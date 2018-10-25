@@ -1,11 +1,11 @@
 from pandas import read_csv
 
 
-def get_single_raw_correlator(all_correlators, channel, NT, NS, sign=+1,
+def get_single_raw_correlator(all_correlators, channels, NT, NS, sign=+1,
                               ensemble_selection=0, initial_configuration=0,
                               configuration_separation=1):
     target_correlator = (
-        all_correlators[all_correlators.channel == channel].iloc[
+        all_correlators[all_correlators.channel.isin(channels)].iloc[
             (initial_configuration * configuration_separation +
              ensemble_selection)::
             configuration_separation
@@ -37,7 +37,7 @@ def get_file_data(filename, NT):
     return all_correlators
 
 
-def get_target_correlator(filename, channels, NT, NS, signs,
+def get_target_correlator(filename, channel_sets, NT, NS, signs,
                           ensemble_selection=0, initial_configuration=0,
                           configuration_separation=1):
     assert ensemble_selection < configuration_separation
@@ -51,14 +51,14 @@ def get_target_correlator(filename, channels, NT, NS, signs,
 
     target_correlators = []
 
-    for channel, sign in zip(channels, signs):
+    for channels, sign in zip(channel_sets, signs):
         target_correlators.append(get_single_raw_correlator(
-            all_correlators, channel, NT, NS, sign,
+            all_correlators, channels, NT, NS, sign,
             ensemble_selection, initial_configuration, configuration_separation
         ))
 
         assert (len(target_correlators[-1]) - 1 <=
-                used_configuration_count <=
+                used_configuration_count * len(channels) <=
                 len(target_correlators[-1]))
 
     return target_correlators

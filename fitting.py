@@ -3,24 +3,36 @@ from numpy.linalg import inv
 from scipy.optimize import differential_evolution
 
 
-def ps_fit_form(t, mass, amplitude, decay_const, NT):
+FITTING_INTENSITIES = {
+    'default': {},
+    'intense': {
+        'popsize': 50,
+        'tol': 0.001,
+        'mutation': (0.5, 1.5),
+        'recombination': 0.5
+    }
+}
+
+
+def ps_fit_form(t, mass, decay_const, amplitude, NT):
     return amplitude ** 2 / mass * (
         exp(-mass * t) + exp(-mass * (NT - t))
     )
 
 
-def ps_av_fit_form(t, mass, amplitude, decay_const, NT):
+def ps_av_fit_form(t, mass, decay_const, amplitude, NT):
     return amplitude * decay_const * (
         exp(-mass * t) - exp(-mass * (NT - t))
     )
 
 
 def minimize_chisquare(correlator_sample_sets, mean_correlators, fit_functions,
-                       plateau_start, plateau_end, NT, fit_means=True,
-                       parameter_ranges=((0.01, 5), (0, 5), (0, 5))):
+                       parameter_ranges, plateau_start, plateau_end, NT,
+                       fit_means=True, intensity='default'):
     assert (len(fit_functions) ==
             len(correlator_sample_sets) ==
             len(mean_correlators))
+
     degrees_of_freedom = (2 * (plateau_end - plateau_start) -
                           len(parameter_ranges))
     time_range = asarray(range(plateau_start, plateau_end))
@@ -65,15 +77,12 @@ def minimize_chisquare(correlator_sample_sets, mean_correlators, fit_functions,
                 time_range,
                 NT
             ),
-            popsize=50,
-            tol=0.001,
-            mutation=(0.5, 1.5),
-            recombination=0.5
+            **FITTING_INTENSITIES[intensity]
         )
         fit_results.append(fit_result.x)
         chisquare_values.append(fit_result.fun / degrees_of_freedom)
 
-    return (*zip(mean(fit_results, axis=0), std(fit_results, axis=0)),
+    return (tuple(zip(mean(fit_results, axis=0), std(fit_results, axis=0))),
             (mean(chisquare_values), std(chisquare_values)))
 
 
