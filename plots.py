@@ -1,5 +1,14 @@
-from matplotlib.pyplot import subplots
+from matplotlib.pyplot import subplots, rcParams
 from numpy import linspace
+
+
+def set_plot_defaults():
+    rcParams['font.family'] = 'serif'
+    rcParams['font.serif'] = ['Computer Modern Roman']
+    rcParams['text.usetex'] = True
+    rcParams['lines.linewidth'] = 1
+    rcParams['errorbar.capsize'] = 2
+    rcParams['lines.markersize'] = 4
 
 
 def do_eff_mass_plot(masses, errors, filename, ymin=None, ymax=None,
