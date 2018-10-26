@@ -44,9 +44,9 @@ def bootstrap_correlators(target_correlators, bootstrap_sample_count=200):
 
 
 def bootstrap_eff_masses(bootstrap_correlator_samples_set):
-    assert len(bootstrap_correlator_samples_set) > 1
-    assert len(set(samples.shape
-                   for samples in bootstrap_correlator_samples_set)) == 1
+    if len(bootstrap_correlator_samples_set) > 1:
+        assert len(set(samples.shape
+                       for samples in bootstrap_correlator_samples_set)) == 1
     eff_mass_samples_shape = list(bootstrap_correlator_samples_set[0].shape)
     eff_mass_samples_shape[0] -= 2
 

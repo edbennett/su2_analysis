@@ -1,10 +1,10 @@
 from argparse import ArgumentParser
 from csv import writer, QUOTE_MINIMAL
 
-from plots import do_eff_mass_plot, do_correlator_plot
+from plots import do_eff_mass_plot, do_correlator_plot, set_plot_defaults
 from data import get_target_correlator
 from bootstrap import bootstrap_correlators, bootstrap_eff_masses
-from fitting import minimize_chisquare, ps_fit_form, ps_av_fit_form
+from fitting import minimize_chisquare, ps_fit_form, ps_av_fit_form, v_fit_form
 
 
 def get_output_filename(basename, type, channel='', tstart='', tend='',
@@ -38,6 +38,7 @@ def process_correlator(
         correlator_lowerbound=None, correlator_upperbound=None,
         optimizer_intensity='default', output_filename_prefix=''
 ):
+    set_plot_defaults()
     target_correlators = get_target_correlator(
         correlator_filename, channel_set, NT, NS, symmetries,
         ensemble_selection, initial_configuration, configuration_separation
@@ -157,15 +158,16 @@ def write_results(filename, channel_name, headers, values):
         csv_writer.writerow((f'{channel_name}_{header}'
                              for header in headers))
         csv_writer.writerow((value
-                      for value_pair in values
-                      for value in value_pair))
+                             for value_pair in values
+                             for value in value_pair))
 
 
 def main():
     parser = ArgumentParser()
 
     parser.add_argument('--correlator_filename', required=True)
-    parser.add_argument('--channel', choices=('g5',), required=True)
+    parser.add_argument('--channel', choices=('g5', 'gk', 'g5gk'),
+                        required=True)
     parser.add_argument('--NT', required=True, type=int)
     parser.add_argument('--NS', required=True, type=int)
     parser.add_argument('--configuration_separation', default=1, type=int)
@@ -191,26 +193,42 @@ def main():
     channel_name = args.channel
 
     channel_set_options = {
-        'g5': (('g5',), ('g5_g0g5_re',))
+        'g5': (('g5',), ('g5_g0g5_re',)),
+        'gk': (('g1', 'g2', 'g3'),),
+        'g5gk': (('g5g1', 'g5g2', 'g5g3'),),
     }
     correlator_names_options = {
-        'g5': ('g5', 'g5_g0g5_re')
+        'g5': ('g5', 'g5_g0g5_re'),
+        'gk': ('gk'),
+        'g5gk': ('g5gk'),
     }
     channel_latexes_options = {
-        'g5': (r'\gamma_5,\gamma_5', '\gamma_0\gamma_5,\gamma_5')
+        'g5': (r'\gamma_5,\gamma_5', '\gamma_0\gamma_5,\gamma_5'),
+        'gk': (r'\gamma_k,\gamma_k',),
+        'g5gk': (r'\gamma_5 \gamma_k,\gamma_5 \gamma_k',),
     }
     fit_forms_options = {
-        'g5': (ps_fit_form, ps_av_fit_form)
+        'g5': (ps_fit_form, ps_av_fit_form),
+        'gk': (v_fit_form,),
+        'g5gk': (v_fit_form,),
     }
     symmetries_options = {
-        'g5': (+1, -1)
+        'g5': (+1, -1),
+        'gk': (+1,),
+        'g5gk': (+1,),
     }
     parameter_range_options = {
-        'g5': ((0.01, 5), (0, 5), (0, 5))
+        'g5': ((0.01, 5), (0, 5), (0, 5)),
+        'gk': ((0.01, 5), (0, 5)),
+        'g5gk': ((0.01, 5), (0, 5)),
     }
     output_file_header_options = {
         'g5': ('mass', 'mass_error', 'decay_const', 'decay_const_error',
-               'amplitude', 'amplitude_error', 'chisquare', 'chisquare_error')
+               'amplitude', 'amplitude_error', 'chisquare', 'chisquare_error'),
+        'gk': ('mass', 'mass_error', 'decay_const', 'decay_const_error',
+               'chisquare', 'chisquare_error'),
+        'g5gk': ('mass', 'mass_error', 'decay_const', 'decay_const_error',
+                 'chisquare', 'chisquare_error'),
     }
 
     channel_set = channel_set_options[channel_name]
@@ -261,11 +279,11 @@ def main():
         )
         if not args.silent:
             print(f'{channel_name} mass: {mass} ± {mass_error}')
-            print(f'{channel_name} amplitude: '
-                  f'{amplitude} ± {amplitude_error}')
+            print(f'{channel_name} decay constant: '
+                  f'{decay_const} ± {decay_const_error}')
             if len(fit_results[0]) > 2:
-                print(f'{channel_name} decay constant: '
-                      f'{decay_const} ± {decay_const_error}')
+                print(f'{channel_name} amplitude: '
+                      f'{amplitude} ± {amplitude_error}')
             print(f'{channel_name} chi-square: '
                   f'{chisquare_value} ± {chisquare_error}')
 

@@ -1,15 +1,18 @@
-from pandas import read_csv
+from pandas import read_csv, concat
 
 
 def get_single_raw_correlator(all_correlators, channels, NT, NS, sign=+1,
                               ensemble_selection=0, initial_configuration=0,
                               configuration_separation=1):
-    target_correlator = (
-        all_correlators[all_correlators.channel.isin(channels)].iloc[
-            (initial_configuration * configuration_separation +
-             ensemble_selection)::
-            configuration_separation
-        ]
+    target_correlator = concat(
+        (
+            all_correlators[all_correlators.channel == channel].iloc[
+                (initial_configuration * configuration_separation +
+                 ensemble_selection)::
+                configuration_separation
+            ]
+            for channel in channels
+        )
     )
 
     target_correlator.drop(['trajectory', 'channel'], axis=1, inplace=True)
@@ -56,8 +59,7 @@ def get_target_correlator(filename, channel_sets, NT, NS, signs,
             all_correlators, channels, NT, NS, sign,
             ensemble_selection, initial_configuration, configuration_separation
         ))
-
-        assert (len(target_correlators[-1]) - 1 <=
+        assert (len(target_correlators[-1]) - len(channels) <=
                 used_configuration_count * len(channels) <=
                 len(target_correlators[-1]))
 

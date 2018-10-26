@@ -26,6 +26,12 @@ def ps_av_fit_form(t, mass, decay_const, amplitude, NT):
     )
 
 
+def v_fit_form(t, mass, decay_const, NT):
+    return decay_const * mass * (
+        exp(-mass * t) + exp(-mass * (NT - t))
+    )
+
+
 def minimize_chisquare(correlator_sample_sets, mean_correlators, fit_functions,
                        parameter_ranges, plateau_start, plateau_end, NT,
                        fit_means=True, intensity='default'):
