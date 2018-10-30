@@ -1,5 +1,13 @@
-from numpy import ndarray, mean, std, arccosh
-from numpy.random import randint
+from numpy import ndarray, mean, std, arccosh, asarray
+from numpy.random import randint, choice
+
+
+def basic_bootstrap(values, bootstrap_sample_count=200):
+    values = asarray(values)
+    samples = []
+    for _ in range(bootstrap_sample_count):
+        samples.append(mean(choice(values, len(values))))
+    return mean(samples), std(samples)
 
 
 def bootstrap_correlators(target_correlators, bootstrap_sample_count=200):

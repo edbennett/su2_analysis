@@ -1,4 +1,34 @@
 from pandas import read_csv, concat
+from numpy import asarray
+from csv import writer, QUOTE_MINIMAL
+
+
+def write_results(filename, headers, values, channel_name=''):
+    if channel_name:
+        channel_name = f'{channel_name}_'
+    with open(filename, 'w', newline='') as csvfile:
+        csv_writer = writer(csvfile, delimiter='\t', quoting=QUOTE_MINIMAL)
+        csv_writer.writerow((f'{channel_name}{header}'
+                             for header in headers))
+        csv_writer.writerow((value
+                             for value_pair in values
+                             for value in value_pair))
+
+
+def get_output_filename(basename, type, channel='', tstart='', tend='',
+                        filetype='pdf'):
+    if channel:
+        channel = f'_{channel}'
+    if tstart:
+        tstart = f'_{tstart}'
+    if tend:
+        tend = f'_{tend}'
+    if tstart and not tend:
+        tend = '_XX'
+    if tend and not tstart:
+        tstart = '_XX'
+
+    return f'{basename}{type}{channel}{tstart}{tend}.{filetype}'
 
 
 def get_single_raw_correlator(all_correlators, channels, NT, NS, sign=+1,
@@ -64,3 +94,23 @@ def get_target_correlator(filename, channel_sets, NT, NS, signs,
                 len(target_correlators[-1]))
 
     return target_correlators
+
+
+def get_flows(filename):
+    data = read_csv(filename, delim_whitespace=True,
+                    names=['n', 't', 'Ep', 'Ec', 'Q'])
+    times = asarray(sorted(set(data.t)))
+    Eps = asarray(
+        [
+            data[data.n == n].Ep
+            for n in set(data.n)
+        ]
+    )
+    Ecs = asarray(
+        [
+            data[data.n == n].Ec
+            for n in set(data.n)
+        ]
+    )
+
+    return times, Eps, Ecs

@@ -1,26 +1,9 @@
 from argparse import ArgumentParser
-from csv import writer, QUOTE_MINIMAL
 
 from plots import do_eff_mass_plot, do_correlator_plot, set_plot_defaults
-from data import get_target_correlator
+from data import get_target_correlator, write_results, get_output_filename
 from bootstrap import bootstrap_correlators, bootstrap_eff_masses
 from fitting import minimize_chisquare, ps_fit_form, ps_av_fit_form, v_fit_form
-
-
-def get_output_filename(basename, type, channel='', tstart='', tend='',
-                        filetype='pdf'):
-    if channel:
-        channel = f'_{channel}'
-    if tstart:
-        tstart = f'_{tstart}'
-    if tend:
-        tend = f'_{tend}'
-    if tstart and not tend:
-        tend = '_XX'
-    if tend and not tstart:
-        tstart = '_XX'
-
-    return f'{basename}{type}{channel}{tstart}{tend}.{filetype}'
 
 
 class Incomplete(Exception):
@@ -150,16 +133,6 @@ def process_correlator(
     )
 
     return fit_results, (chisquare_value, chisquare_error)
-
-
-def write_results(filename, channel_name, headers, values):
-    with open(filename, 'w', newline='') as csvfile:
-        csv_writer = writer(csvfile, delimiter='\t', quoting=QUOTE_MINIMAL)
-        csv_writer.writerow((f'{channel_name}_{header}'
-                             for header in headers))
-        csv_writer.writerow((value
-                             for value_pair in values
-                             for value in value_pair))
 
 
 def main():
