@@ -7,7 +7,22 @@ def basic_bootstrap(values, bootstrap_sample_count=200):
     samples = []
     for _ in range(bootstrap_sample_count):
         samples.append(mean(choice(values, len(values))))
-    return mean(samples), std(samples)
+    return mean(samples, axis=0), std(samples)
+
+
+def bootstrap_1d(values, bootstrap_sample_count=200):
+    values = asarray(values)
+    bootstrap_sample_configurations = randint(
+        values.shape[0],
+        size=(values.shape[0], bootstrap_sample_count)
+    )
+    bootstrap_samples = []
+    for t_index in range(values.shape[1]):
+        bootstrap_samples.append(
+            values[bootstrap_sample_configurations, t_index].mean(axis=1)
+        )
+    bootstrap_samples = asarray(bootstrap_samples)
+    return mean(bootstrap_samples, axis=1), std(bootstrap_samples, axis=1)
 
 
 def bootstrap_correlators(target_correlators, bootstrap_sample_count=200):
