@@ -1,14 +1,28 @@
-from matplotlib.pyplot import subplots, rcParams
+from matplotlib.pyplot import subplots, rc
 from numpy import linspace
 
+from warnings import filterwarnings
 
-def set_plot_defaults():
-    rcParams['font.family'] = 'serif'
-    rcParams['font.serif'] = ['Computer Modern Roman']
-    rcParams['text.usetex'] = True
-    rcParams['lines.linewidth'] = 1
-    rcParams['errorbar.capsize'] = 2
-    rcParams['lines.markersize'] = 4
+
+filterwarnings("ignore", category=UserWarning, module="matplotlib")
+
+
+def set_plot_defaults(fontsize=None, markersize=4):
+    if fontsize:
+        font = {'size': fontsize}
+    else:
+        font = {}
+    rc(
+        'font',
+        **{
+            'family': 'serif',
+            'serif': ['Computer Modern Roman'],
+            **font
+        }
+    )
+    rc('text', usetex=True)
+    rc('lines', linewidth=1, markersize=markersize)
+    rc('errorbar', capsize=2)
 
 
 def do_eff_mass_plot(masses, errors, filename, ymin=None, ymax=None,
