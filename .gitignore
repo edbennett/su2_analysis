@@ -7,6 +7,7 @@ scratch
 processed_data/*
 raw_data/*
 processing_params/*
+final_tables/*
 final_plots/*
 !*/.git_keep
 sp2n.sqlite
