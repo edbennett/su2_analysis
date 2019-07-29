@@ -1,20 +1,31 @@
 from numpy import ndarray, mean, std, arccosh, asarray
 from numpy.random import randint, choice
 
+BOOTSTRAP_SAMPLE_COUNT = 200
 
-def basic_bootstrap(values, bootstrap_sample_count=200):
+
+def basic_bootstrap(values):
     values = asarray(values)
     samples = []
-    for _ in range(bootstrap_sample_count):
+    for _ in range(BOOTSTRAP_SAMPLE_COUNT):
         samples.append(mean(choice(values, len(values))))
     return mean(samples, axis=0), std(samples)
 
 
-def bootstrap_1d(values, bootstrap_sample_count=200):
+def bootstrap_susceptibility(values):
+    values = asarray(values)
+    samples = []
+    for _ in range(BOOTSTRAP_SAMPLE_COUNT):
+        current_sample = choice(values, len(values))
+        samples.append(mean(current_sample ** 2) - mean(current_sample) ** 2)
+    return mean(samples, axis=0), std(samples)
+
+
+def bootstrap_1d(values):
     values = asarray(values)
     bootstrap_sample_configurations = randint(
         values.shape[0],
-        size=(values.shape[0], bootstrap_sample_count)
+        size=(values.shape[0], BOOTSTRAP_SAMPLE_COUNT)
     )
     bootstrap_samples = []
     for t_index in range(values.shape[1]):
@@ -25,7 +36,7 @@ def bootstrap_1d(values, bootstrap_sample_count=200):
     return mean(bootstrap_samples, axis=1), std(bootstrap_samples, axis=1)
 
 
-def bootstrap_correlators(target_correlators, bootstrap_sample_count=200):
+def bootstrap_correlators(target_correlators):
     assert len(target_correlators) > 0
     assert len(set(map(len, target_correlators))) == 1
 
@@ -34,7 +45,7 @@ def bootstrap_correlators(target_correlators, bootstrap_sample_count=200):
 
     bootstrap_sample_configurations = randint(
         number_of_configurations,
-        size=(number_of_configurations, bootstrap_sample_count)
+        size=(number_of_configurations, BOOTSTRAP_SAMPLE_COUNT)
     )
 
 #    print(bootstrap_sample_configurations)
@@ -45,7 +56,7 @@ def bootstrap_correlators(target_correlators, bootstrap_sample_count=200):
 
     for target_correlator in target_correlators:
         bootstrap_correlator_samples_set.append(
-            ndarray((NT // 2, bootstrap_sample_count))
+            ndarray((NT // 2, BOOTSTRAP_SAMPLE_COUNT))
         )
         for timeslice in range(NT // 2):
             bootstrap_correlator_samples_set[-1][timeslice] = (

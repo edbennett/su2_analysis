@@ -1,4 +1,4 @@
-from matplotlib.pyplot import subplots, rc
+from matplotlib.pyplot import subplots, rc, close
 from numpy import linspace
 
 from warnings import filterwarnings
@@ -55,6 +55,7 @@ def do_eff_mass_plot(masses, errors, filename, ymin=None, ymax=None,
         )
     fig.tight_layout()
     fig.savefig(filename)
+    close(fig)
 
 
 def do_correlator_plot(correlator, errors, filename, channel_latex,
@@ -91,3 +92,4 @@ def do_correlator_plot(correlator, errors, filename, channel_latex,
         ax.legend()
     fig.tight_layout()
     fig.savefig(filename)
+    close(fig)
