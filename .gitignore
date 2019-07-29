@@ -10,3 +10,4 @@ processing_params/*
 final_plots/*
 !*/.git_keep
 sp2n.sqlite
+**.pyc
