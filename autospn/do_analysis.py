@@ -196,6 +196,7 @@ def main():
     parser = ArgumentParser()
     parser.add_argument('--ensembles', default='ensembles.yaml')
     parser.add_argument('--skip_mesons', action='store_true')
+    parser.add_argument('--skip_calculation', action='store_true')
     args = parser.parse_args()
 
     ensembles = yaml.safe_load(get_file_contents(args.ensembles))
@@ -207,9 +208,14 @@ def main():
         if is_complete_descriptor(ensemble)
     }
 
-    do_analysis(ensembles,
-                ensembles_date=ensembles_date,
-                skip_mesons=args.skip_mesons)
+    if args.skip_calculation:
+        print("Skipping calculation as requested")
+    else:
+        do_analysis(ensembles,
+                    ensembles_date=ensembles_date,
+                    skip_mesons=args.skip_mesons)
+
+    print("Outputting results:")
     output_results()
 
 
