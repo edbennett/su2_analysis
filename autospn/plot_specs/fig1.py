@@ -68,3 +68,4 @@ def generate(data):
     plt.tight_layout()
     plt.subplots_adjust(right=1)
     plt.savefig(filename)
+    plt.close(fig)
