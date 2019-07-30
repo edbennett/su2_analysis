@@ -25,11 +25,11 @@ def generate(data):
     )
 
     copyfile('processed_data/nf2_FUN/32x16x16x16b6.9m-0.85/Q.pdf',
-             'final_plots/fig3a.pdf')
+             'final_plots/fig4a.pdf')
     copyfile('processed_data/nf2_FUN/36x24x24x24b7.2m-0.78/Q.pdf',
-             'final_plots/fig3b.pdf')
+             'final_plots/fig4b.pdf')
     copyfile('processed_data/nf2_FUN/48x24x24x24b7.5m-0.69/Q.pdf',
-             'final_plots/fig3c.pdf')
+             'final_plots/fig4c.pdf')
 
     ensembles = [{'label': 'DB1M1'}, {'label': 'DB3M5'}, {'label': 'DB5M1'}]
     observables = {}
@@ -41,14 +41,14 @@ def generate(data):
             ensemble, 'Q_width'
         )
 
-    with open('final_plots/fig3.tex', 'w') as f:
+    with open('final_plots/fig4.tex', 'w') as f:
         print(r'\begin{figure}', file=f)
         print(r'  \center', file=f)
         print(r'\captionsetup[subfigure]{aboveskip=-10pt}', file=f)
         for filename, caption in (
-                ('fig3a', r'$\beta=6.9,m=-0.85,V=32\times16^3$'),
-                ('fig3b', r'$\beta=7.2,m=-0.78,V=36\times24^3$'),
-                ('fig3c', r'$\beta=7.5,m=-0.69,V=48\times24^3$')):
+                ('fig4a', r'$\beta=6.9,m=-0.85,V=32\times16^3$'),
+                ('fig4b', r'$\beta=7.2,m=-0.78,V=36\times24^3$'),
+                ('fig4c', r'$\beta=7.5,m=-0.69,V=48\times24^3$')):
             print(r'  \begin{subfigure}{\textwidth}', file=f)
             print(r'    \center', file=f)
             print(r'    \includegraphics[width=0.9\textwidth]{{{fn}}}'.format(
