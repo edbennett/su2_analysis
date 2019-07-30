@@ -1,11 +1,11 @@
 import matplotlib.pyplot as plt
 from numpy import linspace, asarray
-from pandas import merge
 from uncertainties import ufloat
 
 from ..fitting import odr_fit, confpred_band
 from ..plots import set_plot_defaults
 from ..tables import generate_table_from_content
+from ..derived_observables import merge_and_add_mhat2
 
 
 def fit_form(consts, mhat2):
@@ -20,21 +20,7 @@ def single_plot_and_fit(all_data, ax, beta, fit_max, ylabel=None):
 
     # Get data
     data_subset = all_data[all_data.beta == beta]
-    m_values = data_subset[data_subset.observable == 'g5_mass']
-    w0_values = data_subset[(data_subset.observable == 'w0c') &
-                            (data_subset.free_parameter == 0.35)]
-
-    merged_data = merge(m_values, w0_values,
-                        on='label',
-                        suffixes=('_m', '_w0'))
-    merged_data['value_mhat2'] = (merged_data.value_m ** 2 *
-                                  merged_data.value_w0 ** 2)
-    merged_data['uncertainty_mhat2'] = (
-        merged_data.value_m * merged_data.value_w0 * (2 * (
-            merged_data.value_m ** 2 * merged_data.uncertainty_w0 ** 2 +
-            merged_data.value_w0 ** 2 * merged_data.uncertainty_m ** 2
-        )) ** 0.5
-    )
+    merged_data = merge_and_add_mhat2(data_subset)
 
     # Split data into data to be fitted and data to be plotted only
     fit_data = merged_data[merged_data.value_mhat2 <= fit_max]
