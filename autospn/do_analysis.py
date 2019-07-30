@@ -169,7 +169,7 @@ def do_analysis(ensembles, **kwargs):
         do_single_analysis(label, ensemble, **kwargs)
 
 
-def output_results():
+def output_results(only=None):
     data = get_dataframe()
 
     for object_type in ('table', 'plot'):
@@ -179,6 +179,8 @@ def output_results():
 
         for object in objects:
             if '__' in object.__name__:
+                continue
+            if only and only not in object.__name__:
                 continue
             try:
                 print(f'Generating for {object.__name__}')
@@ -197,6 +199,7 @@ def main():
     parser.add_argument('--ensembles', default='ensembles.yaml')
     parser.add_argument('--skip_mesons', action='store_true')
     parser.add_argument('--skip_calculation', action='store_true')
+    parser.add_argument('--only', default=None)
     args = parser.parse_args()
 
     ensembles = yaml.safe_load(get_file_contents(args.ensembles))
@@ -208,15 +211,16 @@ def main():
         if is_complete_descriptor(ensemble)
     }
 
-    if args.skip_calculation:
+    if args.skip_calculation or args.only:
         print("Skipping calculation as requested")
     else:
         do_analysis(ensembles,
                     ensembles_date=ensembles_date,
-                    skip_mesons=args.skip_mesons)
+                    skip_mesons=args.skip_mesons,
+                    only=args.only)
 
     print("Outputting results:")
-    output_results()
+    output_results(args.only)
 
 
 if __name__ == '__main__':
