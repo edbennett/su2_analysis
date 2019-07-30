@@ -1,4 +1,4 @@
-from ..tables import generate_table, ObservableSpec
+from ..tables import generate_table_from_db, ObservableSpec
 
 ENSEMBLES = (
     'DB1M1', 'DB1M2', 'DB1M3', 'DB1M5', 'DB1M6', 'DB1M6',
@@ -16,12 +16,12 @@ EXPONENTIAL = False
 
 
 def generate(data):
-    header = ['', r'$\beta$', '$am_0$', r'$N_t \times N_s^3$',
-              r'$N_{\mathrm{configs}}$', r'$\delta_{\mathrm{traj}}$',
-              r'$\langle P \rangle$', r'$w_0 / a$']
+    columns = ['', None, r'$\beta$', '$am_0$', r'$N_t \times N_s^3$',
+               r'$N_{\mathrm{configs}}$', r'$\delta_{\mathrm{traj}}$', None,
+               r'$\langle P \rangle$', r'$w_0 / a$']
     constants = ('beta', 'm', 'V', 'Nconfigs', 'delta_traj')
     observables = ('avr_plaquette',
-                   ObservableSpec('w0c', free_parameter='0.35'),)
+                   ObservableSpec('w0c', free_parameter=0.35),)
     filename = 'table1.tex'
 
     data['V'] = [
@@ -29,12 +29,12 @@ def generate(data):
         for T, L in zip(data['T'], data['L'])
     ]
 
-    generate_table(
+    generate_table_from_db(
         data=data,
         ensembles=ENSEMBLES,
         observables=observables,
         filename=filename,
-        header=header,
+        columns=columns,
         constants=constants,
         error_digits=ERROR_DIGITS,
         exponential=EXPONENTIAL

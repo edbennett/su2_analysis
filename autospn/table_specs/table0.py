@@ -1,4 +1,4 @@
-from ..tables import generate_table, ObservableSpec
+from ..tables import generate_table_from_db, ObservableSpec
 
 ENSEMBLES = (
     'DB1M1', 'DB1M2', 'DB1M3', 'DB1M5', 'DB1M6', 'DB1M6',
@@ -16,17 +16,17 @@ EXPONENTIAL = False
 
 
 def generate(data):
-    header = ['', r'$w_0^{\mathrm{p}}$', r'$w_0^{\mathrm{c}}$']
+    columns = ['', None, r'$w_0^{\mathrm{p}}$', r'$w_0^{\mathrm{c}}$']
     observables = (ObservableSpec('w0p', free_parameter=0.35),
                    ObservableSpec('w0c', free_parameter=0.35))
     filename = 'table0.tex'
 
-    generate_table(
+    generate_table_from_db(
         data=data,
         ensembles=ENSEMBLES,
         observables=observables,
         filename=filename,
-        header=header,
+        columns=columns,
         error_digits=ERROR_DIGITS,
         exponential=EXPONENTIAL
     )

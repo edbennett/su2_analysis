@@ -1,9 +1,11 @@
 from collections import namedtuple
+
+from numpy import isnan
 from uncertainties import ufloat
 
 HLINE = r'    \hline'
 ObservableSpec = namedtuple('ObservableSpec',
-                            ('value', 'valence_mass', 'free_parameter'),
+                            ('name', 'valence_mass', 'free_parameter'),
                             defaults=(None, None))
 
 
@@ -22,68 +24,90 @@ def format_value_and_error(value, error, error_digits=2, exponential=False):
     return format_string.format(value)
 
 
-def generate_table(data, ensembles, observables, filename, header,
-                   constants=tuple(), error_digits=2, exponential=False):
-    table_spec = 'c'
-    for group in (constants, observables):
-        if len(group) > 0:
-            table_spec += '|' + 'c' * len(group)
+def generate_table_from_content(columns, filename, table_content):
+    table_spec = ''
+    header = [column for column in columns if column is not None]
+    table_spec = ''.join(['c' if column is not None else '|'
+                          for column in columns])
 
     with open('final_tables/' + filename, 'w') as f:
         print(r'\begin{tabular}{' + table_spec + '}', file=f)
         print(table_row(header) + r' \\', file=f)
         print(HLINE, file=f)
         print(HLINE, file=f)
-
-        table_content = []
-        line_content = ''
-        for ensemble in ensembles:
-            if not ensemble:
-                line_content += HLINE + '\n'
-                continue
-
-            ensemble_data = data[data.label == ensemble]
-            if len(ensemble_data) == 0:
-                print(f"WARNING: No data available for ensemble {ensemble}, "
-                      "skipping")
-                continue
-
-            row_content = [ensemble]
-            for constant in constants:
-                value = set(ensemble_data[constant])
-                assert len(value) == 1
-                (value,) = value
-                row_content.append(f'${str(value)}$')
-
-            for observable in observables:
-                if type(observable) == str:
-                    observable = ObservableSpec(observable)
-                assert type(observable) == ObservableSpec
-
-                measurement = ensemble_data[
-                    (ensemble_data.observable == observable) &
-                    (ensemble_data.free_parameter ==
-                     ObservableSpec.free_parameter) &
-                    (ensemble_data.valence_mass == ObservableSpec.valence_mass)
-                ]
-                if len(measurement) > 1:
-                    raise ValueError(
-                        "ensemble-observable combination is not unique"
-                    )
-
-                if len(measurement) == 0:
-                    row_content.append('---')
-                    continue
-
-                row_content.append(format_value_and_error(
-                    float(measurement.value),
-                    float(measurement.uncertainty),
-                    error_digits=error_digits,
-                    exponential=exponential
-                ))
-            line_content += table_row(row_content)
-            table_content.append(line_content)
-            line_content = ''
-
         print((r' \\' '\n').join(table_content), file=f)
         print(r'\end{tabular}', file=f)
+
+
+def generate_table_from_db(
+        data, ensembles, observables, filename, columns,
+        constants=tuple(), error_digits=2, exponential=False
+):
+    table_content = []
+    line_content = ''
+    for ensemble in ensembles:
+        if not ensemble:
+            line_content += HLINE + '\n'
+            continue
+
+        ensemble_data = data[data.label == ensemble]
+        if len(ensemble_data) == 0:
+            print(f"WARNING: No data available for ensemble {ensemble}, "
+                  "skipping")
+            continue
+
+        row_content = [ensemble]
+        for constant in constants:
+            value = set(ensemble_data[constant])
+            assert len(value) == 1
+            (value,) = value
+            row_content.append(f'${str(value)}$')
+
+        for observable in observables:
+            if type(observable) == str:
+                observable = ObservableSpec(observable)
+            assert type(observable) == ObservableSpec
+            measurement_mask = (
+                (ensemble_data.observable == observable.name)
+            )
+            if (observable.free_parameter is None):
+                measurement_mask = (
+                    measurement_mask & ensemble_data.free_parameter.isnull()
+                )
+            else:
+                measurement_mask = (
+                    measurement_mask &
+                    (ensemble_data.free_parameter == observable.free_parameter)
+                )
+            if (observable.valence_mass is None):
+                measurement_mask = (
+                    measurement_mask & ensemble_data.valence_mass.isnull()
+                )
+            else:
+                measurement_mask = (
+                    measurement_mask &
+                    (ensemble_data.valence_mass == observable.valence_mass)
+                )
+
+            measurement = ensemble_data[measurement_mask]
+            if len(measurement) > 1:
+                import pdb; pdb.set_trace()
+                raise ValueError(
+                    "ensemble-observable combination is not unique"
+                )
+
+            if len(measurement) == 0:
+                row_content.append('---')
+                continue
+
+            row_content.append(format_value_and_error(
+                float(measurement.value),
+                float(measurement.uncertainty),
+                error_digits=error_digits,
+                exponential=exponential
+            ))
+        line_content += table_row(row_content)
+        table_content.append(line_content)
+        line_content = ''
+
+    generate_table_from_content(columns, filename, table_content)
