@@ -3,6 +3,7 @@ sp4F2f: &sp4F2f
   group_rank: 4
   representation: FUN
   Nf: 2
+  initial_configuration: 0
 
 ######## TEMPLATES FOR INDIVIDUAL BETAS ########
 DB1: &DB1
