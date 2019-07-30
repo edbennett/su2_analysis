@@ -1,9 +1,7 @@
 import matplotlib.pyplot as plt
-from matplotlib.colors import XKCD_COLORS
-
 from numpy import nan
 
-from ..plots import set_plot_defaults
+from ..plots import set_plot_defaults, COLOR_LIST
 
 ENSEMBLES = (
     'DB3M1', 'DB3M2', 'DB3M3', 'DB3M4', 'DB3M5', 'DB3M6', 'DB3M7', 'DB3M8',
@@ -11,20 +9,6 @@ ENSEMBLES = (
 XS = (0.2, 0.3, 0.35, 0.4, 0.5, 0.6, 0.8, 1.0)
 ERROR_DIGITS = 2
 EXPONENTIAL = False
-
-COLOR_LIST = [XKCD_COLORS[f'xkcd:{colour}'] for colour in [
-    'tomato red',
-    'leafy green',
-    'cerulean blue',
-    'golden brown',
-    'faded purple',
-    'shocking pink',
-    'pumpkin orange',
-    'dusty teal',
-    'red wine',
-    'navy blue',
-    'salmon'
-]]
 
 
 def generate(data):

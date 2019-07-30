@@ -1,8 +1,25 @@
 from matplotlib.pyplot import subplots, rc, close
+from matplotlib.colors import XKCD_COLORS
 from numpy import linspace
 
 from warnings import filterwarnings
 
+
+COLOR_LIST = [XKCD_COLORS[f'xkcd:{colour}'] for colour in [
+    'tomato red',
+    'leafy green',
+    'cerulean blue',
+    'golden brown',
+    'faded purple',
+    'shocking pink',
+    'pumpkin orange',
+    'dusty teal',
+    'red wine',
+    'navy blue',
+    'salmon'
+]]
+
+SYMBOL_LIST = '+.*o^x1v2'
 
 filterwarnings("ignore", category=UserWarning, module="matplotlib")
 
