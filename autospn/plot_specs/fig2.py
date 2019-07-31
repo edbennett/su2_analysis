@@ -67,8 +67,8 @@ def single_plot_and_fit(all_data, ax, beta, fit_max, ylabel=None):
     return fit_result
 
 
-def table3(values):
-    filename = 'table3.tex'
+def table2(values):
+    filename = 'table2.tex'
     columns = [r'$\beta$', None, r'$w_0^\chi / a$', r'$\tilde{k}_1$', None,
                r'$\chi^2/N_{\mathrm{d.o.f.}}$']
     table_content = []
@@ -93,7 +93,7 @@ def generate(data):
 
     fit_69 = single_plot_and_fit(data, ax[0], 6.9, 0.4, ylabel=r'$w_0 / a$')
     fit_72 = single_plot_and_fit(data, ax[1], 7.2, 0.45)
-    table3(((6.9, fit_69), (7.2, fit_72)))
+    table2(((6.9, fit_69), (7.2, fit_72)))
 
     plt.tight_layout()
 
