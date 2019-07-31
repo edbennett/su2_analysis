@@ -11,44 +11,65 @@ from .fitting import (minimize_chisquare, ps_fit_form, ps_av_fit_form,
 channel_set_options = {
     'g5': (('g5',), ('g5_g0g5_re',)),
     'g5_mass': (('g5',),),
+    'id': (('id',),),
     'gk': (('g1', 'g2', 'g3'),),
     'g5gk': (('g5g1', 'g5g2', 'g5g3'),),
+    'g0gk': (('g0g1', 'g0g2', 'g0g3'),),
+    'g0g5gk': (('g0g5g1', 'g0g5g2', 'g0g5g3'),),
 }
 correlator_names_options = {
     'g5': ('g5', 'g5_g0g5_re'),
     'g5_mass': ('g5',),
+    'id': ('id',),
     'gk': ('gk'),
     'g5gk': ('g5gk'),
+    'g0gk': ('g0gk'),
+    'g0g5gk': ('g0g5gk'),
 }
 channel_latexes_options = {
     'g5': (r'\gamma_5,\gamma_5', r'\gamma_0\gamma_5,\gamma_5'),
     'g5_mass': (r'\gamma_5,\gamma_5',),
+    'id': (r'\one,\one',),
     'gk': (r'\gamma_k,\gamma_k',),
     'g5gk': (r'\gamma_5 \gamma_k,\gamma_5 \gamma_k',),
+    'g0gk': (r'\gamma_0 \gamma_k,\gamma_0 \gamma_k',),
+    'g0g5gk': (r'\gamma_0 \gamma_5 \gamma_k,\gamma_0 \gamma_5 \gamma_k',),
 }
 fit_forms_options = {
     'g5': (ps_fit_form, ps_av_fit_form),
     'g5_mass': (v_fit_form,),
+    'id': (v_fit_form,),
     'gk': (v_fit_form,),
     'g5gk': (v_fit_form,),
+    'g0gk': (v_fit_form,),
+    'g0g5gk': (v_fit_form,),
 }
 symmetries_options = {
     'g5': (+1, -1),
     'g5_mass': (+1,),
+    'id': (+1,),
     'gk': (+1,),
     'g5gk': (+1,),
+    'g0gk': (+1,),
+    'g0g5gk': (+1,),
 }
 parameter_range_options = {
     'g5': ((0.01, 5), (0, 5), (0, 5)),
     'g5_mass': ((0.01, 5), (0, 5)),
+    'id': ((0.01, 5), (0, 5)),
     'gk': ((0.01, 5), (0, 5)),
     'g5gk': ((0.01, 5), (0, 5)),
+    'g0gk': ((0.01, 5), (0, 5)),
+    'g0g5gk': ((0.01, 5), (0, 5)),
 }
 quantity_options = {
     'g5': ('mass', 'decay_const', 'amplitude', 'chisquare'),
     'g5_mass': ('mass', 'decay_const', 'chisquare'),
+    'id': ('mass', 'decay_const', 'chisquare'),
     'gk': ('mass', 'decay_const', 'chisquare'),
     'g5gk': ('mass', 'decay_const', 'chisquare'),
+    'g0gk': ('mass', 'decay_const', 'chisquare'),
+    'g0g5gk': ('mass', 'decay_const', 'chisquare'),
 }
 
 
