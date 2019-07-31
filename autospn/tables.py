@@ -131,7 +131,7 @@ def generate_table_from_db(
                 row_content.append('---')
                 continue
 
-            if (
+            if float(measurement.value) > 0 and (
                     float(measurement.uncertainty) / float(measurement.value) <
                     SMALLEST_RELATIVE_UNCERTAINTY
             ):
