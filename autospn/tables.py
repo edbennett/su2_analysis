@@ -1,6 +1,4 @@
-from collections import namedtuple
-
-from numpy import isnan
+from collections import namedtuple, defaultdict
 from uncertainties import ufloat
 
 HLINE = r'    \hline'
@@ -41,10 +39,21 @@ def generate_table_from_content(columns, filename, table_content):
 
 def generate_table_from_db(
         data, ensembles, observables, filename, columns,
-        constants=tuple(), error_digits=2, exponential=False
+        constants=tuple(), error_digits=2, exponential=False,
+        multirow=defaultdict(bool)
 ):
     table_content = []
     line_content = ''
+
+    if 'V' in constants and 'V' not in data.columns:
+        data['V'] = [
+            f'{T} \\times {L}^3'
+            for T, L in zip(data['T'], data['L'])
+        ]
+
+    # Set up initial values of variables used for implementing multirow
+    current_row_constants = {}
+    num_rows = {}
     for ensemble in ensembles:
         if not ensemble:
             line_content += HLINE + '\n'
@@ -57,11 +66,31 @@ def generate_table_from_db(
             continue
 
         row_content = [ensemble]
+        previous_row_constants = current_row_constants
+        current_row_constants = {}
         for constant in constants:
             value = set(ensemble_data[constant])
             assert len(value) == 1
             (value,) = value
-            row_content.append(f'${str(value)}$')
+            current_row_constants[constant] = value
+            if not multirow[constant]:
+                row_content.append(f'${str(value)}$')
+            elif value != previous_row_constants.get(constant, None):
+                # New value: finish previous multirow, start a multirow
+                # and reset row count
+                table_content = [line.replace(f'NUM_ROWS_{constant}',
+                                              str(num_rows[constant]))
+                                 for line in table_content]
+                row_content.append(r'\multirow{NUM_ROWS_' +
+                                   constant +
+                                   r'}{c}{' +
+                                   f'${str(value)}$' +
+                                   r'}$')
+                num_rows[constant] = 1
+            else:
+                # Same value: blank cell, increment row count
+                row_content.append('')
+                num_rows[constant] += 1
 
         for observable in observables:
             if type(observable) == str:
@@ -91,7 +120,6 @@ def generate_table_from_db(
 
             measurement = ensemble_data[measurement_mask]
             if len(measurement) > 1:
-                import pdb; pdb.set_trace()
                 raise ValueError(
                     "ensemble-observable combination is not unique"
                 )
@@ -110,4 +138,10 @@ def generate_table_from_db(
         table_content.append(line_content)
         line_content = ''
 
+    if multirow:
+        for constant in constants:
+            if multirow[constant]:
+                table_content = [line.replace(f'NUM_ROWS_{constant}',
+                                              str(num_rows[constant]))
+                                 for line in table_content]
     generate_table_from_content(columns, filename, table_content)
