@@ -38,6 +38,31 @@ def generate_table_from_content(columns, filename, table_content):
         print(r'\end{tabular}', file=f)
 
 
+def measurement_mask(data, observable):
+    measurement_mask = (
+        (data.observable == observable.name)
+    )
+    if (observable.free_parameter is None):
+        measurement_mask = (
+            measurement_mask & data.free_parameter.isnull()
+        )
+    else:
+        measurement_mask = (
+            measurement_mask &
+            (data.free_parameter == observable.free_parameter)
+        )
+    if (observable.valence_mass is None):
+        measurement_mask = (
+            measurement_mask & data.valence_mass.isnull()
+        )
+    else:
+        measurement_mask = (
+            measurement_mask &
+            (data.valence_mass == observable.valence_mass)
+        )
+    return measurement_mask
+
+
 def generate_table_from_db(
         data, ensembles, observables, filename, columns,
         constants=tuple(), error_digits=2, exponential=False,
@@ -97,29 +122,9 @@ def generate_table_from_db(
             if type(observable) == str:
                 observable = ObservableSpec(observable)
             assert type(observable) == ObservableSpec
-            measurement_mask = (
-                (ensemble_data.observable == observable.name)
-            )
-            if (observable.free_parameter is None):
-                measurement_mask = (
-                    measurement_mask & ensemble_data.free_parameter.isnull()
-                )
-            else:
-                measurement_mask = (
-                    measurement_mask &
-                    (ensemble_data.free_parameter == observable.free_parameter)
-                )
-            if (observable.valence_mass is None):
-                measurement_mask = (
-                    measurement_mask & ensemble_data.valence_mass.isnull()
-                )
-            else:
-                measurement_mask = (
-                    measurement_mask &
-                    (ensemble_data.valence_mass == observable.valence_mass)
-                )
 
-            measurement = ensemble_data[measurement_mask]
+            measurement = ensemble_data[measurement_mask(ensemble_data,
+                                                         observable)]
             if len(measurement) > 1:
                 raise ValueError(
                     "ensemble-observable combination is not unique"
