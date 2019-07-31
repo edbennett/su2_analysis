@@ -5,6 +5,7 @@ HLINE = r'    \hline'
 ObservableSpec = namedtuple('ObservableSpec',
                             ('name', 'valence_mass', 'free_parameter'),
                             defaults=(None, None))
+SMALLEST_RELATIVE_UNCERTAINTY = 1e-12
 
 
 def table_row(row_content):
@@ -128,9 +129,18 @@ def generate_table_from_db(
                 row_content.append('---')
                 continue
 
+            if (
+                    float(measurement.uncertainty) / float(measurement.value) <
+                    SMALLEST_RELATIVE_UNCERTAINTY
+            ):
+                print("WARNING: very small uncertainty found", measurement)
+                uncertainty = 0
+            else:
+                uncertainty = measurement.uncertainty
+
             row_content.append(format_value_and_error(
                 float(measurement.value),
-                float(measurement.uncertainty),
+                float(uncertainty),
                 error_digits=error_digits,
                 exponential=exponential
             ))
