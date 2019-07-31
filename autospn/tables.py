@@ -107,11 +107,8 @@ def generate_table_from_db(
                 table_content = [line.replace(f'NUM_ROWS_{constant}',
                                               str(num_rows[constant]))
                                  for line in table_content]
-                row_content.append(r'\multirow{NUM_ROWS_' +
-                                   constant +
-                                   r'}{c}{' +
-                                   f'${str(value)}$' +
-                                   r'}$')
+                row_content.append(r'\multirow{NUM_ROWS_' + constant + '}{c}' +
+                                   '{' + f'${str(value)}$' + r'}')
                 num_rows[constant] = 1
             else:
                 # Same value: blank cell, increment row count
