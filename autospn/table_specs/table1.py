@@ -24,11 +24,6 @@ def generate(data):
                    ObservableSpec('w0c', free_parameter=0.35),)
     filename = 'table1.tex'
 
-    data['V'] = [
-        f'{T} \\times {L}^3'
-        for T, L in zip(data['T'], data['L'])
-    ]
-
     generate_table_from_db(
         data=data,
         ensembles=ENSEMBLES,

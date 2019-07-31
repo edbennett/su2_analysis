@@ -1,7 +1,7 @@
 from ..tables import generate_table_from_db, ObservableSpec
 
 ENSEMBLES = (
-    'DB1M1', 'DB1M2', 'DB1M3', 'DB1M5', 'DB1M6', 'DB1M6',
+    'DB1M1', 'DB1M2', 'DB1M3', 'DB1M4', 'DB1M5', 'DB1M6',
     None,
     'DB2M1', 'DB2M2', 'DB2M3',
     None,
