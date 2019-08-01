@@ -18,3 +18,36 @@ def merge_and_add_mhat2(data):
         )) ** 0.5
     )
     return merged_data
+
+
+def merge_and_hat_quantities(data, quantities):
+    merged_data = data[(data.observable == 'w0c') &
+                       (data.free_parameter == 0.35)].rename(columns={
+                           'value': 'value_w0',
+                           'uncertainty': 'uncertainty_w0'
+                       })
+    merged_data['value_m_hat'] = merged_data.m * merged_data.value_w0
+    merged_data['uncertainty_m_hat'] = (merged_data.m
+                                        * merged_data.uncertainty_w0)
+
+    for quantity in quantities:
+        quantity_values = data[data.observable == quantity][[
+            'label', 'value', 'uncertainty'
+        ]].rename(columns={
+            'value': f'value_{quantity}',
+            'uncertainty': f'uncertainty_{quantity}'
+        })
+        merged_data = merge(merged_data, quantity_values, on='label',
+                            suffixes=('', f'_{quantity}'))
+
+        merged_data[f'value_{quantity}_hat'] = (
+            merged_data.value_w0 * merged_data[f'value_{quantity}']
+        )
+        merged_data[f'uncertainty_{quantity}_hat'] = (
+            merged_data.value_w0 ** 2
+            * merged_data[f'uncertainty_{quantity}'] ** 2
+            + merged_data.uncertainty_w0 ** 2
+            * merged_data[f'value_{quantity}'] ** 2
+        ) ** 0.5
+
+    return merged_data
