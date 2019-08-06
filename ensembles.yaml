@@ -57,6 +57,11 @@ DB1M1:
       eff_mass_plot_ymax: 0.75
       plateau_start: 9
       plateau_end: 16
+    id:
+      configurtion_separation: 5
+      ensemble_selection: 0
+      plateau_start: 5
+      plateau_end: 9
 
 DB1M2:
   <<: *DB1
@@ -86,6 +91,11 @@ DB1M2:
       eff_mass_plot_ymax: 0.9
       plateau_start: 8
       plateau_end: 16
+    id:
+      configuration_separation: 6
+      ensemble_selection: 0
+      plateau_start: 5
+      plateau_end:  9
 
 DB1M3:
   <<: *DB1
@@ -118,6 +128,11 @@ DB1M3:
       eff_mass_plot_ymax: 0.8
       plateau_start: 9
       plateau_end: 16
+    id:
+      configuration_separation: 6
+      ensemble_selection: 0
+      plateau_start: 6
+      plateau_end: 10
 
 DB1M4:
   <<: *DB1
@@ -149,6 +164,11 @@ DB1M4:
       eff_mass_plot_ymax: 0.8
       plateau_start: 9
       plateau_end: 16
+    id:
+      configuration_separation: 7
+      ensemble_selection: 0
+      plateau_start: 4
+      plateau_end: 8
 
 DB1M5:
   <<: *DB1
@@ -180,6 +200,11 @@ DB1M5:
       eff_mass_plot_ymax: 0.7
       plateau_start: 9
       plateau_end: 15
+    id:
+      configuration_separation: 2
+      ensemble_selection: 0
+      plateau_start: 6
+      plateau_end: 10
 
 DB1M6:
   <<: *DB1
@@ -211,6 +236,11 @@ DB1M6:
       eff_mass_plot_ymax: 0.75
       plateau_start: 9
       plateau_end: 16
+    id:
+      configuration_separation: 6
+      ensemble_selection: 0
+      plateau_start: 5
+      plateau_end: 9
 
 DB1M7:
   <<: *DB1
@@ -238,6 +268,11 @@ DB1M7:
       ensemble_selection: 2
       plateau_start: 9
       plateau_end: 16
+    id:
+      configuration_separation: 3
+      ensemble_selection: 0
+      plateau_start: 5
+      plateau_end: 10
 
 
 ######## BETA = 7.05 ########
@@ -269,7 +304,11 @@ DB2M1:
       ensemble_selection: 4
       plateau_start: 10
       plateau_end: 18
-
+    id:
+      configuration_separation: 5
+      ensemble_selection: 4
+      plateau_start: 7
+      plateau_end: 13
 
 DB2M2:
   <<: *DB2
@@ -301,6 +340,11 @@ DB2M2:
       eff_mass_plot_ymax: 0.55
       plateau_start: 12
       plateau_end: 18
+    id:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 6
+      plateau_end: 9
 
 DB2M3:
   <<: *DB2
@@ -328,6 +372,11 @@ DB2M3:
       ensemble_selection: 2
       plateau_start: 11
       plateau_end: 16
+    id:
+      configuration_separation: 5
+      ensemble_selection: 2
+      plateau_start: 6
+      plateau_end: 12
 
 
 ######## BETA = 7.2 ########
@@ -363,6 +412,11 @@ DB3M1:
       eff_mass_plot_ymax: 0.8
       plateau_start: 13
       plateau_end: 18
+    id:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 8
+      plateau_end: 14
 
 DB3M2:
   <<: *DB3
@@ -394,6 +448,11 @@ DB3M2:
       eff_mass_plot_ymax: 0.75
       plateau_start: 11
       plateau_end: 18
+    id:
+      configuration_separation: 4
+      ensemble_selection: 0
+      plateau_start: 7
+      plateau_end: 14
 
 DB3M3:
   <<: *DB3
@@ -425,6 +484,11 @@ DB3M3:
       eff_mass_plot_ymax: 0.6
       plateau_start: 12
       plateau_end: 17
+    id:
+      configuration_separation: 3
+      ensemble_selection: 2
+      plateau_start: 7
+      plateau_end: 14
 
 DB3M4:
   <<: *DB3
@@ -456,6 +520,11 @@ DB3M4:
       eff_mass_plot_ymax: 0.55
       plateau_start: 13
       plateau_end: 18
+    id:
+      configuration_separation: 5
+      ensemble_selection: 1
+      plateau_start: 8
+      plateau_end: 16
 
 DB3M4*:
   <<: *DB3
@@ -545,6 +614,11 @@ DB3M5:
       eff_mass_plot_ymax: 0.5
       plateau_start: 14
       plateau_end: 18
+    id:
+      configuration_separation: 3
+      ensemble_selection: 0
+      plateau_start: 8
+      plateau_end: 15
 
 DB3M6:
   <<: *DB3
@@ -575,6 +649,11 @@ DB3M6:
       eff_mass_plot_ymax: 0.5
       plateau_start: 12
       plateau_end: 17
+    id:
+      configuration_separation: 6
+      ensemble_selection: 0
+      plateau_start: 9
+      plateau_end: 15
 
 DB3M6*:
   <<: *DB3
@@ -669,6 +748,11 @@ DB3M7:
       eff_mass_plot_ymax: 0.75
       plateau_start: 13
       plateau_end: 18
+    id:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 8
+      plateau_end: 15
 
 DB3M8:
   <<: *DB3
@@ -696,6 +780,11 @@ DB3M8:
       ensemble_selection: 2
       plateau_start: 14
       plateau_end: 20
+    id:
+      configuration_separation: 3
+      ensemble_selection: 2
+      plateau_start: 9
+      plateau_end: 17
 
 
 ######## BETA = 7.4 ########
@@ -731,6 +820,11 @@ DB4M1:
       eff_mass_plot_ymax: 0.45
       plateau_start: 14
       plateau_end: 24
+    id:
+      configuration_separation: 4
+      ensemble_selection: 0
+      plateau_start: 11
+      plateau_end: 18
 
 DB4M2:
   <<: *DB4
@@ -758,6 +852,11 @@ DB4M2:
       ensemble_selection: 1
       plateau_start: 16
       plateau_end: 24
+    id:
+      configuration_separation: 3
+      ensemble_selection: 1
+      plateau_start: 10
+      plateau_end:  17
 
 
 ######## BETA = 7.5 ########
@@ -793,3 +892,8 @@ DB5M1:
       eff_mass_plot_ymax: 0.45
       plateau_start: 17
       plateau_end: 24
+    id:
+      configuration_separation: 3
+      ensemble_selection: 0
+      plateau_start: 10
+      plateau_end: 20
