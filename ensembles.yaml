@@ -43,12 +43,12 @@ DB1M1:
     g5:
       configuration_separation: 5
       ensemble_selection: 1
-      plateau_start: 10
+      plateau_start: 8
       plateau_end: 16
     g5gk:
       configuration_separation: 5
       ensemble_selection: 2
-      plateau_start: 6
+      plateau_start: 5
       plateau_end: 10
     gk:
       configuration_separation: 5
@@ -56,7 +56,7 @@ DB1M1:
       eff_mass_plot_ymin: 0.35
       eff_mass_plot_ymax: 0.75
       plateau_start: 9
-      plateau_end: 15
+      plateau_end: 16
 
 DB1M2:
   <<: *DB1
@@ -72,19 +72,19 @@ DB1M2:
     g5:
       configuration_separation: 6
       ensemble_selection: 5
-      plateau_start: 9
+      plateau_start: 8
       plateau_end: 16
     g5gk:
       configuration_separation: 6
       ensemble_selection: 0
-      plateau_start: 6
+      plateau_start: 5
       plateau_end: 10
     gk:
       configuration_separation: 6
       ensemble_selection: 0
       eff_mass_plot_ymin: 0.7
       eff_mass_plot_ymax: 0.9
-      plateau_start: 9
+      plateau_start: 8
       plateau_end: 16
 
 DB1M3:
@@ -103,21 +103,21 @@ DB1M3:
       ensemble_selection: 0
       eff_mass_plot_ymin: 0.6
       eff_mass_plot_ymax: 0.7
-      plateau_start: 8
-      plateau_end: 15
+      plateau_start: 9
+      plateau_end: 16
       no_decay_const: True
     g5gk:
       configuration_separation: 6
       ensemble_selection: 5
-      plateau_start: 6
-      plateau_end: 11
+      plateau_start: 5
+      plateau_end: 10
     gk:
       configuration_separation: 6
       ensemble_selection: 4
       eff_mass_plot_ymin: 0.7
       eff_mass_plot_ymax: 0.8
       plateau_start: 9
-      plateau_end: 15
+      plateau_end: 16
 
 DB1M4:
   <<: *DB1
@@ -134,21 +134,21 @@ DB1M4:
       ensemble_selection: 0
       eff_mass_plot_ymin: 0.5
       eff_mass_plot_ymax: 0.6
-      plateau_start: 8
-      plateau_end: 15
+      plateau_start: 9
+      plateau_end: 16
       no_decay_const: True
     g5gk:
       configuration_separation: 7
       ensemble_selection: 3
-      plateau_start: 6
-      plateau_end: 10
+      plateau_start: 5
+      plateau_end: 9
     gk:
       configuration_separation: 7
       ensemble_selection: 6
       eff_mass_plot_ymin: 0.6
       eff_mass_plot_ymax: 0.8
       plateau_start: 9
-      plateau_end: 15
+      plateau_end: 16
 
 DB1M5:
   <<: *DB1
@@ -167,7 +167,7 @@ DB1M5:
       eff_mass_plot_ymin: 0.45
       eff_mass_plot_ymax: 0.55
       plateau_start: 9
-      plateau_end: 15
+      plateau_end: 16
     g5gk:
       configuration_separation: 2
       ensemble_selection: 1
@@ -197,19 +197,19 @@ DB1M6:
       ensemble_selection: 4
       eff_mass_plot_ymin: 0.25
       eff_mass_plot_ymax: 0.5
-      plateau_start: 11
+      plateau_start: 9
       plateau_end: 16
     g5gk:
       configuration_separation: 6
       ensemble_selection: 3
-      plateau_start: 6
-      plateau_end: 10
+      plateau_start: 5
+      plateau_end: 9
     gk:
       configuration_separation: 6
       ensemble_selection: 3
       eff_mass_plot_ymin: 0.35
       eff_mass_plot_ymax: 0.75
-      plateau_start: 11
+      plateau_start: 9
       plateau_end: 16
 
 DB1M7:
@@ -226,7 +226,7 @@ DB1M7:
     g5:
       configuration_separation: 3
       ensemble_selection: 2
-      plateau_start: 10
+      plateau_start: 9
       plateau_end: 16
     g5gk:
       configuration_separation: 3
@@ -236,7 +236,7 @@ DB1M7:
     gk:
       configuration_separation: 3
       ensemble_selection: 2
-      plateau_start: 8
+      plateau_start: 9
       plateau_end: 16
 
 
@@ -250,7 +250,26 @@ DB2M1:
   m: -0.835
   Nconfigs: 100
   delta_traj: 20
+  initial_configuration: 26
   measure_gflow: True
+  measure_plaq: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 4
+      plateau_start: 11
+      plateau_end: 18
+    g5gk:
+      configuration_separation: 5
+      ensemble_selection: 4
+      plateau_start: 7
+      plateau_end: 11
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 4
+      plateau_start: 10
+      plateau_end: 18
+
 
 DB2M2:
   <<: *DB2
@@ -268,8 +287,13 @@ DB2M2:
       ensemble_selection: 2
       eff_mass_plot_ymin: 0.25
       eff_mass_plot_ymax: 0.4
-      plateau_start: 12
+      plateau_start: 11
       plateau_end: 18
+    g5gk:
+      configuration_separation: 5
+      ensemble_selection: 2
+      plateau_start: 7
+      plateau_end: 14
     gk:
       configuration_separation: 5
       ensemble_selection: 0
@@ -285,7 +309,25 @@ DB2M3:
   m: -0.857
   Nconfigs: 102
   delta_traj: 20
+  initial_configuration: 0
   measure_gflow: True
+  measure_plaq: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 2
+      plateau_start: 12
+      plateau_end: 18
+    g5gk:
+      configuration_separation: 5
+      ensemble_selection: 2
+      plateau_start: 8
+      plateau_end: 11
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 2
+      plateau_start: 11
+      plateau_end: 16
 
 
 ######## BETA = 7.2 ########
@@ -307,13 +349,13 @@ DB3M1:
       ensemble_selection: 1
       eff_mass_plot_ymin: 0.6
       eff_mass_plot_ymax: 0.8
-      plateau_start: 12
+      plateau_start: 13
       plateau_end: 18
     g5gk:
       configuration_separation: 5
       ensemble_selection: 2
-      plateau_start: 8
-      plateau_end: 13
+      plateau_start: 7
+      plateau_end: 12
     gk:
       configuration_separation: 5
       ensemble_selection: 3
@@ -338,19 +380,19 @@ DB3M2:
       ensemble_selection: 1
       eff_mass_plot_ymin: 0.55
       eff_mass_plot_ymax: 0.65
-      plateau_start: 12
+      plateau_start: 11
       plateau_end: 18
     g5gk:
       configuration_separation: 4
       ensemble_selection: 3
-      plateau_start: 8
-      plateau_end: 13
+      plateau_start: 7
+      plateau_end: 14
     gk:
       configuration_separation: 4
       ensemble_selection: 2
       eff_mass_plot_ymin: 0.65
       eff_mass_plot_ymax: 0.75
-      plateau_start: 12
+      plateau_start: 11
       plateau_end: 18
 
 DB3M3:
@@ -374,15 +416,15 @@ DB3M3:
     g5gk:
       configuration_separation: 3
       ensemble_selection: 2
-      plateau_start: 11
-      plateau_end: 18
+      plateau_start: 18
+      plateau_end: 15
     gk:
       configuration_separation: 3
       ensemble_selection: 2
       eff_mass_plot_ymin: 0.5
       eff_mass_plot_ymax: 0.6
       plateau_start: 12
-      plateau_end: 18
+      plateau_end: 17
 
 DB3M4:
   <<: *DB3
@@ -400,19 +442,19 @@ DB3M4:
       ensemble_selection: 2
       eff_mass_plot_ymin: 0.35
       eff_mass_plot_ymax: 0.5
-      plateau_start: 12
-      plateau_end: 18
+      plateau_start: 13
+      plateau_end: 17
     g5gk:
       configuration_separation: 5
       ensemble_selection: 1
       plateau_start: 8
-      plateau_end: 14
+      plateau_end: 15
     gk:
       configuration_separation: 5
       ensemble_selection: 1
       eff_mass_plot_ymin: 0.45
       eff_mass_plot_ymax: 0.55
-      plateau_start: 12
+      plateau_start: 13
       plateau_end: 18
 
 DB3M4*:
@@ -489,19 +531,19 @@ DB3M5:
       ensemble_selection: 2
       eff_mass_plot_ymin: 0.25
       eff_mass_plot_ymax: 0.5
-      plateau_start: 13
+      plateau_start: 14
       plateau_end: 18
     g5gk:
       configuration_separation: 3
       ensemble_selection: 1
-      plateau_start: 9
-      plateau_end: 13
+      plateau_start: 8
+      plateau_end: 15
     gk:
       configuration_separation: 3
       ensemble_selection: 2
       eff_mass_plot_ymin: 0.4
       eff_mass_plot_ymax: 0.5
-      plateau_start: 13
+      plateau_start: 14
       plateau_end: 18
 
 DB3M6:
@@ -520,35 +562,80 @@ DB3M6:
       eff_mass_plot_ymin: 0.25
       eff_mass_plot_ymax: 0.35
       plateau_start: 12
-      plateau_end: 17
+      plateau_end: 18
     g5gk:
       configuration_separation: 6
       ensemble_selection: 5
       plateau_start: 9
-      plateau_end: 13
+      plateau_end: 15
     gk:
       configuration_separation: 6
       ensemble_selection: 5
       eff_mass_plot_ymin: 0.35
       eff_mass_plot_ymax: 0.5
       plateau_start: 12
-      plateau_end: 18
+      plateau_end: 17
 
-DB3M7*:
+DB3M6*:
   <<: *DB3
   L: 16
   T: 36
-  m: -0.794
-  Nconfigs: 195
-  delta_traj: 12
+  m: -0.79
+  Nconfigs: 100
+  delta_traj: 20
+  initial_configuration: 10
+  measure_gflow: False
+  measure_plaq: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 2
+      eff_mass_plot_ymin: 0.3
+      eff_mass_plot_ymax: 0.4
+      plateau_start: 12
+      plateau_end: 18
+    g5gk:
+      configuration_separation: 5
+      ensemble_selection: 4
+      plateau_start: 8
+      plateau_end: 13
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 2
+      eff_mass_plot_ymin: 0.4
+      eff_mass_plot_ymax: 0.5
+      plateau_start: 12
+      plateau_end: 18
 
-DB3M7**:
+DB3M6**:
   <<: *DB3
   L: 20
   T: 36
-  m: -0.794
-  Nconfigs: 195
-  delta_traj: 12
+  m: -0.79
+  Nconfigs: 100
+  delta_traj: 20
+  measure_gflow: True
+  measure_plaq: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 2
+      eff_mass_plot_ymin: 0.25
+      eff_mass_plot_ymax: 0.35
+      plateau_start: 12
+      plateau_end: 18
+    g5gk:
+      configuration_separation: 5
+      ensemble_selection: 4
+      plateau_start: 8
+      plateau_end: 12
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 2
+      eff_mass_plot_ymin: 0.35
+      eff_mass_plot_ymax: 0.5
+      plateau_start: 12
+      plateau_end: 18
 
 DB3M7:
   <<: *DB3
@@ -574,7 +661,7 @@ DB3M7:
       eff_mass_plot_ymin: 0.4
       eff_mass_plot_ymax: 1.9
       plateau_start: 8
-      plateau_end: 13
+      plateau_end: 14
     gk:
       configuration_separation: 5
       ensemble_selection: 0
@@ -590,7 +677,25 @@ DB3M8:
   m: -0.799
   Nconfigs: 150
   delta_traj: 12
+  initial_configuration: 0
   measure_gflow: True
+  measure_plaq: True
+  measure_mesons:
+    g5:
+      configuration_separation: 3
+      ensemble_selection: 2
+      plateau_start: 14
+      plateau_end: 20
+    g5gk:
+      configuration_separation: 3
+      ensemble_selection: 2
+      plateau_start: 9
+      plateau_end: 16
+    gk:
+      configuration_separation: 3
+      ensemble_selection: 2
+      plateau_start: 14
+      plateau_end: 20
 
 
 ######## BETA = 7.4 ########
@@ -612,15 +717,20 @@ DB4M1:
       ensemble_selection: 1
       eff_mass_plot_ymin: 0.25
       eff_mass_plot_ymax: 0.35
-      plateau_start: 17
-      plateau_end: 23
+      plateau_start: 18
+      plateau_end: 24
+    g5gk:
+      configuration_separation: 4
+      ensemble_selection: 2
+      plateau_start: 11
+      plateau_end: 17
     gk:
       configuration_separation: 4
       ensemble_selection: 3
       eff_mass_plot_ymin: 0.3
       eff_mass_plot_ymax: 0.45
-      plateau_start: 16
-      plateau_end: 21
+      plateau_start: 14
+      plateau_end: 24
 
 DB4M2:
   <<: *DB4
@@ -629,7 +739,25 @@ DB4M2:
   m: -0.73
   Nconfigs: 150
   delta_traj: 12
+  initial_configuration: 0
   measure_gflow: True
+  measure_plaq: True
+  measure_mesons:
+    g5:
+      configuration_separation: 3
+      ensemble_selection: 1
+      plateau_start: 18
+      plateau_end: 23
+    g5gk:
+      configuration_separation: 3
+      ensemble_selection: 1
+      plateau_start: 11
+      plateau_end: 15
+    gk:
+      configuration_separation: 3
+      ensemble_selection: 1
+      plateau_start: 16
+      plateau_end: 24
 
 
 ######## BETA = 7.5 ########
@@ -651,13 +779,13 @@ DB5M1:
       ensemble_selection: 0
       eff_mass_plot_ymin: 0.25
       eff_mass_plot_ymax: 0.35
-      plateau_start: 16
+      plateau_start: 15
       plateau_end: 24
     g5gk:
       configuration_separation: 3
       ensemble_selection: 2
-      plateau_start: 12
-      plateau_end: 16
+      plateau_start: 11
+      plateau_end: 19
     gk:
       configuration_separation: 3
       ensemble_selection: 0
