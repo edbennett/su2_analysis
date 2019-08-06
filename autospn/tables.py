@@ -23,11 +23,20 @@ def format_value_and_error(value, error, error_digits=2, exponential=False):
     return format_string.format(value)
 
 
-def generate_table_from_content(columns, filename, table_content):
-    table_spec = ''
-    header = [column for column in columns if column is not None]
-    table_spec = ''.join(['c' if column is not None else '|'
-                          for column in columns])
+def generate_table_from_content(filename, table_content, columns=None,
+                                header=None, table_spec=None):
+    if columns is not None and (header is not None or table_spec is not None):
+        raise ValueError('Either `columns` or `header` + `table_spec` may be '
+                         'specified, not both.')
+    if columns:
+        header = [column for column in columns if column is not None]
+        table_spec = ''.join(['c' if column is not None else '|'
+                              for column in columns])
+    else:
+        if header is None or table_spec is None:
+            raise ValueError(
+                'Both `header` and `table_spec` must be specified if one is.'
+            )
 
     with open('final_tables/' + filename, 'w') as f:
         print(r'\begin{tabular}{' + table_spec + '}', file=f)
@@ -64,9 +73,10 @@ def measurement_mask(data, observable):
 
 
 def generate_table_from_db(
-        data, ensembles, observables, filename, columns,
+        data, ensembles, observables, filename, columns=None,
         constants=tuple(), error_digits=2, exponential=False,
-        multirow=defaultdict(bool)
+        multirow=defaultdict(bool),
+        header=None, table_spec=None
 ):
     table_content = []
     line_content = ''
@@ -107,7 +117,7 @@ def generate_table_from_db(
                 table_content = [line.replace(f'NUM_ROWS_{constant}',
                                               str(num_rows[constant]))
                                  for line in table_content]
-                row_content.append(r'\multirow{NUM_ROWS_' + constant + '}{c}' +
+                row_content.append(r'\multirow{NUM_ROWS_' + constant + '}{*}' +
                                    '{' + f'${str(value)}$' + r'}')
                 num_rows[constant] = 1
             else:
@@ -156,4 +166,6 @@ def generate_table_from_db(
                 table_content = [line.replace(f'NUM_ROWS_{constant}',
                                               str(num_rows[constant]))
                                  for line in table_content]
-    generate_table_from_content(columns, filename, table_content)
+    generate_table_from_content(filename, table_content,
+                                columns=columns,
+                                header=header, table_spec=table_spec)

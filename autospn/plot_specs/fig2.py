@@ -81,7 +81,7 @@ def table2(values):
             f'    {beta} & {w0X:.1ufS} & {k1:2ufS} & {chi2:.1}'
         )
 
-    generate_table_from_content(columns, filename, table_content)
+    generate_table_from_content(filename, table_content, columns=columns)
 
 
 def generate(data):

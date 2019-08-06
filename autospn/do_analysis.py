@@ -169,7 +169,7 @@ def do_analysis(ensembles, **kwargs):
         do_single_analysis(label, ensemble, **kwargs)
 
 
-def output_results(only=None):
+def output_results(only=None, ensembles=None):
     data = get_dataframe()
 
     for object_type in ('table', 'plot'):
@@ -184,7 +184,7 @@ def output_results(only=None):
                 continue
             try:
                 print(f'Generating for {object.__name__}')
-                object.generate(data)
+                object.generate(data, ensembles=ensembles)
             except AttributeError as ex:
                 if "has no attribute 'generate'" in str(ex):
                     print(
@@ -220,7 +220,7 @@ def main():
                     only=args.only)
 
     print("Outputting results:")
-    output_results(args.only)
+    output_results(args.only, ensembles=ensembles)
 
 
 if __name__ == '__main__':
