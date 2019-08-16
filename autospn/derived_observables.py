@@ -55,4 +55,13 @@ def merge_and_hat_quantities(data, quantities):
             * merged_data[f'value_{quantity}'] ** 2
         ) ** 0.5
 
+        # Calculate squared hatted values
+        merged_data[f'value_{quantity}_hat_squared'] = (
+            merged_data[f'value_{quantity}_hat'] ** 2
+        )
+        merged_data[f'uncertainty_{quantity}_hat_squared'] = (
+            2 * merged_data[f'value_{quantity}_hat']
+            * merged_data[f'uncertainty_{quantity}_hat']
+        )
+
     return merged_data
