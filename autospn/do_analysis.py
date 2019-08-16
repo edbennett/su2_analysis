@@ -13,6 +13,7 @@ from .t0 import plot_measure_and_save_sqrt_8t0
 from .Q import plot_measure_and_save_Q
 from .avr_plaquette import measure_and_save_avr_plaquette
 from .fit_correlation_function import plot_measure_and_save_mesons, Incomplete
+from .one_loop_matching import do_one_loop_matching
 
 
 DEBUG = True
@@ -162,6 +163,23 @@ def do_single_analysis(label, ensemble,
                     print('   ', result)
                 else:
                     print('    Already up to date')
+
+            if ensemble.get('measure_plaq', False):
+                if DEBUG:
+                    print('    * One-loop matching:')
+                try:
+                    result = do_one_loop_matching(ensemble['descriptor'],
+                                                  channel_name,
+                                                  channel_parameters)
+                except KeyError:
+                    print('      Missing data for this ensemble')
+                except ValueError:
+                    print('      No Z known for this channel')
+
+                if result and DEBUG:
+                    print('     ', result)
+                else:
+                    print('      Already up to date')
 
 
 def do_analysis(ensembles, **kwargs):
