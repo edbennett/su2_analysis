@@ -154,7 +154,8 @@ def do_single_analysis(label, ensemble,
                     correlator_filename=f'raw_data/{subdirectory}/out_corr',
                     channel_name=channel_name,
                     meson_parameters=channel_parameters,
-                    parameter_date=ensembles_date
+                    parameter_date=ensembles_date,
+                    output_filename_prefix=f'raw_data/{subdirectory}/'
                 )
             except Incomplete as ex:
                 print(f'    INCOMPLETE: {ex.message}')
