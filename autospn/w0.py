@@ -1,5 +1,5 @@
 from numpy import argmax
-from matplotlib.pyplot import subplots
+from matplotlib.pyplot import subplots, close
 from argparse import ArgumentParser
 
 from .bootstrap import basic_bootstrap, bootstrap_1d
@@ -98,6 +98,7 @@ def plot_measure_and_save_w0(W0,
         ax.axhline(W0, dashes=(1, 1))
         fig.tight_layout()
         fig.savefig(plot_filename)
+        close(fig)
 
     return w0p, w0c
 

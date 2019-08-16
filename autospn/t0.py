@@ -1,5 +1,5 @@
 from numpy import argmax
-from matplotlib.pyplot import subplots
+from matplotlib.pyplot import subplots, close
 
 from .bootstrap import basic_bootstrap, bootstrap_1d
 from .data import get_flows_from_raw
@@ -102,5 +102,6 @@ def plot_measure_and_save_sqrt_8t0(E0,
         ax.axhline(E0, dashes=(1, 1))
         fig.tight_layout()
         fig.savefig(plot_filename)
+        close(fig)
 
     return s8t0p, s8t0c
