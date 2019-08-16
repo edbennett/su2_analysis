@@ -1,14 +1,15 @@
 from numpy import (exp, outer, sum, asarray, swapaxes, mean, std, newaxis,
                    zeros_like, einsum)
 from numpy.linalg import inv
-from scipy.optimize import differential_evolution
+from scipy.optimize import (differential_evolution, shgo, dual_annealing,
+                            minimize)
 from scipy.odr import ODR, Model, RealData
 from scipy.stats import t
 
 
 FITTING_INTENSITIES = {
     'default': {},
-    'intense': {
+    'intense_de': {
         'popsize': 50,
         'tol': 0.001,
         'mutation': (0.5, 1.5),
@@ -91,10 +92,15 @@ def confpred_band(x, dfdp, fitobj, f,
 
 def minimize_chisquare(correlator_sample_sets, mean_correlators, fit_functions,
                        parameter_ranges, plateau_start, plateau_end, NT,
-                       fit_means=True, intensity='default'):
+                       fit_means=True, intensity='default', method='de'):
     assert (len(fit_functions) ==
             len(correlator_sample_sets) ==
             len(mean_correlators))
+    methods = {
+        'de': differential_evolution,
+        'shgo': shgo,
+        'da': dual_annealing
+    }
 
     degrees_of_freedom = (2 * (plateau_end - plateau_start) -
                           len(parameter_ranges))
@@ -130,18 +136,28 @@ def minimize_chisquare(correlator_sample_sets, mean_correlators, fit_functions,
     chisquare_values = []
 
     for set_to_fit in sets_to_fit:
-        fit_result = differential_evolution(
-            chisquare,
-            parameter_ranges,
-            args=(
-                set_to_fit,
-                fit_functions,
-                inverse_covariances,
-                time_range,
-                NT
-            ),
-            **FITTING_INTENSITIES[intensity]
+        args = (
+            set_to_fit,
+            fit_functions,
+            inverse_covariances,
+            time_range,
+            NT
         )
+        if method in methods:
+            fit_result = methods[method](
+                chisquare,
+                parameter_ranges,
+                args=args,
+                **FITTING_INTENSITIES[intensity]
+            )
+        else:
+            fit_result = minimize(
+                chisquare,
+                x0=[(parameter[1] - parameter[0])/2
+                    for parameter in parameter_ranges],
+                bounds=parameter_ranges,
+                args=args
+            )
         fit_results.append(fit_result.x)
         chisquare_values.append(fit_result.fun / degrees_of_freedom)
 
