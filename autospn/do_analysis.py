@@ -38,7 +38,7 @@ def get_subdirectory_name(descriptor):
 
 def do_single_analysis(label, ensemble,
                        ensembles_date=datetime.now,
-                       skip_mesons=False):
+                       skip_mesons=False, **kwargs):
     ensemble['descriptor'] = describe_ensemble(ensemble, label)
     subdirectory = get_subdirectory_name(ensemble['descriptor'])
 
