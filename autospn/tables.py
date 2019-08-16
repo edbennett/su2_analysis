@@ -33,14 +33,15 @@ def generate_table_from_content(filename, table_content, columns=None,
         table_spec = ''.join(['c' if column is not None else '|'
                               for column in columns])
     else:
-        if header is None or table_spec is None:
+        if table_spec is None:
             raise ValueError(
-                'Both `header` and `table_spec` must be specified if one is.'
+                'Either `columns` or `table_spec` must be specified.'
             )
 
     with open('final_tables/' + filename, 'w') as f:
         print(r'\begin{tabular}{' + table_spec + '}', file=f)
-        print(table_row(header) + r' \\', file=f)
+        if header:
+            print(table_row(header) + r' \\', file=f)
         print(HLINE, file=f)
         print(HLINE, file=f)
         print((r' \\' '\n').join(table_content), file=f)
