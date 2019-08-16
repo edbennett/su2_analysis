@@ -145,6 +145,7 @@ def fit_and_plot(data, observable, channels, filename, figsize=None):
 
     fig.tight_layout()
     fig.savefig(filename)
+    plt.close(fig)
     return fit_results
 
 

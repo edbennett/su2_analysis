@@ -70,6 +70,7 @@ def plot_history_and_histogram(trajectories, Qs, output_file=None,
         f.show()
     else:
         f.savefig(output_file)
+    plt.close(f)
 
     return (
         # r"$Q_0 = {:.2f} \pm {:.2f}$; $\sigma = {:.2f} \pm {:.2f}$".format(
