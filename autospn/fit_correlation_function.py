@@ -29,7 +29,7 @@ correlator_names_options = {
 channel_latexes_options = {
     'g5': (r'\gamma_5,\gamma_5', r'\gamma_0\gamma_5,\gamma_5'),
     'g5_mass': (r'\gamma_5,\gamma_5',),
-    'id': (r'\one,\one',),
+    'id': (r'1,1',),
     'gk': (r'\gamma_k,\gamma_k',),
     'g5gk': (r'\gamma_5 \gamma_k,\gamma_5 \gamma_k',),
     'g0gk': (r'\gamma_0 \gamma_k,\gamma_0 \gamma_k',),
