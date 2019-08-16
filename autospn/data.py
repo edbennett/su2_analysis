@@ -107,6 +107,12 @@ def get_single_raw_correlator_set(all_correlators, channels, NT, NS,
         target_correlator.drop(range(NT // 2 + 1, NT + 1),
                                axis=1, inplace=True)
 
+        # Fits require positive data; flip sign if necessary
+        # The first point is frequently a different sign and orders of
+        # magnitude larger, so ignore it.
+        if target_correlator[range(1, NT // 2)].mean().mean() < 0:
+            target_correlator = -target_correlator
+
         correlator_set.append(target_correlator * NS ** 3)
 
     return correlator_set
