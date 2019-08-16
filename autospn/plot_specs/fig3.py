@@ -28,7 +28,7 @@ def single_plot(all_data, ax, beta, colour, symbol):
     )
 
 
-def generate(data):
+def generate(data, ensembles):
     filename = 'final_plots/fig3.pdf'
     set_plot_defaults()
 

@@ -84,7 +84,7 @@ def table2(values):
     generate_table_from_content(filename, table_content, columns=columns)
 
 
-def generate(data):
+def generate(data, ensembles):
     filename = 'final_plots/fig2.pdf'
     set_plot_defaults()
 

@@ -95,7 +95,7 @@ def single_plot_and_fit(all_data, ax, ensembles,
     return fit_result
 
 
-def generate(data):
+def generate(data, ensembles):
     filename = 'final_plots/fig5.pdf'
 
     set_plot_defaults()

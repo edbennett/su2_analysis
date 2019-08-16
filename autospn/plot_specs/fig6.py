@@ -12,7 +12,7 @@ def fit_form_mPS_hat(consts, m_hat):
     return (2 * consts[1] * (m_hat - consts[0])) ** 0.5
 
 
-def generate(data):
+def generate(data, ensembles):
     filename = 'final_plots/fig6.pdf'
     set_plot_defaults()
 

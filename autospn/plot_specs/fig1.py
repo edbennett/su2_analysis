@@ -11,7 +11,7 @@ ERROR_DIGITS = 2
 EXPONENTIAL = False
 
 
-def generate(data):
+def generate(data, ensembles):
     filename = 'final_plots/fig1.pdf'
 
     set_plot_defaults()

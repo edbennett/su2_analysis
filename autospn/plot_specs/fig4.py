@@ -10,7 +10,7 @@ Topological charge histories (left), and histograms (right), for the ensembles
 (c) $Q_0={DB5M1_Q0:.2uSL}$, $\sigma={DB5M1_width:.2uSL}$.'''
 
 
-def generate(data):
+def generate(data, ensembles):
     assert measurement_is_up_to_date(
         {'label': 'DB1M1'}, 'fitted_Q0',
         compare_file='raw_data/nf2_FUN/32x16x16x16b6.9m-0.85/out_wflow'
