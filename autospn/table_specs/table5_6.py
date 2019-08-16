@@ -62,6 +62,6 @@ def table6(data):
     )
 
 
-def generate(data):
+def generate(data, ensembles):
     table5(data)
     table6(data)

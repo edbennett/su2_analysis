@@ -15,7 +15,7 @@ ERROR_DIGITS = 2
 EXPONENTIAL = False
 
 
-def generate(data):
+def generate(data, ensembles):
     columns = ['', None, r'$w_0^{\mathrm{p}}$', r'$w_0^{\mathrm{c}}$']
     observables = (ObservableSpec('w0p', free_parameter=0.35),
                    ObservableSpec('w0c', free_parameter=0.35))
