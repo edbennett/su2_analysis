@@ -19,12 +19,13 @@ def table5(data):
     columns = ['', None, r'$am_{\mathrm{PS}}$', r'$af_{\mathrm{PS}}$',
                r'$am_{\mathrm{S}}$', None,
                r'$m_{\mathrm{PS}}L$', r'$f_{\mathrm{PS}}L$']
-    observables = ('g5_mass', 'g5_decay_const', 'id_mass',
+    observables = ('g5_mass', 'g5_renormalised_decay_const', 'id_mass',
                    'mPS_L', 'fPS_L')
     filename = 'table5.tex'
 
     for ensemble in ENSEMBLES:
-        for source, dest in (('mass', 'mPS_L'), ('decay_const', 'fPS_L')):
+        for source, dest in (('mass', 'mPS_L'),
+                             ('renormalised_decay_const', 'fPS_L')):
             datum = data[(data.label == ensemble) &
                          (data.observable == f'g5_{source}')].copy()
             datum.observable = dest
@@ -47,8 +48,8 @@ def table6(data):
     columns = ['', None, r'$am_{\mathrm{V}}$', r'$af_{\mathrm{V}}$', None,
                r'$am_{\mathrm{AV}}$', r'$af_{\mathrm{AV}}$', None,
                r'$am_{\mathrm{T}}$', r'$am_{\mathrm{AT}}$']
-    observables = ('gk_mass', 'gk_decay_const', 'g5gk_mass',
-                   'g5gk_decay_const', 'g0gk_mass', 'g0g5gk_mass')
+    observables = ('gk_mass', 'gk_renormalised_decay_const', 'g5gk_mass',
+                   'g5gk_renormalised_decay_const', 'g0gk_mass', 'g0g5gk_mass')
     filename = 'table6.tex'
 
     generate_table_from_db(
