@@ -52,12 +52,12 @@ def table3(data, m_PS_inf_values):
 def fit_form(consts, L):
     # consts[0] = A_M, consts[1] = m_PS^inf
     return consts[1] * (
-        1 + consts[0] * exp(-consts[0] * L) / (consts[0] * L) ** (3/2)
+        1 + consts[0] * exp(-consts[1] * L) / (consts[1] * L) ** (3/2)
     )
 
 
 def single_plot_and_fit(all_data, ax, ensembles,
-                        xlim=(None, None), ylabel=None):
+                        xlim=(None, None), ylim=(None, None), ylabel=None):
     ax.set_xlabel(r'$m_{\mathrm{PS}}^{\mathrm{inf.}}L$')
     if ylabel:
         ax.set_ylabel(ylabel)
@@ -85,10 +85,13 @@ def single_plot_and_fit(all_data, ax, ensembles,
         color='blue'
     )
     ax.set_xlim(xlim)
+    if ylim:
+        ax.set_ylim(ylim)
 
     # Plot fit results
     L_m_PS_inf_range = linspace(*ax.get_xlim(), 1000)
-    ax.plot(L_m_PS_inf_range, fit_form(fit_result.beta, L_m_PS_inf_range),
+    L_range = L_m_PS_inf_range / m_PS_inf
+    ax.plot(L_m_PS_inf_range, fit_form(fit_result.beta, L_range),
             'b--')
     ax.plot(ax.get_xlim(), (m_PS_inf, m_PS_inf), 'k-')
 
@@ -105,11 +108,12 @@ def generate(data, ensembles):
 
     m4_result = single_plot_and_fit(
         data, ax[0], ENSEMBLES[0],
-        xlim=(5.5, 11.5), ylabel=r'$a\,m_{\mathrm{PS}}$'
+        xlim=(5.5, 11.5), ylim=(0.420, 0.436),
+        ylabel=r'$a\,m_{\mathrm{PS}}$'
     )
     m6_result = single_plot_and_fit(
         data, ax[1], ENSEMBLES[1],
-        xlim=(4, 9.5)
+        xlim=(4, 9.5), ylim=(0.310, 0.352)
     )
     fig.tight_layout()
     fig.savefig(filename)
