@@ -211,6 +211,9 @@ def output_results(only=None, ensembles=None):
                     )
                 else:
                     raise ex
+#            except Exception as ex:
+#                import pdb; pdb.set_trace()
+#                print(' - FAILED: ', ex)
 
 
 def main():
