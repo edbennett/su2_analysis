@@ -6,6 +6,8 @@ from scipy.optimize import (differential_evolution, shgo, dual_annealing,
 from scipy.odr import ODR, Model, RealData
 from scipy.stats import t
 
+from numba import vectorize
+
 
 FITTING_INTENSITIES = {
     'default': {},
@@ -18,18 +20,21 @@ FITTING_INTENSITIES = {
 }
 
 
+@vectorize(nopython=True)
 def ps_fit_form(t, mass, decay_const, amplitude, NT):
     return amplitude ** 2 / mass * (
         exp(-mass * t) + exp(-mass * (NT - t))
     )
 
 
+@vectorize(nopython=True)
 def ps_av_fit_form(t, mass, decay_const, amplitude, NT):
     return amplitude * decay_const * (
         exp(-mass * t) - exp(-mass * (NT - t))
     )
 
 
+@vectorize(nopython=True)
 def v_fit_form(t, mass, decay_const, NT):
     return decay_const * mass * (
         exp(-mass * t) + exp(-mass * (NT - t))
