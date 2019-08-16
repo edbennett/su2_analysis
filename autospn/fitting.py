@@ -36,7 +36,7 @@ def ps_av_fit_form(t, mass, decay_const, amplitude, NT):
 
 @vectorize(nopython=True)
 def v_fit_form(t, mass, decay_const, NT):
-    return decay_const * mass * (
+    return decay_const ** 2 * mass * (
         exp(-mass * t) + exp(-mass * (NT - t))
     )
 
