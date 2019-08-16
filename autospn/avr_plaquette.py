@@ -6,6 +6,11 @@ from .bootstrap import basic_bootstrap
 from .db import measurement_is_up_to_date, add_measurement
 from .data import get_filename
 
+C_F = 5 / 4
+DELTA_SIGMA_ONE = -12.82
+DELTA_G5GMU = -3.0
+DELTA_GMU = -7.75
+
 
 def get_plaquettes(filename):
     '''Given a HMC output filename, scan the file for all instances of
@@ -18,8 +23,9 @@ def get_plaquettes(filename):
     return asarray(plaquettes)
 
 
-def Z(plaquettes, beta, delta):
-    Z_values = 1 + 5 * delta * 8 / (beta * 4 * 16 * pi ** 2 * plaquettes)
+def Z(plaquettes, delta, beta):
+    #  Z     = 1 + C_F  \Delta          \tilde{g}^2      /   {16 \pi^2}
+    Z_values = 1 + C_F * delta * (8 / beta / plaquettes) / (16 * pi ** 2)
     return basic_bootstrap(Z_values)
 
 
@@ -52,8 +58,10 @@ def measure_and_save_avr_plaquette(simulation_descriptor=None,
     results = [(avr_plaquette, avr_plaquette_error)]
 
     if simulation_descriptor:
-        results.append(Z(plaquettes, -20.57, simulation_descriptor['beta']))
-        results.append(Z(plaquettes, -15.82, simulation_descriptor['beta']))
+        results.append(Z(plaquettes, DELTA_SIGMA_ONE + DELTA_GMU,
+                         simulation_descriptor['beta']))
+        results.append(Z(plaquettes, DELTA_SIGMA_ONE + DELTA_G5GMU,
+                         simulation_descriptor['beta']))
 
         quantities = ('avr_plaquette', 'Zv', 'Zav')
         for quantity, result in zip(quantities, results):
