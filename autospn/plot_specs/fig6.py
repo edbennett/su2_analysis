@@ -26,8 +26,9 @@ def generate(data, ensembles):
     f_ax.set_ylabel(r'$\hat{f}_{\mathrm{PS}}^2$')
 
     subset_data = data[data.label.isin(ENSEMBLES)]
-    hatted_data = merge_and_hat_quantities(subset_data,
-                                           ('g5_mass', 'g5_decay_const'))
+    hatted_data = merge_and_hat_quantities(
+        subset_data, ('g5_mass', 'g5_renormalised_decay_const')
+    )
 
     fit_result = odr_fit(
         fit_form_mPS_hat,
@@ -44,18 +45,20 @@ def generate(data, ensembles):
         hatted_data['uncertainty_m_hat'] ** 2 + uncertainty_m_c_hat ** 2
     ) ** 0.5
 
-    hatted_data['value_mPSfPS_hat'] = (hatted_data.value_g5_mass_hat
-                                       * hatted_data.value_g5_decay_const_hat)
+    hatted_data['value_mPSfPS_hat'] = (
+        hatted_data.value_g5_mass_hat
+        * hatted_data.value_g5_renormalised_decay_const_hat
+    )
     hatted_data['uncertainty_mPSfPS_hat'] = (
         hatted_data.value_g5_mass_hat ** 2
-        * hatted_data.uncertainty_g5_decay_const_hat ** 2
-        + hatted_data.value_g5_decay_const_hat ** 2
+        * hatted_data.uncertainty_g5_renormalised_decay_const_hat ** 2
+        + hatted_data.value_g5_renormalised_decay_const_hat ** 2
         * hatted_data.uncertainty_g5_mass_hat ** 2
     ) ** 0.5
 
     for plot_ax, quantity, marker, colour in (
             (ax[0], 'g5_mass', '+', 'green'),
-            (f_ax, 'g5_decay_const', 'x', 'blue'),
+            (f_ax, 'g5_renormalised_decay_const', 'x', 'blue'),
             (ax[1], 'mPSfPS', '.', 'red')
     ):
         plot_ax.errorbar(
@@ -68,7 +71,7 @@ def generate(data, ensembles):
             color=colour
         )
 
-        plot_ax.set_xlim((0, None))
+        plot_ax.set_xlim((0, 0.84))
         plot_ax.set_ylim((0, None))
 
     plt.tight_layout()
