@@ -31,15 +31,20 @@ def merge_and_hat_quantities(data, quantities):
                                         * merged_data.uncertainty_w0)
 
     for quantity in quantities:
+        # Filter out desired observable
         quantity_values = data[data.observable == quantity][[
             'label', 'value', 'uncertainty'
         ]].rename(columns={
             'value': f'value_{quantity}',
             'uncertainty': f'uncertainty_{quantity}'
         })
-        merged_data = merge(merged_data, quantity_values, on='label',
+
+        # Join these data in
+        merged_data = merge(merged_data, quantity_values,
+                            how='left', on='label',
                             suffixes=('', f'_{quantity}'))
 
+        # Calculate hatted values
         merged_data[f'value_{quantity}_hat'] = (
             merged_data.value_w0 * merged_data[f'value_{quantity}']
         )
