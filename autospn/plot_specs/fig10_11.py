@@ -21,12 +21,12 @@ def fit_form(consts, m_PS2_and_w0):
     # q refers to either f or m
     q_hat_squared_chi, L_zero, W_zero = consts
     return (q_hat_squared_chi * (1 + L_zero * m_PS2_and_w0[0])
-            + m_PS2_and_w0[1] / W_zero)
+            + W_zero / m_PS2_and_w0[1])
 
 
 def set_up_axis(fig, axis_index,
                 observable, channel, offset,
-                num_channels, num_rows):
+                num_channels, num_rows, xlim=X_AXIS_LIMIT):
     axis = plt.subplot2grid(
         shape=(num_rows, 4),
         loc=(axis_index // 2, offset),
@@ -36,7 +36,7 @@ def set_up_axis(fig, axis_index,
     axis.set_xlabel(r'$\hat{m}_{\mathrm{PS}}^2$')
     axis.set_ylabel(r'$\hat{' f'{observable}'
                     r'}^2_{\mathrm{' f'{channel}' r'}}$')
-    axis.set_xlim(X_AXIS_LIMIT)
+    axis.set_xlim(xlim)
     return axis
 
 
@@ -140,8 +140,13 @@ def fit_and_plot(data, observable, channels, filename, figsize=None):
         offsets[-1] = 1
 
     for axis_index, (channel, offset) in enumerate(zip(channels, offsets)):
+        if channel == 'PS':
+            extra_params = {'xlim': (0, 0.42)}
+        else:
+            extra_params = {'xlim': X_AXIS_LIMIT}
+
         axis = set_up_axis(fig, axis_index, observable, channel, offset,
-                           len(channels), num_rows)
+                           len(channels), num_rows, **extra_params)
         axes.append(axis)
         fit_results.append(
             fit_and_plot_single_channel(data, observable, channel, axis)
@@ -226,8 +231,8 @@ def hat_and_filter(data, channels, observables):
 
 
 def generate(data, ensembles):
-    set_plot_defaults()
-    channels = (('PS', 'V', 'AV'), ('V', 'AV', 'T', 'AT', 'S'))
+    set_plot_defaults(linewidth=0.5, capsize=1)
+    channels = (('PS', 'V', 'AV'), ('V', 'T', 'AV', 'AT', 'S'))
     observables = ('f', 'm')
 
     data_to_fit = hat_and_filter(data, channels, observables)
