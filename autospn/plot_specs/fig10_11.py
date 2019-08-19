@@ -33,16 +33,10 @@ def set_up_axis(fig, axis_index,
         colspan=2,
         fig=fig
     )
+    axis.set_xlabel(r'$\hat{m}_{\mathrm{PS}}^2$')
     axis.set_ylabel(r'$\hat{' f'{observable}'
                     r'}^2_{\mathrm{' f'{channel}' r'}}$')
     axis.set_xlim(X_AXIS_LIMIT)
-
-    if (axis_index // 2 == num_rows - 1
-        or (num_channels % 2 == 1
-            and axis_index // 2 == num_rows - 2)):
-        axis.set_xlabel(r'$\hat{m}_{\mathrm{PS}}^2$')
-    else:
-        axis.tick_params(labelbottom=False)
     return axis
 
 
