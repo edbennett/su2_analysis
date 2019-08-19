@@ -24,7 +24,7 @@ SYMBOL_LIST = '+.*o^x1v2'
 filterwarnings("ignore", category=UserWarning, module="matplotlib")
 
 
-def set_plot_defaults(fontsize=None, markersize=4):
+def set_plot_defaults(fontsize=None, markersize=4, capsize=2, linewidth=1):
     if fontsize:
         font = {'size': fontsize}
     else:
@@ -38,8 +38,8 @@ def set_plot_defaults(fontsize=None, markersize=4):
         }
     )
     rc('text', usetex=True)
-    rc('lines', linewidth=1, markersize=markersize)
-    rc('errorbar', capsize=2)
+    rc('lines', linewidth=linewidth, markersize=markersize)
+    rc('errorbar', capsize=capsize)
 
 
 def do_eff_mass_plot(masses, errors, filename=None, ymin=None, ymax=None,
