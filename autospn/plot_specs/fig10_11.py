@@ -195,7 +195,7 @@ def tabulate(fit_results, observables, channels, filename):
                     ))
                 row_content.append(f'{value_error:.2ufS}'
                                    f'({systematic_formatted})')
-            row_content.append(f'{chi2}')
+            row_content.append(f'{chi2:.1f}')
 
             table_content.append(line + ' & '.join(row_content))
             line = '    '
