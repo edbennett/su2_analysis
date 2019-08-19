@@ -76,7 +76,7 @@ def confpred_band(x, dfdp, fitobj, f,
     else:
         covscale = fitobj.res_var
 
-    dof = len(fitobj.xplus) - n
+    dof = fitobj.xplus.shape[-1] - n
     tval = t.ppf(prb, dof)
 
     C = fitobj.cov_beta
