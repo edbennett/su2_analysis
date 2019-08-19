@@ -5,6 +5,7 @@ from numpy import (
 )
 from uncertainties import ufloat
 
+from ..db import session_scope, get_simulation, update_or_make_new_measurement
 from ..plots import set_plot_defaults, COLOR_LIST, SYMBOL_LIST
 from ..tables import HLINE, generate_table_from_content
 from ..fitting import odr_fit, confpred_band
@@ -12,6 +13,13 @@ from ..derived_observables import merge_and_hat_quantities
 from .fig7_8_9 import QUANTITY_NAMES, CHANNEL_LABELS
 
 X_AXIS_LIMIT = (0, 0.62)
+
+EFT_ENSEMBLES = (
+    [f'DB1M{N}' for N in (5, 6, 7)]
+    + [f'DB2M{N}' for N in (1, 2, 3)]
+    + [f'DB3M{N}' for N in {5, 6, 7, 8}]
+    + ['DB4M2']
+)
 
 
 def fit_form(consts, m_PS2_and_w0):
@@ -158,10 +166,10 @@ def fit_and_plot(data, observable, channels, filename, figsize=None):
     return fit_results
 
 
-def tabulate(fit_results, observables, channels, filename):
+def tabulate(fit_results, observables, channels_set, filename):
     table_content = []
     for observable_fit_results, letter, channels in zip(
-            fit_results, observables, channels
+            fit_results, observables, channels_set
     ):
         table_content.append(
             r' & $\hat{' f'{letter}' r'}_{M}^{2,\chi}$'
@@ -205,15 +213,9 @@ def tabulate(fit_results, observables, channels, filename):
 
 
 def hat_and_filter(data, channels, observables):
-    fPS_ensembles = (
-        [f'DB1M{N}' for N in (5, 6, 7)]
-        + [f'DB2M{N}' for N in (1, 2, 3)]
-        + [f'DB3M{N}' for N in {5, 6, 7, 8}]
-        + ['DB4M2']
-    )
     data_filtered_fPS = data[
         data.observable.ne('g5_renormalised_decay_const')
-        | data.label.isin(fPS_ensembles)
+        | data.label.isin(EFT_ENSEMBLES)
     ]
 
     columns_to_hat = [
@@ -228,6 +230,71 @@ def hat_and_filter(data, channels, observables):
         hatted_data_filtered_fPS.value_g5_mass_hat_squared.le(0.6)
         | hatted_data_filtered_fPS.value_w0.ge(1.0)
     ]
+
+
+def save_to_database(data, ensembles, fit_results, observables, channels_set):
+    with session_scope() as session:
+        for ensemble in ensembles:
+            ensemble_data = data[data.label == ensemble]
+            if len(ensemble_data) == 0:
+                continue
+            assert len(ensemble_data) == 1
+
+            simulation = get_simulation(
+                simulation_descriptor={'label': ensemble},
+                session=session
+            )
+            w0 = ensemble_data['value_w0']
+            update_or_make_new_measurement(
+                simulation=simulation,
+                observable='a_hat',
+                valence_mass=None,
+                free_parameter=None,
+                value=1 / w0,
+                uncertainty=ensemble_data['uncertainty_w0'] / w0 ** 2,
+                session=session
+            )
+            update_or_make_new_measurement(
+                simulation=simulation,
+                observable='g5_mass_hat_squared',
+                valence_mass=None,
+                free_parameter=None,
+                value=ensemble_data['value_g5_mass_hat_squared'],
+                uncertainty=ensemble_data['uncertainty_g5_mass_hat_squared'],
+                session=session
+            )
+
+            for observable_fit_results, letter, channels in zip(
+                    fit_results, observables, channels_set
+            ):
+                quantity = QUANTITY_NAMES[letter]
+                for channel_fit_results, channel in zip(
+                        observable_fit_results, channels
+                ):
+                    channel_full_name = (
+                        f'{CHANNEL_LABELS[channel]}_{quantity}_hat_squared'
+                    )
+                    observable_value = ensemble_data[
+                        f'value_{channel_full_name}'
+                    ]
+                    observable_error = ensemble_data[
+                        f'uncertainty_{channel_full_name}'
+                    ]
+                    corrected_value = (
+                        observable_value - channel_fit_results[0].beta[2] / w0
+                    )
+                    if isnan(float(corrected_value)):
+                        continue
+
+                    update_or_make_new_measurement(
+                        simulation=simulation,
+                        observable=f'{channel_full_name}_continuum_corrected',
+                        valence_mass=None,
+                        free_parameter=None,
+                        value=corrected_value,
+                        uncertainty=observable_error,
+                        session=session
+                    )
 
 
 def generate(data, ensembles):
@@ -254,3 +321,8 @@ def generate(data, ensembles):
              observables,
              channels,
              'table7.tex')
+    save_to_database(data_to_fit,
+                     ensembles,
+                     (fit_results_decay_const, fit_results_mass),
+                     observables,
+                     channels)
