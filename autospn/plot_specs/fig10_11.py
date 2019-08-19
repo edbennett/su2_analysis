@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
 from numpy import (
     asarray, linspace, zeros_like, max, min, ceil, log10, round, row_stack,
-    isnan
+    isnan, inf
 )
 from uncertainties import ufloat
 
@@ -41,20 +41,29 @@ def set_up_axis(fig, axis_index,
 
 
 def do_single_fit(data, channel_full_name):
-    m_PS2_values = data['value_g5_mass_hat_squared']
-    q_values = data[
-        f'value_{channel_full_name}'
-    ]
-    m_PS2_errors = data['uncertainty_g5_mass_hat_squared']
-    q_errors = data[
-        f'uncertainty_{channel_full_name}'
-    ]
-    w0_values = data['value_w0']
-    w0_errors = data['uncertainty_w0']
+    '''
+    Extracts values from `data` for `channel_full_name`, and fits them using
+    scipy.odr using the `fit_form` defined above as a function of both
+    the PS mass and w0.
+    '''
+
+    # First, remove any NaNs, which will break ODR
+    valid_rows = (data['value_g5_mass_hat_squared'].notna()
+                  & data['uncertainty_g5_mass_hat_squared'].notna()
+                  & data[f'value_{channel_full_name}'].notna()
+                  & data[f'uncertainty_{channel_full_name}'].notna()
+                  & data['value_w0'].notna()
+                  & data['uncertainty_w0'].notna())
+
+    m_PS2_values = data['value_g5_mass_hat_squared'][valid_rows]
+    q_values = data[f'value_{channel_full_name}'][valid_rows]
+    m_PS2_errors = data['uncertainty_g5_mass_hat_squared'][valid_rows]
+    q_errors = data[f'uncertainty_{channel_full_name}'][valid_rows]
+    w0_values = data['value_w0'][valid_rows]
+    w0_errors = data['uncertainty_w0'][valid_rows]
 
     m_PS2_and_w0_values = row_stack([m_PS2_values, w0_values])
     m_PS2_and_w0_errors = row_stack([m_PS2_errors, w0_errors])
-#    import pdb; pdb.set_trace()
     fit_result = odr_fit(fit_form, m_PS2_and_w0_values, q_values,
                          m_PS2_and_w0_errors, q_errors, num_params=3)
     return fit_result
@@ -102,7 +111,8 @@ def fit_and_plot_single_channel(data, observable, channel, axis):
     dfdp = asarray([1 + L_zero * m_PS2_range,
                     q_squared_chi * m_PS2_range,
                     zeros_like(m_PS2_range)])
-    both_parameters_range = asarray([m_PS2_range, zeros_like(m_PS2_range)])
+    both_parameters_range = asarray([m_PS2_range,
+                                     zeros_like(m_PS2_range) + inf])
     fit_line, fit_lower, fit_upper = confpred_band(
         both_parameters_range,
         dfdp,
