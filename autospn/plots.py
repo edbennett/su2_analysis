@@ -49,6 +49,10 @@ def do_eff_mass_plot(masses, errors, filename=None, ymin=None, ymax=None,
 
     if not ax:
         fig, ax = subplots()
+        local_ax = True
+    else:
+        local_ax = False
+
     ax.errorbar(
         list(range(1, len(masses) + 1)),
         masses,
@@ -58,7 +62,7 @@ def do_eff_mass_plot(masses, errors, filename=None, ymin=None, ymax=None,
         label=label
     )
 
-    if not ax:
+    if local_ax:
         ax.set_xlim((0, len(masses) + 1))
         ax.set_ylim((ymin, ymax))
 
@@ -72,14 +76,16 @@ def do_eff_mass_plot(masses, errors, filename=None, ymin=None, ymax=None,
             tmax = len(masses)
         # ax.plot((tmin, tmax), (m, m), color=colour)
         ax.fill_between(
-            (tmin, tmax),
+            # tmin + 1 due to mixing of adjacent points when calculating
+            # effective mass
+            (tmin + 1, tmax),
             (m + m_error, m + m_error),
             (m - m_error, m - m_error),
             facecolor=colour,
             alpha=0.4
         )
 
-    if not ax:
+    if local_ax:
         fig.tight_layout()
         fig.savefig(filename)
         close(fig)
