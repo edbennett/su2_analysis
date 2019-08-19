@@ -3,7 +3,8 @@ from argparse import ArgumentParser
 from .plots import do_eff_mass_plot, do_correlator_plot, set_plot_defaults
 from .data import get_target_correlator, get_output_filename
 from .db import measurement_is_up_to_date, add_measurement, purge_measurement
-from .bootstrap import bootstrap_correlators, bootstrap_eff_masses
+from .bootstrap import (bootstrap_correlators, bootstrap_eff_masses,
+                        BOOTSTRAP_SAMPLE_COUNT)
 from .fitting import (minimize_chisquare, ps_fit_form, ps_av_fit_form,
                       v_fit_form)
 
@@ -83,11 +84,12 @@ def process_correlator(
         correlator_names, fit_forms, NT, NS, parameter_ranges,
         ensemble_selection=0,
         initial_configuration=0, configuration_separation=1,
-        bootstrap_sample_count=200, plateau_start=None, plateau_end=None,
+        bootstrap_sample_count=BOOTSTRAP_SAMPLE_COUNT,
+        plateau_start=None, plateau_end=None,
         eff_mass_plot_ymin=None, eff_mass_plot_ymax=None,
         correlator_lowerbound=None, correlator_upperbound=None,
         optimizer_intensity='default', output_filename_prefix='',
-        raw_correlators=True
+        raw_correlators=True, _iter=0, maxiter=4
 ):
     set_plot_defaults()
     target_correlator_sets, valence_masses = get_target_correlator(
@@ -137,7 +139,9 @@ def process_correlator(
         if not (plateau_start and plateau_end):
             continue
 
-        fit_results, (chisquare_value, chisquare_error) = minimize_chisquare(
+        (fit_results,
+         (chisquare_value, chisquare_error),
+         _) = minimize_chisquare(
             bootstrap_correlator_samples_set,
             bootstrap_mean_correlators,
             fit_forms,
@@ -176,7 +180,9 @@ def process_correlator(
                 corr_lowerbound=correlator_lowerbound
             )
 
-        fit_results, (chisquare_value, chisquare_error) = minimize_chisquare(
+        (fit_results,
+         (chisquare_value, chisquare_error),
+         final_chisquare) = minimize_chisquare(
             bootstrap_correlator_samples_set,
             bootstrap_mean_correlators,
             fit_forms,
@@ -188,7 +194,7 @@ def process_correlator(
         )
         (mass, mass_error), *_ = fit_results
         fit_results_set.append((fit_results,
-                                (chisquare_value, chisquare_error)))
+                                final_chisquare))
 
         do_eff_mass_plot(
             bootstrap_mean_eff_masses[0],
@@ -211,6 +217,37 @@ def process_correlator(
             "Effective mass plot has been generated. "
             "Now specify the start and end of the plateau to "
             "perform the fit."
+        )
+    if chisquare_error > chisquare_value:
+        if optimizer_intensity == 'default':
+            optimizer_intensity = 'intense_de'
+            print('    Trying intense_de')
+        else:
+            if _iter >= maxiter:
+                print('    WARNING: max iters exceeded with '
+                      f'{bootstrap_sample_count} samples.')
+                return fit_results_set, valence_masses
+            else:
+                print('    Increasing boostrap samples to '
+                      f'{bootstrap_sample_count}...')
+                _iter = _iter + 1
+        return process_correlator(
+            correlator_filename,
+            channel_name, channel_set, channel_latexes, symmetries,
+            correlator_names, fit_forms, NT, NS, parameter_ranges,
+            ensemble_selection=ensemble_selection,
+            initial_configuration=initial_configuration,
+            configuration_separation=configuration_separation,
+            bootstrap_sample_count=bootstrap_sample_count * 2,
+            plateau_start=plateau_start, plateau_end=plateau_end,
+            eff_mass_plot_ymin=eff_mass_plot_ymin,
+            eff_mass_plot_ymax=eff_mass_plot_ymax,
+            correlator_lowerbound=correlator_lowerbound,
+            correlator_upperbound=correlator_upperbound,
+            optimizer_intensity=optimizer_intensity,
+            output_filename_prefix=output_filename_prefix,
+            raw_correlators=raw_correlators,
+            _iter=_iter, maxiter=maxiter
         )
 
     return fit_results_set, valence_masses
@@ -283,7 +320,7 @@ def plot_measure_and_save_mesons(simulation_descriptor, correlator_filename,
             output_valence_masses = valence_masses
         for valence_mass, values in zip(output_valence_masses,
                                         fit_results_set):
-            values = values[0] + (values[1],)
+            values = values[0] + ((values[1], None),)
             for quantity_name, value in zip(quantity_options[channel_name],
                                             values):
                 add_measurement(simulation_descriptor,
@@ -384,7 +421,7 @@ def main():
                     decay_const, decay_const_error = fit_results[0][1]
                     if len(fit_results[0]) > 2:
                         amplitude, amplitude_error = fit_results[0][2]
-                    chisquare_value, chisquare_error = fit_results[1]
+                    chisquare_value = fit_results[1]
 
                     print(f'{args.channel} mass: {mass} ± {mass_error}')
                     print(f'{args.channel} decay constant: '
@@ -393,7 +430,7 @@ def main():
                         print(f'{args.channel} amplitude: '
                               f'{amplitude} ± {amplitude_error}')
                     print(f'{args.channel} chi-square: '
-                          f'{chisquare_value} ± {chisquare_error}')
+                          f'{chisquare_value}')
 
 
 if __name__ == '__main__':

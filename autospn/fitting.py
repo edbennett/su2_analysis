@@ -167,7 +167,10 @@ def minimize_chisquare(correlator_sample_sets, mean_correlators, fit_functions,
         chisquare_values.append(fit_result.fun / degrees_of_freedom)
 
     return (tuple(zip(mean(fit_results, axis=0), std(fit_results, axis=0))),
-            (mean(chisquare_values), std(chisquare_values)))
+            (mean(chisquare_values), std(chisquare_values)),
+            chisquare(mean(fit_results, axis=0),
+                      trimmed_mean_correlators,
+                      *args[1:]) / degrees_of_freedom)
 
 
 def chisquare(x, correlators_to_fit, fit_functions,
