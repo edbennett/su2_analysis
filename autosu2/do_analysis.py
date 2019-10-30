@@ -25,14 +25,18 @@ def get_file_contents(filename):
 
 
 def get_subdirectory_name(descriptor):
-    return 'nf{Nf}{rep_suffix}/{T}x{L}x{L}x{L}b{beta}{m_suffix}'.format(
+    return (
+        'nf{Nf}{rep_suffix}/{T}x{L}x{L}x{L}b{beta}{m_suffix}{directory_suffix}'
+    ).format(
         Nf=descriptor['Nf'],
         L=descriptor['L'],
         T=descriptor['T'],
         beta=descriptor['beta'],
         m_suffix=f'm{descriptor["m"]}' if 'm' in descriptor else '',
         rep_suffix=(f'_{descriptor["representation"]}'
-                    if 'representation' in descriptor else '')
+                    if 'representation' in descriptor else ''),
+        directory_suffix=(f'_{descriptor["directory_suffix"]}'
+                          if 'directory_suffix' in descriptor else '')
     )
 
 
@@ -40,7 +44,7 @@ def do_single_analysis(label, ensemble,
                        ensembles_date=datetime.now,
                        skip_mesons=False, **kwargs):
     ensemble['descriptor'] = describe_ensemble(ensemble, label)
-    subdirectory = get_subdirectory_name(ensemble['descriptor'])
+    subdirectory = get_subdirectory_name(ensemble)
 
     if DEBUG:
         print("Processing", subdirectory)
@@ -62,7 +66,6 @@ def do_single_analysis(label, ensemble,
             print("    w0p:", w0p, "w0c:", w0c)
         elif DEBUG:
             print("    Already up to date")
-
         if ensemble['beta'] == 7.2:
             # Generate extra W0 values for figure 1
             # Could be made more efficient by splitting
@@ -119,7 +122,8 @@ def do_single_analysis(label, ensemble,
         result = plot_measure_and_save_Q(
             simulation_descriptor=ensemble['descriptor'],
             flows_file=f'raw_data/{subdirectory}/out_wflow',
-            output_file=f'processed_data/{subdirectory}/Q.pdf'
+            output_file_history=f'processed_data/{subdirectory}/Q.pdf',
+            output_file_autocorr=f'processed_data/{subdirectory}/Q_corr.pdf',
         )
         if result and DEBUG:
             print("    {}".format(
@@ -192,8 +196,8 @@ def output_results(only=None, ensembles=None):
     data = get_dataframe()
 
     for object_type in ('table', 'plot'):
-        objects = [import_module(f'autospn.{object_type}_specs.' + module[:-3])
-                   for module in listdir(f'autospn/{object_type}_specs')
+        objects = [import_module(f'autosu2.{object_type}_specs.' + module[:-3])
+                   for module in listdir(f'autosu2/{object_type}_specs')
                    if module[-3:] == '.py' and module[0] != '.']
 
         for object in objects:
@@ -222,6 +226,7 @@ def main():
     parser.add_argument('--skip_mesons', action='store_true')
     parser.add_argument('--skip_calculation', action='store_true')
     parser.add_argument('--only', default=None)
+    parser.add_argument('--quenched', action='store_true')
     args = parser.parse_args()
 
     ensembles = yaml.safe_load(get_file_contents(args.ensembles))
@@ -239,7 +244,8 @@ def main():
         do_analysis(ensembles,
                     ensembles_date=ensembles_date,
                     skip_mesons=args.skip_mesons,
-                    only=args.only)
+                    only=args.only,
+                    quenched=args.quenched)
 
     print("Outputting results:")
     output_results(args.only, ensembles=ensembles)

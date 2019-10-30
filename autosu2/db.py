@@ -14,7 +14,7 @@ from uncertainties import ufloat
 from pandas import read_sql
 
 Base = declarative_base()
-database_location = 'sqlite:///sp2n.sqlite'
+database_location = 'sqlite:///su2.sqlite'
 
 
 class Simulation(Base):
@@ -273,7 +273,7 @@ def purge_measurement(simulation_descriptor, observable,
                                                 valence_mass, free_parameter,
                                                 session)
         except KeyError:
-            # Measurement or simulation didn't exist, so already purged
+            # Measurement didn't exist, so already purged
             return
         else:
             session.delete(measurement)

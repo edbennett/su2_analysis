@@ -9,7 +9,10 @@ SMALLEST_RELATIVE_UNCERTAINTY = 1e-12
 
 
 def table_row(row_content):
-    return '    ' + ' & '.join(row_content)
+    if type(row_content) == str:
+        return '    ' + row_content
+    else:
+        return '    ' + ' & '.join(row_content)
 
 
 def format_value_and_error(value, error, error_digits=2, exponential=False):
@@ -77,7 +80,7 @@ def generate_table_from_db(
         data, ensembles, observables, filename, columns=None,
         constants=tuple(), error_digits=2, exponential=False,
         multirow=defaultdict(bool),
-        header=None, table_spec=None
+        header=None, table_spec=None, suppress_zeroes=False
 ):
     table_content = []
     line_content = ''
@@ -151,12 +154,16 @@ def generate_table_from_db(
             else:
                 uncertainty = measurement.uncertainty
 
-            row_content.append(format_value_and_error(
-                float(measurement.value),
-                float(uncertainty),
-                error_digits=error_digits,
-                exponential=exponential
-            ))
+            if (measurement.value == 0).bool() and suppress_zeroes:
+                row_content.append(r'\ll 1')
+            else:
+                row_content.append(format_value_and_error(
+                    float(measurement.value),
+                    float(uncertainty),
+                    error_digits=error_digits,
+                    exponential=exponential
+                ))
+
         line_content += table_row(row_content)
         table_content.append(line_content)
         line_content = ''
