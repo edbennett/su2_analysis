@@ -20,13 +20,13 @@ def gaussian(x, A, x0, sigma):
     return A * np.exp(-(x - x0) ** 2 / (2 * sigma ** 2))
 
 
-def exp_decay(x, A, tau_exp):
+def exp_decay(x, tau_exp):
     '''
     The fit form of an exponential decay.
     Returns A e^(-x / tau_exp)
     '''
 
-    return A * np.exp(-x / tau_exp)
+    return np.exp(-x / tau_exp)
 
 
 def autocorr(series, cutoff=None):
@@ -38,10 +38,11 @@ def autocorr(series, cutoff=None):
     if not cutoff:
         cutoff = len(series) // 2
     acf = np.zeros(cutoff - 1)
-    series -= np.mean(series)
+    zero_centered_series = series - np.mean(series)
     acf[0] = 1
     for i in range(1, cutoff - 1):
-        acf[i] = np.mean(series[:-i] * series[i:]) / np.var(series)
+        acf[i] = (np.mean(zero_centered_series[:-i] * zero_centered_series[i:])
+                  / np.var(zero_centered_series))
     return acf
 
 
@@ -74,7 +75,7 @@ def analyse_autocorrelation(series, filename, fit_range=10):
     else:
         plt.show()
 
-    tau_exp, tau_exp_error = fit_result[0][1], fit_result[1][1][1] ** 0.5
+    tau_exp, tau_exp_error = fit_result[0][0], fit_result[1][0][0] ** 0.5
 
     if tau_exp < 1 and tau_exp_error > 10 * tau_exp:
         if np.std(acf[1:fit_range]) > np.mean(acf[1:fit_range]):
@@ -147,11 +148,12 @@ def plot_history_and_histogram(trajectories, Qs, output_file=None,
                         abs(sigma), np.sqrt(pcov[2][2]))
             )
             f.subplots_adjust(top=0.8 if legend else 0.9)
-    if output_file is None:
-        plt.show()
-    else:
-        f.savefig(output_file)
-    plt.close(f)
+    if not history_ax:
+        if output_file is None:
+            plt.show()
+        else:
+            f.savefig(output_file)
+        plt.close(f)
 
     return (
         # r"$Q_0 = {:.2f} \pm {:.2f}$; $\sigma = {:.2f} \pm {:.2f}$".format(
@@ -211,6 +213,13 @@ def plot_measure_and_save_Q(flows_file, simulation_descriptor=None,
     if do_fit_and_plot or do_bootstrap:
         trajectories, *_, Qs = get_flows_from_raw(flows_file)
         tau_exp = analyse_autocorrelation(Qs, output_file_autocorr)
+
+        fit_range = 20
+        while tau_exp[0] > fit_range and fit_range < len(Qs):
+            tau_exp = analyse_autocorrelation(Qs, output_file_autocorr,
+                                              fit_range=fit_range)
+            fit_range *= 2
+
         if simulation_descriptor:
             add_measurement(simulation_descriptor, 'Q_tau_exp', *tau_exp)
 
@@ -259,11 +268,11 @@ def main():
 
     analyse_autocorrelation(Qs, args.output_file_autocorr)
 
-    plot_history_and_histogram(
+    print(plot_history_and_histogram(
         trajectories=trajectories, Qs=Qs,
         **{k: vars(args)[k]
            for k in ('output_file', 'title', 'legend', 'extra_title')}
-    )
+    ))
 
 
 if __name__ == '__main__':
