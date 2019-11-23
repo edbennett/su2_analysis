@@ -1,7 +1,7 @@
 import yaml
 
 from argparse import ArgumentParser
-from os import listdir
+from os import listdir, makedirs
 from importlib import import_module
 from datetime import datetime
 from os.path import getmtime
@@ -26,13 +26,13 @@ def get_file_contents(filename):
 
 def get_subdirectory_name(descriptor):
     return (
-        'nf{Nf}{rep_suffix}/{T}x{L}x{L}x{L}b{beta}{m_suffix}{directory_suffix}'
+        'nf{Nf}{rep_suffix}/b{beta}{m_suffix}/{T}x{L}{directory_suffix}'
     ).format(
         Nf=descriptor['Nf'],
         L=descriptor['L'],
         T=descriptor['T'],
         beta=descriptor['beta'],
-        m_suffix=f'm{descriptor["m"]}' if 'm' in descriptor else '',
+        m_suffix=f'/m{descriptor["m"]}' if 'm' in descriptor else '',
         rep_suffix=(f'_{descriptor["representation"]}'
                     if 'representation' in descriptor else ''),
         directory_suffix=(f'_{descriptor["directory_suffix"]}'
@@ -45,6 +45,7 @@ def do_single_analysis(label, ensemble,
                        skip_mesons=False, **kwargs):
     ensemble['descriptor'] = describe_ensemble(ensemble, label)
     subdirectory = get_subdirectory_name(ensemble)
+    makedirs('processed_data/' + subdirectory, exist_ok=True)
 
     if DEBUG:
         print("Processing", subdirectory)
@@ -159,7 +160,7 @@ def do_single_analysis(label, ensemble,
                     channel_name=channel_name,
                     meson_parameters=channel_parameters,
                     parameter_date=ensembles_date,
-                    output_filename_prefix=f'raw_data/{subdirectory}/'
+                    output_filename_prefix=f'processed_data/{subdirectory}/'
                 )
             except Incomplete as ex:
                 print(f'    INCOMPLETE: {ex.message}')

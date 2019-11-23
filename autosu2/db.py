@@ -32,8 +32,9 @@ class Simulation(Base):
     T = Column(Integer, nullable=False)
     beta = Column(Float, nullable=False)
     m = Column(Float, nullable=True)
-    Nconfigs = Column(Integer, nullable=False)
-    delta_traj = Column(Integer, nullable=False)
+    first_cfg = Column(Integer, nullable=False)
+    last_cfg = Column(Integer, nullable=False)
+    cfg_count = Column(Integer, nullable=False)
     initial_configuration = Column(Integer, nullable=True)
 
     __table_args__ = (
@@ -287,8 +288,9 @@ def is_complete_descriptor(simulation_descriptor):
             and 'L' in simulation_descriptor
             and 'T' in simulation_descriptor
             and 'beta' in simulation_descriptor
-            and 'Nconfigs' in simulation_descriptor
-            and 'delta_traj' in simulation_descriptor
+            and 'first_cfg' in simulation_descriptor
+            and 'last_cfg' in simulation_descriptor
+            and 'cfg_count' in simulation_descriptor
     ):
         return True
     else:
@@ -300,7 +302,7 @@ def describe_ensemble(ensemble, label):
 
     descriptor = {'label': label}
     for key in ('group_family', 'group_rank', 'Nf', 'L', 'T', 'beta',
-                'Nconfigs', 'delta_traj'):
+                'first_cfg', 'last_cfg', 'cfg_count'):
         descriptor[key] = ensemble[key]
     for key in ('representation', 'm', 'initial_configuration'):
         if key in ensemble:
