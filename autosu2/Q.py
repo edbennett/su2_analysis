@@ -71,9 +71,9 @@ def analyse_autocorrelation(series, filename, fit_range=10):
 
     if filename:
         f.savefig(filename)
-        plt.close(f)
     else:
         plt.show()
+    plt.close(f)
 
     tau_exp, tau_exp_error = fit_result[0][0], fit_result[1][0][0] ** 0.5
 
@@ -99,6 +99,7 @@ def plot_history_and_histogram(trajectories, Qs, output_file=None,
     )
     assert not (output_file and history_ax)
 
+    f = None
     if not history_ax:
         set_plot_defaults()
         f, (history_ax, histogram_ax) = plt.subplots(
@@ -137,7 +138,7 @@ def plot_history_and_histogram(trajectories, Qs, output_file=None,
 
     histogram_ax.set_xlabel("Count")
 
-    if not history_ax:
+    if f:
         f.tight_layout()
 
         if title:
@@ -148,7 +149,7 @@ def plot_history_and_histogram(trajectories, Qs, output_file=None,
                         abs(sigma), np.sqrt(pcov[2][2]))
             )
             f.subplots_adjust(top=0.8 if legend else 0.9)
-    if not history_ax:
+
         if output_file is None:
             plt.show()
         else:
