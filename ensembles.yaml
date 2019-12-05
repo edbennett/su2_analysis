@@ -53,6 +53,17 @@ DB1M1*:
   cfg_count: 2500
   measure_gflow: True
   measure_plaq: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 7
+      plateau_end: 12
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 7
+      plateau_end: 12
 
 DB1M2:
   <<: *DB1
@@ -64,6 +75,17 @@ DB1M2:
   cfg_count: 5000
   measure_gflow: True
   measure_plaq: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 8
+      plateau_end: 16
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 8
+      plateau_end: 16
 
 DB1M3:
   <<: *DB1
@@ -75,6 +97,17 @@ DB1M3:
   cfg_count: 2500
   measure_gflow: True
   measure_plaq: False
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 8
+      plateau_end: 12
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 8
+      plateau_end: 12
 
 DB1M4:
   <<: *DB1
@@ -86,6 +119,17 @@ DB1M4:
   cfg_count: 1687
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 7
+      plateau_end: 24
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 6
+      plateau_end: 24
 
 DB1M4*:
   <<: *DB1
@@ -97,6 +141,17 @@ DB1M4*:
   cfg_count: 5163
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 11
+      plateau_end: 16
+#    gk:
+#      configuration_separation: 5
+#      ensemble_selection: 0
+#      plateau_start: 8
+#      plateau_end: 16
 
 DB1M4**:
   <<: *DB1
@@ -108,6 +163,17 @@ DB1M4**:
   cfg_count: 4013
   measure_gflow: True
   measure_plaq: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 8
+      plateau_end: 12
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 8
+      plateau_end: 12
 
 DB1M5:
   <<: *DB1
@@ -119,6 +185,17 @@ DB1M5:
   cfg_count: 4999
   measure_gflow: True
   measure_plaq: False
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 11
+      plateau_end: 16
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 11
+      plateau_end: 16
 
 DB1M6:
   <<: *DB1
@@ -130,6 +207,17 @@ DB1M6:
   cfg_count: 5000
   measure_gflow: True
   measure_plaq: False
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 9
+      plateau_end: 16
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 10
+      plateau_end: 16
 
 DB1M7:
   <<: *DB1
@@ -141,6 +229,17 @@ DB1M7:
   cfg_count: 3028
   measure_gflow: True
   measure_plaq: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 14
+      plateau_end: 24
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 10
+      plateau_end: 24
 
 DB1M7*:
   <<: *DB1
@@ -152,6 +251,17 @@ DB1M7*:
   cfg_count: 2500
   measure_gflow: True
   measure_plaq: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 7
+      plateau_end: 16
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 8
+      plateau_end: 16
 
 DB1M8:
   <<: *DB1
@@ -163,6 +273,17 @@ DB1M8:
   cfg_count: 1000
   measure_gflow: True
   measure_plaq: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 12
+      plateau_end: 24
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 9
+      plateau_end: 22
 
 DB1M8*:
   <<: *DB1
@@ -174,6 +295,17 @@ DB1M8*:
   cfg_count: 5006
   measure_gflow: True
   measure_plaq: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 12
+      plateau_end: 16
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 12
+      plateau_end: 16
 
 DB1M9:
   <<: *DB1
@@ -197,6 +329,17 @@ DB2M1:
   cfg_count: 5000
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 9
+      plateau_end: 12
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 8
+      plateau_end: 12
 
 DB2M2:
   <<: *DB2
@@ -208,6 +351,17 @@ DB2M2:
   cfg_count: 5000
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 7
+      plateau_end: 12
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 8
+      plateau_end: 12
 
 DB2M3:
   <<: *DB2
@@ -219,6 +373,17 @@ DB2M3:
   cfg_count: 5000
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 8
+      plateau_end: 12
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 8
+      plateau_end: 12
 
 DB2M4:
   <<: *DB2
@@ -230,6 +395,17 @@ DB2M4:
   cfg_count: 5000
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 11
+      plateau_end: 16
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 10
+      plateau_end: 16
 
 DB2M5:
   <<: *DB2
@@ -241,6 +417,17 @@ DB2M5:
   cfg_count: 5000
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 8
+      plateau_end: 16
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 9
+      plateau_end: 16
 
 DB2M6:
   <<: *DB2
@@ -252,6 +439,39 @@ DB2M6:
   cfg_count: 5000
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 14
+      plateau_end: 24
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 14
+      plateau_end: 24
+
+DB2M6*:
+  <<: *DB2
+  L: 20
+  T: 40
+  m: -1.47
+  first_cfg: 1
+  last_cfg: 5000
+  cfg_count: 5000
+  measure_plaq: True
+  measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 12
+      plateau_end: 20
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 13
+      plateau_end: 19
 
 
 DB3M1:
@@ -264,6 +484,17 @@ DB3M1:
   cfg_count: 5000
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 9
+      plateau_end: 12
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 8
+      plateau_end: 12
 
 DB3M2:
   <<: *DB3
@@ -275,6 +506,17 @@ DB3M2:
   cfg_count: 5000
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 9
+      plateau_end: 12
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 9
+      plateau_end: 12
 
 DB3M3:
   <<: *DB3
@@ -286,6 +528,17 @@ DB3M3:
   cfg_count: 5000
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 9
+      plateau_end: 12
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 9
+      plateau_end: 12
 
 DB3M4:
   <<: *DB3
@@ -297,6 +550,17 @@ DB3M4:
   cfg_count: 5100
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 8
+      plateau_end: 16
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 10
+      plateau_end: 16
 
 DB3M5:
   <<: *DB3
@@ -308,6 +572,17 @@ DB3M5:
   cfg_count: 5077
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 11
+      plateau_end: 16
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 11
+      plateau_end: 16
 
 DB3M6:
   <<: *DB3
@@ -319,6 +594,17 @@ DB3M6:
   cfg_count: 5014
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 11
+      plateau_end: 16
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 10
+      plateau_end: 16
 
 DB3M7:
   <<: *DB3
@@ -330,7 +616,17 @@ DB3M7:
   cfg_count: 2190
   measure_plaq: True
   measure_gflow: True
-
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 9
+      plateau_end: 24
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 9
+      plateau_end: 24
 
 
 DB4M1:
@@ -343,6 +639,17 @@ DB4M1:
   cfg_count: 8059
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 9
+      plateau_end: 12
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 10
+      plateau_end: 12
 
 DB4M2:
   <<: *DB4
@@ -354,6 +661,17 @@ DB4M2:
   cfg_count: 5320
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 9
+      plateau_end: 12
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 10
+      plateau_end: 12
 
 DB4M3:
   <<: *DB4
@@ -365,6 +683,17 @@ DB4M3:
   cfg_count: 5000
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 10
+      plateau_end: 12
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 10
+      plateau_end: 12
 
 DB4M4:
   <<: *DB4
@@ -376,6 +705,17 @@ DB4M4:
   cfg_count: 5000
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 9
+      plateau_end: 12
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 9
+      plateau_end: 12
 
 DB4M5:
   <<: *DB4
@@ -387,6 +727,17 @@ DB4M5:
   cfg_count: 5000
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 11
+      plateau_end: 16
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 11
+      plateau_end: 16
 
 DB4M5*:
   <<: *DB4
@@ -398,6 +749,17 @@ DB4M5*:
   cfg_count: 5000
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 10
+      plateau_end: 12
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 10
+      plateau_end: 12
 
 DB4M6:
   <<: *DB4
@@ -409,6 +771,12 @@ DB4M6:
   cfg_count: 5092
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 10
+      plateau_end: 12
 
 DB4M7:
   <<: *DB4
@@ -420,6 +788,17 @@ DB4M7:
   cfg_count: 2954
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 11
+      plateau_end: 16
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 11
+      plateau_end: 16
 
 DB4M7*:
   <<: *DB4
@@ -431,6 +810,17 @@ DB4M7*:
   cfg_count: 5000
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 10
+      plateau_end: 12
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 10
+      plateau_end: 12
 
 DB4M8:
   <<: *DB4
@@ -442,6 +832,17 @@ DB4M8:
   cfg_count: 5000
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 13
+      plateau_end: 16
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 12
+      plateau_end: 16
 
 DB4M9:
   <<: *DB4
@@ -453,6 +854,17 @@ DB4M9:
   cfg_count: 2721
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 12
+      plateau_end: 24
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 13
+      plateau_end: 23
 
 DB4M9*:
   <<: *DB4
@@ -464,17 +876,17 @@ DB4M9*:
   cfg_count: 5000
   measure_plaq: True
   measure_gflow: True
-
-DB4M9**:
-  <<: *DB4
-  L: 12
-  T: 24
-  m: -1.36
-  first_cfg: 1
-  last_cfg: 5000
-  cfg_count: 5000
-  measure_plaq: True
-  measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 13
+      plateau_end: 16
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 12
+      plateau_end: 16
 
 DB4M10:
   <<: *DB4
@@ -486,6 +898,17 @@ DB4M10:
   cfg_count: 5000
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 13
+      plateau_end: 24
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 13
+      plateau_end: 24
 
 DB4M11:
   <<: *DB4
@@ -497,3 +920,14 @@ DB4M11:
   cfg_count: 2505
   measure_plaq: True
   measure_gflow: True
+  measure_mesons:
+    g5:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 14
+      plateau_end: 24
+    gk:
+      configuration_separation: 5
+      ensemble_selection: 0
+      plateau_start: 14
+      plateau_end: 24

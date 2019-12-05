@@ -11,6 +11,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 
 from uncertainties import ufloat
 
+from numpy import isnan
 from pandas import read_sql
 
 Base = declarative_base()
@@ -190,12 +191,13 @@ def add_measurement(simulation_descriptor, observable, value, uncertainty=None,
     then checks if an existing measurement exists, and if so updates it.
     Otherwise creates a new measurement and stores the result there.'''
 
-    with session_scope() as session:
-        simulation = get_or_create_simulation(simulation_descriptor, session)
-        update_or_make_new_measurement(
-            simulation, observable, valence_mass, free_parameter,
-            value, uncertainty, session
-        )
+    if not isnan(value):
+        with session_scope() as session:
+            simulation = get_or_create_simulation(simulation_descriptor, session)
+            update_or_make_new_measurement(
+                simulation, observable, valence_mass, free_parameter,
+                value, uncertainty, session
+                )
 
 
 def get_measurement(simulation_descriptor, observable,
@@ -326,8 +328,9 @@ def get_dataframe():
                simulation.T,
                simulation.beta,
                simulation.m,
-               simulation.Nconfigs,
-               simulation.delta_traj
+               simulation.first_cfg,
+               simulation.last_cfg,
+               simulation.cfg_count
         FROM measurement
         JOIN simulation
         ON measurement.simulation_id == simulation.id''',
