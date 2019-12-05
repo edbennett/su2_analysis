@@ -257,7 +257,8 @@ def plot_measure_and_save_mesons(simulation_descriptor, correlator_filename,
                                  channel_name,
                                  output_filename_prefix=None,
                                  meson_parameters=None,
-                                 parameter_date=None):
+                                 parameter_date=None,
+                                 force=False):
     # Distinguish between g5 with and without decay constant in analysis
     # But make them use same name in database to allow easy tabulation
     # and plotting
@@ -273,7 +274,7 @@ def plot_measure_and_save_mesons(simulation_descriptor, correlator_filename,
         channel_name = 'g5_mass'
 
     need_to_run = False
-    if not simulation_descriptor:
+    if force:
         need_to_run = True
     else:
         for quantity_name in quantity_options[channel_name]:
@@ -313,7 +314,7 @@ def plot_measure_and_save_mesons(simulation_descriptor, correlator_filename,
         **meson_parameters
     )
 
-    if simulation_descriptor and len(valence_masses) > 0:
+    if not force and len(valence_masses) > 0:
         if len(valence_masses) == 1:
             output_valence_masses = [None]
         else:
@@ -406,7 +407,8 @@ def main():
                 args.correlator_filename,
                 args.channel,
                 output_filename_prefix=args.output_filename_prefix,
-                meson_parameters=meson_parameters
+                meson_parameters=meson_parameters,
+                force=True
             )
         except Incomplete as ex:
             print("ANALYSIS NOT YET COMPLETE")
