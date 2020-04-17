@@ -138,7 +138,8 @@ def generate_table_from_db(
                                                          observable)]
             if len(measurement) > 1:
                 raise ValueError(
-                    "ensemble-observable combination is not unique"
+                    "ensemble-observable combination is not unique for "
+                    f"{ensemble} {observable}"
                 )
 
             if len(measurement) == 0:
