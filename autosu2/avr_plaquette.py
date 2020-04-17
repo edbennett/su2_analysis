@@ -1,3 +1,5 @@
+from re import compile
+
 from numpy import pi, asarray
 from argparse import ArgumentParser
 
@@ -11,14 +13,24 @@ DELTA_SIGMA_ONE = -12.82
 DELTA_G5GMU = -3.0
 DELTA_GMU = -7.75
 
+TRAJECTORY_GETTER = compile(
+    r'\[MAIN\]\[0\]Trajectory #(?P<trajectory>[0-9]+)'
+)
 
-def get_plaquettes(filename):
+def get_plaquettes(filename, first_trajectory=0):
     '''Given a HMC output filename, scan the file for all instances of
     plaquettes and return them in a list.'''
 
     plaquettes = []
+    current_trajectory = 0
     for line in open(filename, 'r'):
-        if line.startswith("[MAIN][0]Plaquette: "):
+        trajectory = TRAJECTORY_GETTER.match(line)
+        if trajectory:
+            current_trajectory = int(trajectory.group('trajectory'))
+        if (
+                current_trajectory > first_trajectory
+                and line.startswith("[MAIN][0]Plaquette: ")
+        ):
             plaquettes.append(float(line.split(' ')[1]))
     return asarray(plaquettes)
 
@@ -49,12 +61,14 @@ def measure_and_save_avr_plaquette(simulation_descriptor=None,
         # Already up to date
         return
 
-    plaquettes = get_plaquettes(filename)[
-        initial_configuration::configuration_separation
-    ]
-    avr_plaquette, avr_plaquette_error = basic_bootstrap(
-        plaquettes
-    )
+    if simulation_descriptor:
+        initial_configuration = simulation_descriptor.get(
+            'first_cfg', initial_configuration
+        )
+
+    plaquettes = get_plaquettes(filename, initial_configuration)
+
+    avr_plaquette, avr_plaquette_error = basic_bootstrap(plaquettes)
     results = [(avr_plaquette, avr_plaquette_error)]
 
     if simulation_descriptor:
