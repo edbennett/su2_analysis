@@ -1,4 +1,4 @@
-from numpy import ndarray, mean, std, arccosh, asarray
+from numpy import ndarray, mean, std, arccosh, asarray, sinh, newaxis
 from numpy.random import randint, choice
 
 BOOTSTRAP_SAMPLE_COUNT = 200
@@ -104,3 +104,45 @@ def bootstrap_eff_masses(bootstrap_correlator_samples_set):
         )
 
     return bootstrap_mean_eff_masses, bootstrap_error_eff_masses
+
+
+def bootstrap_pcac_eff_mass(
+        bootstrap_correlator_samples_set,
+        plateau_start=None, plateau_end=None
+):
+    assert len(bootstrap_correlator_samples_set) == 2
+    assert len(set(samples.shape
+                   for samples in bootstrap_correlator_samples_set)) == 1
+
+    g5_samples, g5_g0g5_re_samples = bootstrap_correlator_samples_set
+
+    (g5_eff_mass,), _ = bootstrap_eff_masses((g5_samples,))
+    g5_eff_mass = g5_eff_mass[:, newaxis]
+
+    # The factor g5_eff_mass / sinh(g5_eff_mass) is a correction to
+    # make the derivative more closely match the continuum value.
+    # See eq. B.14 of 1104.4301.
+    eff_mass_samples = g5_eff_mass / sinh(g5_eff_mass) * (
+        (g5_g0g5_re_samples[:-2] - g5_g0g5_re_samples[2:])
+        / (4 * g5_samples[1:-1])
+    )
+
+    eff_mass_mean = mean(eff_mass_samples, axis=1)
+    eff_mass_error = std(eff_mass_samples, axis=1)
+
+    if plateau_start is not None and plateau_end is not None:
+        plateau_mean = eff_mass_mean[plateau_start:plateau_end]
+        plateau_error = eff_mass_error[plateau_start:plateau_end]
+        fit_mean = mean(plateau_mean)
+        fit_err = std(eff_mass_samples[plateau_start:plateau_end])
+
+        chisquare = (
+            (((plateau_mean - fit_mean) / plateau_error) ** 2).sum()
+            / (plateau_end - plateau_start - 1)
+        )
+    else:
+        fit_mean = None
+        fit_err = None
+        chisquare = None
+
+    return eff_mass_mean, eff_mass_error, fit_mean, fit_err, chisquare

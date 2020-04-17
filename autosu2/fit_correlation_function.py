@@ -64,6 +64,7 @@ parameter_range_options = {
     'g0g5gk': ((0.01, 5), (0, 5)),
 }
 quantity_options = {
+    'mpcac': ('mass', 'chisquare'),
     'g5': ('mass', 'decay_const', 'amplitude', 'chisquare'),
     'g5_mass': ('mass', 'decay_const', 'chisquare'),
     'id': ('mass', 'decay_const', 'chisquare'),

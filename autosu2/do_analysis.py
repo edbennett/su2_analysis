@@ -13,6 +13,7 @@ from .t0 import plot_measure_and_save_sqrt_8t0
 from .Q import plot_measure_and_save_Q
 from .avr_plaquette import measure_and_save_avr_plaquette
 from .fit_correlation_function import plot_measure_and_save_mesons, Incomplete
+from .fit_effective_mass import plot_measure_and_save_mpcac
 from .one_loop_matching import do_one_loop_matching
 
 
@@ -186,6 +187,26 @@ def do_single_analysis(label, ensemble,
                     print('     ', result)
                 else:
                     print('      Already up to date')
+
+    if ensemble.get('measure_pcac', False):
+        # Mesonic observables
+        if DEBUG:
+            print(f"  - PCAC mass")
+        try:
+            result = plot_measure_and_save_mpcac(
+                simulation_descriptor=ensemble['descriptor'],
+                correlator_filename=f'raw_data/{subdirectory}/out_corr',
+                meson_parameters=ensemble['measure_pcac'],
+                parameter_date=ensembles_date,
+                output_filename_prefix=f'processed_data/{subdirectory}/'
+            )
+        except Incomplete as ex:
+            print(f'    INCOMPLETE: {ex.message}')
+        else:
+            if result and DEBUG:
+                print('   ', result)
+            else:
+                print('    Already up to date')
 
 
 def do_analysis(ensembles, **kwargs):

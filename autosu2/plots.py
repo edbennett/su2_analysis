@@ -1,6 +1,8 @@
+from math import ceil
+
 from matplotlib.pyplot import subplots, rc, close
 from matplotlib.colors import XKCD_COLORS
-from numpy import linspace
+from numpy import linspace, arange
 
 from warnings import filterwarnings
 
@@ -53,18 +55,28 @@ def do_eff_mass_plot(masses, errors, filename=None, ymin=None, ymax=None,
     else:
         local_ax = False
 
+    if tmin is None:
+        tmin = 0
+    if tmax is None:
+        tmax = len(masses) + 1
+    t_range_start = ceil(tmin)
+    t_range_end = min(len(masses), ceil(tmax))
+
     ax.errorbar(
-        list(range(1, len(masses) + 1)),
-        masses,
-        yerr=errors,
+        arange(t_range_start, t_range_end),
+        masses[t_range_start:t_range_end],
+        yerr=errors[t_range_start:t_range_end],
         fmt=marker,
         color=colour,
         label=label
     )
 
     if local_ax:
-        ax.set_xlim((0, len(masses) + 1))
-        ax.set_ylim((ymin, ymax))
+        ax.set_xlim((tmin, tmax))
+        if ymin is None and ymax is None:
+            ax.autoscale(axis='y', tight=True)
+        else:
+            ax.set_ylim((ymin, ymax))
 
         ax.set_xlabel(r'$t$')
         ax.set_ylabel(r'$m_{\mathrm{eff}}$')
