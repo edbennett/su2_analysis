@@ -15,6 +15,7 @@ from .avr_plaquette import measure_and_save_avr_plaquette
 from .fit_correlation_function import plot_measure_and_save_mesons, Incomplete
 from .fit_effective_mass import plot_measure_and_save_mpcac
 from .one_loop_matching import do_one_loop_matching
+from .polyakov import fit_plot_and_save_polyakov_loops
 
 
 DEBUG = True
@@ -175,6 +176,21 @@ def do_single_analysis(label, ensemble,
                 print('   ', result)
             else:
                 print('    Already up to date')
+
+    if ensemble.get('measure_polyakov', False):
+        # Simple Polyakov loop analysis for centre symmetry
+        if DEBUG:
+            print(f"  - Polyakov loops")
+        fit_results = fit_plot_and_save_polyakov_loops(
+            simulation_descriptor=ensemble['descriptor'],
+            filename=f'raw_data/{subdirectory}/out_pl',
+            plot_filename=(
+                f'processed_data/{subdirectory}/polyakov.pdf'
+            )
+        )
+        if DEBUG and fit_results:
+            for direction, result in enumerate(fit_results):
+                print(f'    Direction {direction}:', result)
 
 
 def do_analysis(ensembles, **kwargs):
