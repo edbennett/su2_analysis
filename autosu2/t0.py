@@ -30,7 +30,7 @@ def ensemble_sqrt_8t0(times, Es, E0, ax=None, plot_label=None):
     return (8 * t0) ** 0.5
 
 
-def measure_w0(filename, E0, ax=None):
+def measure_t0(filename, E0, ax=None):
     '''Reads flows from`filename`, and finds the value t where  E(t) == `E0`.
     Plots flows on `ax` if it is given.
 
@@ -87,7 +87,7 @@ def plot_measure_and_save_sqrt_8t0(E0,
     else:
         fig, ax = None, None
 
-    s8t0p, s8t0c = measure_w0(filename, E0, ax=ax)
+    s8t0p, s8t0c = measure_t0(filename, E0, ax=ax)
 
     if simulation_descriptor:
         add_measurement(simulation_descriptor, 's8t0p', *s8t0p,
