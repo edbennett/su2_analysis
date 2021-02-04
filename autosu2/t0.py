@@ -6,6 +6,8 @@ from .data import get_flows_from_raw
 from .db import measurement_is_up_to_date, add_measurement
 from .data import get_filename
 
+DEFAULT_E0 = 0.2
+
 
 def ensemble_sqrt_8t0(times, Es, E0, ax=None, plot_label=None):
     h = times[1] - times[0]

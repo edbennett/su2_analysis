@@ -8,6 +8,9 @@ from .db import measurement_is_up_to_date, add_measurement
 from .data import get_filename
 
 
+DEFAULT_W0 = 0.2
+
+
 def ensemble_w0(times, Es, W0, ax=None, plot_label=None):
     h = times[1] - times[0]
     t2E = times ** 2 * Es
@@ -107,7 +110,7 @@ def main():
     parser = ArgumentParser()
     parser.add_argument('--filename', required=True)
     parser.add_argument('--output_filename_prefix', default=None)
-    parser.add_argument('--W0', default=0.35, type=float)
+    parser.add_argument('--W0', default=DEFAULT_W0, type=float)
     parser.add_argument('--plot', action='store_true')
     parser.add_argument('--silent', action='store_true')
     args = parser.parse_args()
