@@ -80,7 +80,8 @@ def generate_table_from_db(
         data, ensembles, observables, filename, columns=None,
         constants=tuple(), error_digits=2, exponential=False,
         multirow=defaultdict(bool),
-        header=None, table_spec=None, suppress_zeroes=False
+        header=None, table_spec=None, suppress_zeroes=False,
+        skip_empty_rows=False
 ):
     table_content = []
     line_content = ''
@@ -129,6 +130,7 @@ def generate_table_from_db(
                 row_content.append('')
                 num_rows[constant] += 1
 
+        observable_found = False
         for observable in observables:
             if type(observable) == str:
                 observable = ObservableSpec(observable)
@@ -145,6 +147,8 @@ def generate_table_from_db(
             if len(measurement) == 0:
                 row_content.append('---')
                 continue
+            else:
+                observable_found = True
 
             if float(measurement.value) > 0 and (
                     float(measurement.uncertainty) / float(measurement.value) <
@@ -164,6 +168,8 @@ def generate_table_from_db(
                     error_digits=error_digits,
                     exponential=exponential
                 ))
+        if skip_empty_rows and not observable_found:
+            continue
 
         line_content += table_row(row_content)
         table_content.append(line_content)
