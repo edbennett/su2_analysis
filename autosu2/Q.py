@@ -89,7 +89,8 @@ def analyse_autocorrelation(series, filename, fit_range=10):
 
 def plot_history_and_histogram(trajectories, Qs, output_file=None,
                                title=True, extra_title='', legend=False,
-                               history_ax=None, histogram_ax=None):
+                               history_ax=None, histogram_ax=None,
+                               label_axes=True):
     '''Histograms, amd plots to the screen or a PDF if specified,
     the topological charges in Qs, with trajectory numbers provided in
     `trajectories`.'''
@@ -111,7 +112,10 @@ def plot_history_and_histogram(trajectories, Qs, output_file=None,
                               ncol=5, mode="expand", borderaxespad=0.,
                               frameon=False)
 
-    history_ax.set_xlabel('Trajectory')
+    if label_axes:
+        history_ax.set_xlabel('Trajectory')
+        histogram_ax.set_xlabel("Count")
+
     history_ax.set_ylabel('$Q$')
 
     Q_bins = Counter(Qs.round())
@@ -134,9 +138,9 @@ def plot_history_and_histogram(trajectories, Qs, output_file=None,
     smooth_Q_range = np.linspace(range_min - 0.5, range_max - 0.5, 1000)
     histogram_ax.plot(gaussian(smooth_Q_range, A, Q0, sigma),
                       smooth_Q_range, label="Fit")
+    histogram_ax.set_xlim((-max(Q_counts) * 0.1, max(Q_counts) * 1.1))
 #    histogram.legend(loc=0, frameon=False)
 
-    histogram_ax.set_xlabel("Count")
 
     if f:
         f.tight_layout()
