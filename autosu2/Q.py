@@ -130,11 +130,14 @@ def plot_history_and_histogram(trajectories, Qs, output_file=None,
 
     Q_range = np.arange(range_min, range_max)
 
-    Q_counts = [Q_bins[Q] for Q in Q_range]
+    Q_counts = np.asarray([Q_bins[Q] for Q in Q_range])
 
     histogram_ax.step(Q_counts, Q_range - 0.5, label="Histogram")
 
-    (A, Q0, sigma), pcov = curve_fit(gaussian, Q_range, Q_counts)
+    (A, Q0, sigma), pcov = curve_fit(
+        gaussian, Q_range, Q_counts,
+        sigma=(Q_counts + 1) ** 0.5, absolute_sigma=True
+    )
     smooth_Q_range = np.linspace(range_min - 0.5, range_max - 0.5, 1000)
     histogram_ax.plot(gaussian(smooth_Q_range, A, Q0, sigma),
                       smooth_Q_range, label="Fit")
@@ -164,8 +167,6 @@ def plot_history_and_histogram(trajectories, Qs, output_file=None,
         # r"$Q_0 = {:.2f} \pm {:.2f}$; $\sigma = {:.2f} \pm {:.2f}$".format(
         (Q0, np.sqrt(pcov[1][1])), (abs(sigma), np.sqrt(pcov[2][2]))
     )
-
-    return (Q0, np.sqrt(pcov[1][1])), (sigma, np.sqrt(pcov[2][2]))
 
 
 def topological_charge_susceptibility(Qs, V):
