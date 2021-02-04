@@ -224,7 +224,7 @@ def get_measurement_as_ufloat(simulation_descriptor, observable,
 def measurement_exists(simulation_descriptor, observable,
                        valence_mass=None, free_parameter=None):
     '''Check if a measurement of a particular `observable` and `valence mass`
-    for a particular simulation described by  `simulation_descriptor` exists.
+    for a particular simulation described by `simulation_descriptor` exists.
     '''
     try:
         if get_measurement(simulation_descriptor, observable,
@@ -232,6 +232,19 @@ def measurement_exists(simulation_descriptor, observable,
             return True
     except KeyError:
         return False
+
+
+def single_simulation_exists(simulation_descriptor):
+    '''Check if a particular `simulation_descriptor` describes exactly one
+    simulation in the database.'''
+
+    with session_scope() as session:
+        try:
+            simulation = get_simulation(simulation_descriptor, session)
+        except:
+            return False
+        else:
+            return True
 
 
 def measurement_is_up_to_date(simulation_descriptor, observable,
