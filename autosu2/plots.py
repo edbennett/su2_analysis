@@ -7,6 +7,7 @@ from numpy import linspace, arange
 from warnings import filterwarnings
 
 
+REVTEX_FONT_SIZE = 10
 COLOR_LIST = [XKCD_COLORS[f'xkcd:{colour}'] for colour in [
     'tomato red',
     'leafy green',
@@ -30,7 +31,7 @@ def set_plot_defaults(fontsize=None, markersize=4, capsize=2, linewidth=1):
     if fontsize:
         font = {'size': fontsize}
     else:
-        font = {}
+        font = {'size': REVTEX_FONT_SIZE}
     rc(
         'font',
         **{
@@ -40,7 +41,8 @@ def set_plot_defaults(fontsize=None, markersize=4, capsize=2, linewidth=1):
         }
     )
     rc('text', usetex=True)
-    rc('lines', linewidth=linewidth, markersize=markersize)
+    rc('lines',
+       linewidth=linewidth, markersize=markersize, markeredgewidth=linewidth)
     rc('errorbar', capsize=capsize)
 
 
