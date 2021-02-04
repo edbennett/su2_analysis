@@ -5,6 +5,12 @@ su2A1f: &su2A1f
   Nf: 1
   initial_configuration: 0
 
+su2Q: &su2Q
+  group_family: SUN
+  group_rank: 2
+  Nf: 0
+  initial_configuration: 0
+
 DB1: &DB1
   <<: *su2A1f
   beta: 2.05
@@ -21,6 +27,27 @@ DB4: &DB4
   <<: *su2A1f
   beta: 2.2
 
+QB1:
+  <<: *su2Q
+  beta: 2.4
+  L: 12
+  T: 12
+  first_cfg: 2001
+  last_cfg: 10000
+  cfg_count: 8000
+  measure_gflow: True
+
+QB2:
+  <<: *su2Q
+  beta: 2.55
+  L: 20
+  T: 20
+  first_cfg: 2001
+  last_cfg: 10000
+  cfg_count: 8000
+  measure_gflow: True
+
+
 DB1M1:
   <<: *DB1
   L: 16
@@ -31,6 +58,7 @@ DB1M1:
   cfg_count: 4000
   measure_gflow: True
   measure_plaq: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -58,6 +86,7 @@ DB1M1*:
   cfg_count: 4000
   measure_gflow: True
   measure_plaq: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -90,6 +119,7 @@ DB1M2:
   cfg_count: 4000
   measure_gflow: True
   measure_plaq: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -117,6 +147,7 @@ DB1M3:
   cfg_count: 4000
   measure_gflow: True
   measure_plaq: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -144,6 +175,7 @@ DB1M4:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -181,6 +213,7 @@ DB1M4*:
   cfg_count: 4163
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -208,6 +241,7 @@ DB1M4**:
   cfg_count: 4013
   measure_gflow: True
   measure_plaq: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -235,6 +269,7 @@ DB1M5:
   cfg_count: 4000
   measure_gflow: True
   measure_plaq: False
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -272,6 +307,7 @@ DB1M6:
   cfg_count: 4000
   measure_gflow: True
   measure_plaq: False
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -304,6 +340,7 @@ DB1M7:
   cfg_count: 4000
   measure_gflow: True
   measure_plaq: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -336,6 +373,7 @@ DB1M7*:
   cfg_count: 4000
   measure_gflow: True
   measure_plaq: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -373,6 +411,14 @@ DB1M8:
   cfg_count: 4000
   measure_gflow: True
   measure_plaq: True
+  measure_polyakov: True
+  measure_modenumber:
+    plot_omega_min: 0.03
+    plot_omega_max: 0.13
+    fit_omega_min: 0.03
+    fit_omega_max: 0.07
+    fit_window_length_min: 0.05
+    fit_window_length_max: 0.10
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -410,6 +456,7 @@ DB1M8*:
   cfg_count: 4006
   measure_gflow: True
   measure_plaq: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -453,6 +500,14 @@ DB1M10:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
+  measure_modenumber:
+    plot_omega_min: 0.03
+    plot_omega_max: 0.11
+    fit_omega_min: 0.03
+    fit_omega_max: 0.065
+    fit_window_length_min: 0.05
+    fit_window_length_max: 0.10
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -491,6 +546,7 @@ DB2M1:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -523,6 +579,7 @@ DB2M2:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -560,6 +617,7 @@ DB2M3:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -592,6 +650,7 @@ DB2M4:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -629,6 +688,7 @@ DB2M5:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -661,6 +721,7 @@ DB2M6:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -693,6 +754,7 @@ DB2M6*:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -730,6 +792,14 @@ DB2M7:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
+  measure_modenumber:
+    plot_omega_min: 0.03
+    plot_omega_max: 0.11
+    fit_omega_min: 0.03
+    fit_omega_max: 0.05
+    fit_window_length_min: 0.02
+    fit_window_length_max: 0.08
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -768,6 +838,7 @@ DB3M1:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -805,6 +876,7 @@ DB3M2:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -837,6 +909,7 @@ DB3M3:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -864,6 +937,7 @@ DB3M4:
   cfg_count: 4100
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -901,6 +975,7 @@ DB3M5:
   cfg_count: 4077
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -933,6 +1008,7 @@ DB3M6:
   cfg_count: 4014
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -970,6 +1046,7 @@ DB3M7:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -1007,6 +1084,14 @@ DB3M8:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
+  measure_modenumber:
+    plot_omega_min: 0.04
+    plot_omega_max: 0.13
+    fit_omega_min: 0.04
+    fit_omega_max: 0.08
+    fit_window_length_min: 0.05
+    fit_window_length_max: 0.08
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -1044,6 +1129,7 @@ DB4M1:
   cfg_count: 8000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -1076,6 +1162,7 @@ DB4M2:
   cfg_count: 4320
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -1108,6 +1195,7 @@ DB4M3:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -1145,6 +1233,7 @@ DB4M3*:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -1182,6 +1271,7 @@ DB4M4:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -1219,6 +1309,7 @@ DB4M4*:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -1256,6 +1347,7 @@ DB4M5:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -1293,6 +1385,7 @@ DB4M5*:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -1325,6 +1418,7 @@ DB4M6:
   cfg_count: 4092
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -1357,6 +1451,7 @@ DB4M7:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -1394,6 +1489,7 @@ DB4M7*:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -1431,6 +1527,7 @@ DB4M8:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -1468,6 +1565,7 @@ DB4M9:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -1505,6 +1603,7 @@ DB4M9*:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -1537,6 +1636,7 @@ DB4M10:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       configuration_separation: 5
@@ -1574,6 +1674,14 @@ DB4M11:
   cfg_count: 4000
   measure_plaq: True
   measure_gflow: True
+  measure_polyakov: True
+  measure_modenumber:
+    plot_omega_min: 0.05
+    plot_omega_max: 0.14
+    fit_omega_min: 0.05
+    fit_omega_max: 0.09
+    fit_window_length_min: 0.05
+    fit_window_length_max: 0.09
   measure_mesons:
     g5:
       configuration_separation: 5
