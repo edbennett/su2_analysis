@@ -235,7 +235,8 @@ def get_flows_from_raw(filename):
     with open(filename) as f:
         for line in f.readlines():
             line_contents = line.split()
-            if line_contents[0] == '[IO][0]Configuration':
+            if (line_contents[0] == '[IO][0]Configuration'
+                    and line_contents[2] == 'read'):
                 trajectories.append(int(findall(r'.*n(\d+)]',
                                                 line_contents[1])[0]))
                 continue
