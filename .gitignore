@@ -4,6 +4,7 @@ scratch
 *#*#
 *~
 *__pycache__
+auxiliary_plots/*
 processed_data/*
 raw_data/*
 processing_params/*
@@ -12,3 +13,5 @@ final_plots/*
 !*/.git_keep
 sp2n.sqlite
 **.pyc
+*.pdf
+**.ipynb_checkpoints
