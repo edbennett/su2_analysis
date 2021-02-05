@@ -220,7 +220,8 @@ def do_single_analysis(label, ensemble,
             filename=f'raw_data/{subdirectory}/out_pl',
             plot_filename=(
                 f'processed_data/{subdirectory}/polyakov.pdf'
-            )
+            ),
+            do_fit=False
         )
         if DEBUG and fit_results:
             for direction, result in enumerate(fit_results):
