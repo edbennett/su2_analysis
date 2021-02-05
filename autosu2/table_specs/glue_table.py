@@ -5,11 +5,10 @@ EXPONENTIAL = False
 
 
 def generate(data, **kwargs):
-    columns = ['', None,
-               r'$am_{0^-_{\mathrm{v}}}$', r'$af_{0^-_{\mathrm{v}}}$', None,
-               r'$am_{\breve{g}}$']
-    observables = 'gk_mass', 'gk_decay_const', 'spin12_mass'
-    filename = 'mesons.tex'
+    columns = ['', r'$a \sqrt{\sigma}$', None,
+               r'$am_{0^{++}}$', r'$am_{2^{++}}$']
+    observables = 'sqrtsigma', 'App_mass', 'Epp_mass'
+    filename = 'glue.tex'
 
     generate_table_from_db(
         data=data,
@@ -19,5 +18,6 @@ def generate(data, **kwargs):
         columns=columns,
         error_digits=ERROR_DIGITS,
         exponential=EXPONENTIAL,
-        suppress_zeroes=True
+        suppress_zeroes=True,
+        skip_empty_rows=True
     )
