@@ -1,10 +1,12 @@
 from pandas import merge
 
+from .w0 import DEFAULT_W0
+
 
 def merge_and_add_mhat2(data):
     m_values = data[data.observable == 'g5_mass']
     w0_values = data[(data.observable == 'w0c') &
-                     (data.free_parameter == 0.35)]
+                     (data.free_parameter == DEFAULT_W0)]
 
     merged_data = merge(m_values, w0_values,
                         on='label',
@@ -20,15 +22,16 @@ def merge_and_add_mhat2(data):
     return merged_data
 
 
-def merge_and_hat_quantities(data, quantities):
+def merge_quantities(data, quantities, hat=False):
     merged_data = data[(data.observable == 'w0c') &
-                       (data.free_parameter == 0.35)].rename(columns={
+                       (data.free_parameter == DEFAULT_W0)].rename(columns={
                            'value': 'value_w0',
                            'uncertainty': 'uncertainty_w0'
                        })
-    merged_data['value_m_hat'] = merged_data.m * merged_data.value_w0
-    merged_data['uncertainty_m_hat'] = (merged_data.m
-                                        * merged_data.uncertainty_w0)
+    if hat:
+        merged_data['value_m_hat'] = merged_data.m * merged_data.value_w0
+        merged_data['uncertainty_m_hat'] = (merged_data.m
+                                            * merged_data.uncertainty_w0)
 
     for quantity in quantities:
         # Filter out desired observable
@@ -44,24 +47,29 @@ def merge_and_hat_quantities(data, quantities):
                             how='left', on='label',
                             suffixes=('', f'_{quantity}'))
 
-        # Calculate hatted values
-        merged_data[f'value_{quantity}_hat'] = (
-            merged_data.value_w0 * merged_data[f'value_{quantity}']
-        )
-        merged_data[f'uncertainty_{quantity}_hat'] = (
-            merged_data.value_w0 ** 2
-            * merged_data[f'uncertainty_{quantity}'] ** 2
-            + merged_data.uncertainty_w0 ** 2
-            * merged_data[f'value_{quantity}'] ** 2
-        ) ** 0.5
+        if hat:
+            # Calculate hatted values
+            merged_data[f'value_{quantity}_hat'] = (
+                merged_data.value_w0 * merged_data[f'value_{quantity}']
+            )
+            merged_data[f'uncertainty_{quantity}_hat'] = (
+                merged_data.value_w0 ** 2
+                * merged_data[f'uncertainty_{quantity}'] ** 2
+                + merged_data.uncertainty_w0 ** 2
+                * merged_data[f'value_{quantity}'] ** 2
+            ) ** 0.5
 
-        # Calculate squared hatted values
-        merged_data[f'value_{quantity}_hat_squared'] = (
-            merged_data[f'value_{quantity}_hat'] ** 2
-        )
-        merged_data[f'uncertainty_{quantity}_hat_squared'] = (
-            2 * merged_data[f'value_{quantity}_hat']
-            * merged_data[f'uncertainty_{quantity}_hat']
-        )
+            # Calculate squared hatted values
+            merged_data[f'value_{quantity}_hat_squared'] = (
+                merged_data[f'value_{quantity}_hat'] ** 2
+            )
+            merged_data[f'uncertainty_{quantity}_hat_squared'] = (
+                2 * merged_data[f'value_{quantity}_hat']
+                * merged_data[f'uncertainty_{quantity}_hat']
+            )
 
     return merged_data
+
+
+def merge_and_hat_quantities(data, quantities):
+    return merge_quantities(data, quantities, hat=True)

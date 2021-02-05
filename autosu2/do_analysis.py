@@ -8,8 +8,8 @@ from os.path import getmtime
 
 from .db import is_complete_descriptor, describe_ensemble, get_dataframe
 
-from .w0 import plot_measure_and_save_w0
-from .t0 import plot_measure_and_save_sqrt_8t0
+from .w0 import plot_measure_and_save_w0, DEFAULT_W0
+from .t0 import plot_measure_and_save_sqrt_8t0, DEFAULT_E0
 from .Q import plot_measure_and_save_Q
 from .avr_plaquette import measure_and_save_avr_plaquette
 from .fit_correlation_function import plot_measure_and_save_mesons, Incomplete
@@ -57,7 +57,7 @@ def do_single_analysis(label, ensemble,
         if DEBUG:
             print("  - w0")
         result = plot_measure_and_save_w0(
-            W0=0.35,
+            W0=DEFAULT_W0,
             simulation_descriptor=ensemble['descriptor'],
             filename=f'raw_data/{subdirectory}/out_wflow',
             plot_filename=(
@@ -74,7 +74,7 @@ def do_single_analysis(label, ensemble,
         if DEBUG:
             print("  - t0")
         result = plot_measure_and_save_sqrt_8t0(
-            E0=0.35,
+            E0=DEFAULT_E0,
             simulation_descriptor=ensemble['descriptor'],
             filename=f'raw_data/{subdirectory}/out_wflow',
             plot_filename=(
