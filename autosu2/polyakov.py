@@ -1,6 +1,6 @@
 from re import findall
 
-from matplotlib.pyplot import show, subplots
+from matplotlib.pyplot import show, subplots, close
 from numpy import arange, asarray, exp, histogram, inf, linspace, nan, ones
 from scipy.optimize import curve_fit, minimize
 
@@ -66,7 +66,8 @@ def get_loops_from_raw(filename, first_config):
 
 
 def plot_loops(loop_histograms,
-               filename=None, ax=None, fitted_params=None, fit_form=None):
+               filename=None, ax=None, fitted_params=None, fit_form=None,
+               label_axes=True):
     assert not (filename and ax)
 
     set_plot_defaults()
@@ -77,13 +78,17 @@ def plot_loops(loop_histograms,
     else:
         received_ax = True
 
-    ax.set_xlabel(r'$\langle P_\mu\rangle$')
+    if label_axes:
+        ax.set_xlabel(r'$\langle P_\mu\rangle$')
     ax.set_ylabel(r'$N$')
 
     bins, histograms = loop_histograms
 
     for direction, histogram in enumerate(histograms):
-        ax.plot(bins, histogram, drawstyle='steps-pre', label=f'{direction}')
+        ax.plot(
+            bins.real, histogram,
+            drawstyle='steps-pre', label=f'{direction}'
+        )
 
     if fitted_params and fit_form:
         x_values = linspace(min(bins), max(bins), 1000)
@@ -98,12 +103,15 @@ def plot_loops(loop_histograms,
               "not plotting a fit.")
 
     ax.set_ylim((0, None))
-    ax.legend(loc=0, frameon=False, title=r'$\mu$')
+
+    if label_axes:
+        ax.legend(loc=0, frameon=False, title=r'$\mu$')
 
     if not received_ax:
         fig.tight_layout()
         if filename:
             fig.savefig(filename)
+            close(fig)
         else:
             show()
 
@@ -173,7 +181,8 @@ def curve_fit_with_minimize(f, xdata, ydata, p0,
 
 def fit_and_plot_polyakov_loops(filename,
                                 bin_width=None, num_bins=None, first_config=0,
-                                plot_filename=None, ax=None, do_fit=True):
+                                plot_filename=None, ax=None, do_fit=True,
+                                label_axes=True):
     configs, plaqs, loops = get_loops_from_raw(filename, first_config)
 
     for observable in plaqs + loops:
@@ -200,7 +209,9 @@ def fit_and_plot_polyakov_loops(filename,
     plot_loops((bin_lower_edges, histogrammed_loops),
                filename=plot_filename,
                fitted_params=fitted_params,
-               fit_form=fit_form)
+               fit_form=fit_form,
+               ax=ax,
+               label_axes=label_axes)
 
     return fitted_params_with_errors
 
@@ -241,6 +252,9 @@ def fit_plot_and_save_polyakov_loops(simulation_descriptor=None,
         first_config=0,
         do_fit=do_fit
     )
+
+    if not do_fit:
+        return
 
     for direction, fit_result_set in enumerate(fit_results):
         for observable, result in (
