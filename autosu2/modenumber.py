@@ -3,12 +3,19 @@ from re import compile
 from argparse import ArgumentParser
 
 import numpy as np
-from numpy import array, asarray, isnan, mean, std
+from numpy import array, asarray, isnan, mean, std, nanmin, nanmax
 from numpy.random import randint, ranf
 from sys import *
 from scipy.optimize import curve_fit
-from pandas import DataFrame
+from pandas import DataFrame, read_csv
 from numba import vectorize
+
+from matplotlib.pyplot import subplots, show
+from matplotlib.cm import plasma
+from matplotlib.colors import LogNorm
+
+from .plots import set_plot_defaults
+from .data import file_is_up_to_date
 
 
 CONFIGURATION_GETTER = compile(
@@ -58,8 +65,8 @@ def chisquare(func, indep, dep, sigma, params):
         chisquare += ((func(indep[point], *params) - dep[point]) ** 2
                       / sigma[point] ** 2)
     return chisquare / len(indep)
-    
-    
+
+
 def old_fit(filename):
     DEBUG = True
 
@@ -273,14 +280,90 @@ def old_fit(filename):
     ))
 
 
+def plot_modenumber_fits(results, output=None):
+#    set_plot_defaults()
+    from matplotlib.pyplot import rc
+    rc('lines', markersize=1)
+
+    fig, axes = subplots(nrows=2, ncols=2, sharex=True, figsize=(12, 8))
+
+    for ax in axes[1]:
+        ax.set_xlabel(r'$\Omega_{\mathrm{upper}}$')
+        ax.set_xscale('log')
+        ax.set_xlim((results.omega_upper_bound.min(),
+                     results.omega_upper_bound.max()))
+
+    colour_norm = LogNorm(vmin=results.omega_lower_bound.min(),
+                          vmax=results.omega_lower_bound.max())
+
+    colours = plasma(colour_norm(results.omega_lower_bound.values))
+    colours[:, 3] -= results.badness.values.clip(max=100) / 100
+
+    omega_upper_bounds = results.omega_upper_bound.values
+
+    results['am2'] = results.am ** 2
+    results['am2_error'] = 2 * results.am * results.am_error
+
+    for (variable_label, variable_column, v_min, v_max), ax in zip((
+            (r"A", "A", 0.9, 1.0),
+            (r"(am)^2", "am2", 0.9, 0.01),
+            (r"\gamma_*", "gamma_star", 0.9, 1.1),
+            (r"\overline{\nu}", "nubar0", 0.2, 0.1)
+    ), axes.ravel()):
+        ax.set_ylabel(f"${variable_label}$")
+        values = results[variable_column].values
+        min_value = v_min * nanmin(values)
+        max_value = v_max * nanmax(values)
+        ax.scatter(omega_upper_bounds, values, color=colours)
+        ax.errorbar(
+            omega_upper_bounds,
+            values,
+            yerr=results[f"{variable_column}_error"].values,
+            ecolor=colours,
+            fmt='None'
+        )
+        ax.set_ylim([min_value, max_value])
+
+    if output is None:
+        fig.tight_layout()
+        show()
+    else:
+        fig.suptitle(output[:-4])
+        fig.tight_layout()
+        fig.savefig(output)
+
+
+def do_modenumber_fit(modenumber_filename,
+                      results_filename=None):
+    if file_is_up_to_date(results_filename,
+                          compare_file=modenumber_filename):
+        return
+
+    results = old_fit(modenumber_filename)
+
+    if results_filename is not None:
+        results.to_csv(results_filename)
+
+    return results
+
 
 def main():
     parser = ArgumentParser()
     parser.add_argument('modenumber_filename')
     parser.add_argument('--output', default=None)
+    parser.add_argument('--reload', action='store_true')
+    parser.add_argument('--plot', action='store_true')
+    parser.add_argument('--plot_filename', default=None)
     args = parser.parse_args()
 
-    results = old_fit(args.modenumber_filename)
+    if args.reload:
+        results = read_csv(args.modenumber_filename)
+    else:
+        results = old_fit(args.modenumber_filename)
+
+    if args.plot or (args.plot_filename is not None):
+        plot_modenumber_fits(results, args.plot_filename)
+
     if args.output is not None:
         results.to_csv(args.output)
 
