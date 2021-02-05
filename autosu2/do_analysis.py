@@ -16,6 +16,7 @@ from .fit_correlation_function import plot_measure_and_save_mesons, Incomplete
 from .fit_effective_mass import plot_measure_and_save_mpcac
 from .one_loop_matching import do_one_loop_matching
 from .polyakov import fit_plot_and_save_polyakov_loops
+from .modenumber import do_modenumber_fit
 
 
 DEBUG = True
@@ -191,6 +192,17 @@ def do_single_analysis(label, ensemble,
         if DEBUG and fit_results:
             for direction, result in enumerate(fit_results):
                 print(f'    Direction {direction}:', result)
+
+    if ensemble.get('measure_modenumber', False):
+        # Mode number analysis for anomalous dimension
+        if DEBUG:
+            print(f"  - Mode number")
+        modenumber_result = do_modenumber_fit(
+            f'raw_data/{subdirectory}/out_modenumber',
+            f'processed_data/{subdirectory}/modenumber_fit.csv'
+        )
+        if modenumber_result and DEBUG:
+            print('    Already up to date')
 
 
 def do_analysis(ensembles, **kwargs):
