@@ -71,6 +71,22 @@ def do_single_analysis(label, ensemble,
         elif DEBUG:
             print("    Already up to date")
 
+        if ensemble['beta'] == 2.1:
+            # Generate extra W0 values for figure 1
+            # Could be made more efficient by splitting
+            # `plot_measure_and_save_w0` into two functions
+            for W0 in (0.2, 0.3, 0.4, 0.5, 0.6, 0.8, 1.0):
+                result = plot_measure_and_save_w0(
+                    W0=W0,
+                    simulation_descriptor=ensemble['descriptor'],
+                    filename=f'raw_data/{subdirectory}/out_wflow',
+                )
+                if result and DEBUG:
+                    w0p, w0c = result
+                    print("    W0:", W0, "| w0p:", w0p, "w0c:", w0c)
+                elif DEBUG:
+                    print("    W0:", W0, "also already up to date")
+
         # Gradient flow: t0
         if DEBUG:
             print("  - t0")
@@ -87,6 +103,23 @@ def do_single_analysis(label, ensemble,
             print("    sqrt(8t0p):", s8t0p, "sqrt(8t0c):", s8t0c)
         elif DEBUG:
             print("    Already up to date")
+
+        if ensemble['beta'] == 2.1:
+            # Generate extra E0 values for figure 1
+            # Could be made more efficient by splitting
+            # `plot_measure_and_save_w0` into two functions
+            for E0 in (0.2, 0.3, 0.4, 0.5, 0.6, 0.8, 1.0):
+                result = plot_measure_and_save_sqrt_8t0(
+                    E0=E0,
+                    simulation_descriptor=ensemble['descriptor'],
+                    filename=f'raw_data/{subdirectory}/out_wflow',
+                )
+                if result and DEBUG:
+                    s8t0p, s8t0c = result
+                    print("    E0:", E0, "| sqrt(8t0p):", s8t0p,
+                          "sqrt(8t0c):", s8t0c)
+                elif DEBUG:
+                    print("    E0:", E0, "also already up to date")
 
         # Gradient flow: Q
         if DEBUG:
