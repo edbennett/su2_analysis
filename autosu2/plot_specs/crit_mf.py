@@ -32,7 +32,7 @@ def generate(data, ensembles):
             p0=(1.0, -2.0, 1.0), method='trf',
             sigma=data_to_fit.uncertainty, absolute_sigma=True
         )
-        breakpoint()
+
         m_max = data_to_plot.m.max()
         m_range = linspace(m_c, m_max, 1000)
         ax.plot(m_range, fit_form_mPS(m_range, B, m_c, D))
