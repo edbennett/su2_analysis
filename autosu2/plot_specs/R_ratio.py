@@ -25,7 +25,8 @@ def plot_points(data, beta, colour, marker, ax):
         label=f"$\\beta={beta}$",
         ls='none'
     )
-    ax.legend(frameon=False, loc='lower left', handletextpad=0)
+    ax.text(0.03, 0.05, f'$\\beta={beta}$', transform=ax.transAxes)
+
 
 def shade_prediction(colour, R, ax):
     # ax.set_xlim((0, None))

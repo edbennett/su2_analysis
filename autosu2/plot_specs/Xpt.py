@@ -52,8 +52,7 @@ def generate(data, ensembles):
     set_plot_defaults(markersize=3, capsize=1, linewidth=0.5)
 
     observables = 'g5_mass', 'gk_mass'
-    extra_observables = ('mpcac_mass', 'g5_decay_const')
-    observable_labels = r'\gamma_5', r'\gamma_k'
+    extra_observables = ('mpcac_mass',)
 
     merged_data = merge_quantities(
         data, observables + extra_observables
@@ -62,7 +61,7 @@ def generate(data, ensembles):
     hatted_data = merge_and_hat_quantities(
         data,
         ('mpcac_mass', 'g5_mass',)
-    ).dropna(subset=('value_mpcac_mass',))
+    ).dropna(subset=('value_mpcac_mass', 'value_g5_mass_hat_squared'))
 
     fit_result = Xpt_fit(hatted_data)
 
@@ -103,7 +102,7 @@ def generate(data, ensembles):
 
     ax.set_ylim((0, None))
     ax.set_xlim((0, None))
-    ax.set_ylabel(r'$w_0^2 M_{\gamma_5}^2$')
+    ax.set_ylabel(r'$w_0^2 M_{2_{\mathrm{s}}^+}^2$')
     ax.set_xlabel(r'$w_0 m_{\mathrm{PCAC}}$')
     ax.legend(loc='upper left', frameon=False, handletextpad=0, borderaxespad=0.2)
 
