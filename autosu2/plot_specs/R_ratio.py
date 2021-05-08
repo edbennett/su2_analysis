@@ -14,7 +14,7 @@ ALPHA = 0.3
 R_value = namedtuple("R_value", ["centre", "lower", "upper"])
 
 def plot_points(data, beta, colour, marker, ax):
-    ax.set_ylabel(r'$\frac{m_{2^{++}}}{m_{0^{++}}}$')
+    ax.set_ylabel(r'$\frac{M_{2^{++}}}{M_{0^{++}}}$')
     ax.errorbar(
         data.value_App_mass * data.L,
         data.value_R,
@@ -84,7 +84,7 @@ def generate(data, ensembles):
         * hatted_data.uncertainty_App_mass ** 2
         / hatted_data.value_App_mass ** 2
     ) ** 0.5
-    axes[-1].set_xlabel(r'$L m_{0^{++}}$')
+    axes[-1].set_xlabel(r'$L M_{0^{++}}$')
 
     for (beta, colour, marker), ax in zip(beta_colour_marker, axes):
         data_to_plot = hatted_data[

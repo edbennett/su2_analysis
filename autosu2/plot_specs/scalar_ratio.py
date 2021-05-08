@@ -28,7 +28,7 @@ def generate(data, ensembles):
         / hatted_data.value_g5_mass ** 2
     ) ** 0.5
     ax.set_xlabel(r'$w_0 m_{\mathrm{PCAC}}$')
-    ax.set_ylabel(r'$\frac{m_{0^{++}}}{m_{2^+_{\mathrm{s}}}}$')
+    ax.set_ylabel(r'$\frac{M_{0^{++}}}{M_{2^+_{\mathrm{s}}}}$')
 
     for beta, colour, marker in beta_colour_marker:
         data_to_plot = hatted_data[

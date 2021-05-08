@@ -85,7 +85,7 @@ def do_plot(betas, merged_data):
     add_figure_key(fig)
 
     for ax in axes:
-        ax.set_ylabel('$m_{\mathrm{H}}$')
+        ax.set_ylabel('$M_{2^+_{\mathrm{s}}}$')
         ax.set_ylim((0, None))
 
     axes[-1].set_xlabel(r'$Lm_{\mathrm{PCAC}}^{1/(1+\gamma_*)}$')

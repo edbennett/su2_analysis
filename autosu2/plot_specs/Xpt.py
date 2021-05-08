@@ -103,7 +103,7 @@ def generate(data, ensembles):
 
     ax.set_ylim((0, None))
     ax.set_xlim((0, None))
-    ax.set_ylabel(r'$w_0^2 m_{\gamma_5}^2$')
+    ax.set_ylabel(r'$w_0^2 M_{\gamma_5}^2$')
     ax.set_xlabel(r'$w_0 m_{\mathrm{PCAC}}$')
     ax.legend(loc='upper left', frameon=False, handletextpad=0, borderaxespad=0.2)
 

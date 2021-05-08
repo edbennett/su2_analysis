@@ -110,7 +110,7 @@ def plot(data, fit_result, betas_to_fit, filename=None):
         )
 
     ax.set_xlabel(r'$Lm_{\mathrm{PCAC}}^{1/y_m}$')
-    ax.set_ylabel(r'$Lm_{\gamma_5}/(1+c_0m^\omega)$')
+    ax.set_ylabel(r'$LM_{\gamma_5}/(1+c_0m^\omega)$')
     ax.set_xlim((0, None))
     ax.set_ylim((0, None))
 
