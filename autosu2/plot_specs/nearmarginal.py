@@ -195,7 +195,7 @@ def generate(data, ensembles):
     merged_data = merge_quantities(
         data, ['g5_mass', 'mpcac_mass']
     ).dropna(
-        subset=('value_mpcac_mass',)
+        subset=('value_mpcac_mass', 'value_g5_mass')
     )
 
     for betas_to_fit in betas_to_fit_set:
