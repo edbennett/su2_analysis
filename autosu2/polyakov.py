@@ -1,4 +1,5 @@
 from re import findall
+from os .path import getmtime
 
 from matplotlib.pyplot import show, subplots, close
 from numpy import arange, asarray, exp, histogram, inf, linspace, nan, ones
@@ -67,7 +68,7 @@ def get_loops_from_raw(filename, first_config):
 
 def plot_loops(loop_histograms,
                filename=None, ax=None, fitted_params=None, fit_form=None,
-               label_axes=True):
+               label_axes=True, title=''):
     assert not (filename and ax)
 
     set_plot_defaults()
@@ -106,6 +107,8 @@ def plot_loops(loop_histograms,
 
     if label_axes:
         ax.legend(loc=0, frameon=False, title=r'$\mu$')
+    if title:
+        ax.set_title(title)
 
     if not received_ax:
         fig.tight_layout()
@@ -182,7 +185,7 @@ def curve_fit_with_minimize(f, xdata, ydata, p0,
 def fit_and_plot_polyakov_loops(filename,
                                 bin_width=None, num_bins=None, first_config=0,
                                 plot_filename=None, ax=None, do_fit=True,
-                                label_axes=True):
+                                label_axes=True, title=''):
     configs, plaqs, loops = get_loops_from_raw(filename, first_config)
 
     for observable in plaqs + loops:
@@ -211,7 +214,8 @@ def fit_and_plot_polyakov_loops(filename,
                fitted_params=fitted_params,
                fit_form=fit_form,
                ax=ax,
-               label_axes=label_axes)
+               label_axes=label_axes,
+               title=title)
 
     return fitted_params_with_errors
 
@@ -232,10 +236,12 @@ def fit_plot_and_save_polyakov_loops(simulation_descriptor=None,
 
     if (simulation_descriptor
         and not force
-        and (measurement_is_up_to_date(
-            simulation_descriptor, 'polyakov_0_centre',
-            compare_file=filename)
-        )
+        # Not currently fitting; just check that plots are up to date
+        and getmtime(plot_filename) > getmtime(filename)
+        # and (measurement_is_up_to_date(
+        #     simulation_descriptor, 'polyakov_0_centre',
+        #     compare_file=filename)
+        # )
     ):
         # Already up to date
         return
@@ -276,6 +282,7 @@ def main():
     parser.add_argument('--bin_width', default=None, type=float)
     parser.add_argument('--num_bins', default=None, type=int)
     parser.add_argument('--skip_fit', dest='do_fit', action='store_false')
+    parser.add_argument('--title', default='')
     args = parser.parse_args()
 
     pprint(fit_and_plot_polyakov_loops(**vars(args)))
