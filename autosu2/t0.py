@@ -3,7 +3,10 @@ from matplotlib.pyplot import subplots, close
 
 from .bootstrap import basic_bootstrap, bootstrap_1d
 from .data import get_flows_from_raw
-from .db import measurement_is_up_to_date, add_measurement
+from .db import (
+    measurement_is_up_to_date, add_measurement, get_measurement,
+    measurement_exists
+)
 from .data import get_filename
 
 DEFAULT_E0 = 0.2
@@ -32,13 +35,13 @@ def ensemble_sqrt_8t0(times, Es, E0, ax=None, plot_label=None):
     return (8 * t0) ** 0.5
 
 
-def measure_t0(filename, E0, ax=None):
+def measure_t0(filename, E0, bin_size=1, ax=None):
     '''Reads flows from`filename`, and finds the value t where  E(t) == `E0`.
     Plots flows on `ax` if it is given.
 
     Returns (s8t0p, s8t0p_error), (s8t0c, s8t0c_error)'''
 
-    trajectories, times, Eps, Ecs, _ = get_flows_from_raw(filename)
+    trajectories, times, Eps, Ecs, _ = get_flows_from_raw(filename, bin_size)
     s8t0ps = ensemble_sqrt_8t0(times, Eps, E0, ax=ax,
                                plot_label=r'$\sqrt{8t_0^p}$')
     s8t0cs = ensemble_sqrt_8t0(times, Ecs, E0, ax=ax,
@@ -56,7 +59,8 @@ def plot_measure_and_save_sqrt_8t0(E0,
                                    filename=None,
                                    plot_filename_formatter=None,
                                    plot_filename=None,
-                                   force=False):
+                                   force=False,
+                                   bin_size=1):
     '''Measure sqrt{8t0} via plaquette and clover for a given simulation
     described by `simulation_descriptor`, with gradient flow output file in
     either `filename_formatter(simulation_descriptor)` or `filename`.
@@ -84,12 +88,19 @@ def plot_measure_and_save_sqrt_8t0(E0,
         # Already up to date
         return
 
+    if simulation_descriptor and measurement_exists(
+            simulation_descriptor, 'Q_tau_exp'
+    ):
+        bin_size = int(
+            get_measurement(simulation_descriptor, 'Q_tau_exp').value
+        ) + 1
+
     if plot_filename:
         fig, ax = subplots()
     else:
         fig, ax = None, None
 
-    s8t0p, s8t0c = measure_t0(filename, E0, ax=ax)
+    s8t0p, s8t0c = measure_t0(filename, E0, bin_size=bin_size, ax=ax)
 
     if simulation_descriptor:
         add_measurement(simulation_descriptor, 's8t0p', *s8t0p,

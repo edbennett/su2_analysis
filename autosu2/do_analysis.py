@@ -54,6 +54,22 @@ def do_single_analysis(label, ensemble,
         print("Processing", subdirectory)
 
     if ensemble.get('measure_gflow', False):
+        # Gradient flow: Q
+        if DEBUG:
+            print("  - Q")
+        result = plot_measure_and_save_Q(
+            simulation_descriptor=ensemble['descriptor'],
+            flows_file=f'raw_data/{subdirectory}/out_wflow',
+            output_file_history=f'processed_data/{subdirectory}/Q.pdf',
+            output_file_autocorr=f'processed_data/{subdirectory}/Q_corr.pdf',
+        )
+        if result and DEBUG:
+            print("    {}".format(
+                ' '.join([f'{k}: {v}' for k, v in result.items()])
+            ))
+        else:
+            print("    Already up to date")
+
         # Gradient flow: w0
         if DEBUG:
             print("  - w0")
@@ -120,22 +136,6 @@ def do_single_analysis(label, ensemble,
                           "sqrt(8t0c):", s8t0c)
                 elif DEBUG:
                     print("    E0:", E0, "also already up to date")
-
-        # Gradient flow: Q
-        if DEBUG:
-            print("  - Q")
-        result = plot_measure_and_save_Q(
-            simulation_descriptor=ensemble['descriptor'],
-            flows_file=f'raw_data/{subdirectory}/out_wflow',
-            output_file_history=f'processed_data/{subdirectory}/Q.pdf',
-            output_file_autocorr=f'processed_data/{subdirectory}/Q_corr.pdf',
-        )
-        if result and DEBUG:
-            print("    {}".format(
-                ' '.join([f'{k}: {v}' for k, v in result.items()])
-            ))
-        else:
-            print("    Already up to date")
 
     if ensemble.get('measure_plaq', False):
         # HMC history: plaquette
