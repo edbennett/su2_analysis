@@ -217,7 +217,8 @@ def plot_measure_and_save_Q(flows_file, simulation_descriptor=None,
     result = {}
 
     if do_fit_and_plot or do_bootstrap:
-        trajectories, *_, Qs = get_flows_from_raw(flows_file)
+        trajectories, *_, Qs = get_flows_from_raw(flows_file,
+                                                  limit_t_for_Q='L/2')
         tau_exp = analyse_autocorrelation(Qs, output_file_autocorr)
 
         fit_range = 20
