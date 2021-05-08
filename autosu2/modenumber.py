@@ -70,7 +70,7 @@ def chisquare(func, indep, dep, sigma, params):
 def old_fit(filename):
     DEBUG = True
 
-    nus = read_modenumber(argv[1])
+    nus = read_modenumber(filename)
     lambs = sorted(nus.keys())
 
     # Pull an arbitrary element out of nus, since all have the same keys
