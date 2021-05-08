@@ -41,7 +41,8 @@ def add_figure_key(fig, markers=True):
     legend_contents = [
         fig.axes[0].errorbar(
             [-1], [-1], yerr=[nan], xerr=[nan],
-            fmt=f'{colour}{marker if markers else ","}',
+            color=colour,
+            marker=f'{marker if markers else ","}',
             label=f"$\\beta={beta}$")
         for beta, colour, marker in beta_colour_marker
     ]
