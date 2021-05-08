@@ -457,40 +457,25 @@ DB1M8*:
   measure_gflow: True
   measure_plaq: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
+    cfg_count: 4000
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 12
       plateau_end: 16
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 12
       plateau_end: 16
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 4
       plateau_end: 7
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 11
     plateau_end: 16
 
 DB1M9:
-  <<: *DB1
-  L: 32
-  T: 64
-  m: -1.5245
-  first_cfg: 1
-  last_cfg: 1502
-  cfg_count: 1454
-  measure_plaq: True
-  measure_gflow: True
-
-DB1M10:
   <<: *DB1
   L: 24
   T: 48
@@ -534,6 +519,7 @@ DB1M10:
     ensemble_selection: 0
     plateau_start: 15
     plateau_end: 24
+  measure_spin12: True
 
 
 DB2M1:

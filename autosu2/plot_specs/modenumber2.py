@@ -184,7 +184,7 @@ def tabulate(fit_results, ensembles):
 
 def generate(data, ensembles):
     plot_filename = 'final_plots/modenumber.pdf'
-    ensembles_to_plot = 'DB1M8', 'DB1M10', 'DB2M7', 'DB3M8', 'DB4M11'
+    ensembles_to_plot = 'DB1M8', 'DB1M9', 'DB2M7', 'DB3M8', 'DB4M11'
     fit_results = {}
 
     # capsize=1 breaks multicolour plots so don't set this here

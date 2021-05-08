@@ -8,7 +8,7 @@ from ..plots import set_plot_defaults
 from ..Q import plot_history_and_histogram
 
 
-ENSEMBLES = 'DB1M10', 'DB2M7', 'DB3M8', 'DB4M11'
+ENSEMBLES = 'DB1M9', 'DB2M7', 'DB3M8', 'DB4M11'
 OUTPUT_DIR = 'final_plots'
 FILENAME_BASE = 'q_topology'
 CAPTION = r'''

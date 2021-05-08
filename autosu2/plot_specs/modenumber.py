@@ -71,7 +71,7 @@ def do_plot(data, filename, omega_min=None, omega_max=None):
 def generate(data, ensembles):
     ensembles_to_plot = (
         ('DB1M8', 0.03, 0.12),
-        ('DB1M10', 0.03, 0.12),
+        ('DB1M9', 0.03, 0.12),
         ('DB2M7', 0.03, 0.12),
         ('DB3M8', 0.04, 0.12),
         ('DB4M11', 0.04, 0.12)
