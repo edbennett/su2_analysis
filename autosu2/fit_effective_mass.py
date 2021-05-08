@@ -2,7 +2,10 @@ from argparse import ArgumentParser
 
 from .plots import do_eff_mass_plot, do_correlator_plot, set_plot_defaults
 from .data import get_target_correlator, get_output_filename
-from .db import measurement_is_up_to_date, add_measurement, purge_measurement
+from .db import (
+    measurement_is_up_to_date, add_measurement, measurement_exists,
+    get_measurement, purge_measurement
+)
 from .bootstrap import (bootstrap_correlators, bootstrap_pcac_eff_mass,
                         BOOTSTRAP_SAMPLE_COUNT)
 from .fitting import minimize_chisquare
@@ -14,8 +17,7 @@ from .fit_correlation_function import (
 def process_mpcac(
         correlator_filename,
         NT, NS,
-        ensemble_selection=0,
-        initial_configuration=0, configuration_separation=1,
+        initial_configuration=0, bin_size=1,
         bootstrap_sample_count=BOOTSTRAP_SAMPLE_COUNT,
         plateau_start=None, plateau_end=None,
         eff_mass_plot_ymin=None, eff_mass_plot_ymax=None,
@@ -27,8 +29,7 @@ def process_mpcac(
 
     target_correlator_sets, valence_masses = get_target_correlator(
         correlator_filename, channel_set_options['g5'], NT, NS,
-        symmetries_options['g5'],
-        ensemble_selection, initial_configuration, configuration_separation,
+        symmetries_options['g5'], initial_configuration, bin_size=bin_size,
         from_raw=raw_correlators
     )
 
@@ -121,6 +122,13 @@ def plot_measure_and_save_mpcac(simulation_descriptor, correlator_filename,
     if not need_to_run:
         return
 
+    if simulation_descriptor and measurement_exists(
+            simulation_descriptor, 'Q_tau_exp'
+    ):
+        bin_size = int(
+            get_measurement(simulation_descriptor, 'Q_tau_exp').value
+        ) + 1
+
     fit_results_set, valence_masses = process_mpcac(
         correlator_filename,
         simulation_descriptor['T'],
@@ -129,6 +137,7 @@ def plot_measure_and_save_mpcac(simulation_descriptor, correlator_filename,
             'initial_configuration', 0
         ),
         output_filename_prefix=output_filename_prefix,
+        bin_size=bin_size,
         **meson_parameters
     )
 
@@ -155,10 +164,8 @@ def main():
                         required=True)
     parser.add_argument('--NT', required=True, type=int)
     parser.add_argument('--NS', required=True, type=int)
-    parser.add_argument('--configuration_separation', default=1, type=int)
+    parser.add_argument('--bin_size', default=1, type=int)
     parser.add_argument('--initial_configuration', default=0, type=int)
-    # ensemble_selection can range from 0 to configuration_separation
-    parser.add_argument('--ensemble_selection', default=0, type=int)
     parser.add_argument('--bootstrap_sample_count', default=200, type=int)
     parser.add_argument('--silent', action='store_true')
     parser.add_argument('--eff_mass_plot_ymin', default=None, type=float)
@@ -177,7 +184,6 @@ def main():
 
     meson_parameters = {
         key: args.__dict__[key] for key in [
-            'ensemble_selection',
             'eff_mass_plot_ymin', 'eff_mass_plot_ymax',
             'plateau_start', 'plateau_end',
             'correlator_lowerbound', 'correlator_upperbound',
@@ -189,7 +195,7 @@ def main():
     simulation_descriptor = {
         'L': args.NS,
         'T': args.NT,
-        'delta_traj': args.configuration_separation,
+        'delta_traj': args.bin_size,
         'initial_configuration': args.initial_configuration
     }
     if not args.ignore:
