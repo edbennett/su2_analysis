@@ -61,18 +61,12 @@ DB1M1:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 7
       plateau_end: 16
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 8
       plateau_end: 16
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 7
     plateau_end: 16
 
@@ -89,23 +83,15 @@ DB1M1*:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 7
       plateau_end: 12
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 7
       plateau_end: 12
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 2
       plateau_end: 5
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 8
     plateau_end: 12
 
@@ -122,18 +108,12 @@ DB1M2:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 8
       plateau_end: 16
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 8
       plateau_end: 16
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 7
     plateau_end: 16
 
@@ -150,18 +130,12 @@ DB1M3:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 8
       plateau_end: 12
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 8
       plateau_end: 12
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 8
     plateau_end: 12
 
@@ -178,28 +152,18 @@ DB1M4:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 7
       plateau_end: 24
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 6
       plateau_end: 24
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 5
       plateau_end: 7
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 3
       plateau_end: 6
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 9
     plateau_end: 24
 
@@ -216,8 +180,6 @@ DB1M4*:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 11
       plateau_end: 16
 #    gk:
@@ -226,8 +188,6 @@ DB1M4*:
 #      plateau_start: 8
 #      plateau_end: 16
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 11
     plateau_end: 16
 
@@ -244,18 +204,12 @@ DB1M4**:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 8
       plateau_end: 12
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 8
       plateau_end: 12
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 8
     plateau_end: 12
 
@@ -272,28 +226,18 @@ DB1M5:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 11
       plateau_end: 16
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 11
       plateau_end: 16
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 4
       plateau_end: 6
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 4
       plateau_end: 6
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 10
     plateau_end: 16
 
@@ -310,23 +254,15 @@ DB1M6:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 11
       plateau_end: 16
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 10
       plateau_end: 16
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 4
       plateau_end: 7
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 11
     plateau_end: 16
 
@@ -343,25 +279,18 @@ DB1M7:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 14
       plateau_end: 24
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 10
       plateau_end: 24
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 4
       plateau_end: 8
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 15
     plateau_end: 24
+  measure_spin12: True
 
 DB1M7*:
   <<: *DB1
@@ -376,28 +305,18 @@ DB1M7*:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 7
       plateau_end: 16
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 8
       plateau_end: 16
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 5
       plateau_end: 7
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 4
       plateau_end: 7
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 7
     plateau_end: 16
 
@@ -421,30 +340,21 @@ DB1M8:
     fit_window_length_max: 0.10
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 12
       plateau_end: 24
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 9
       plateau_end: 22
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 5
       plateau_end: 9
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 5
       plateau_end: 8
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 15
     plateau_end: 24
+  measure_spin12: True
 
 DB1M8*:
   <<: *DB1
@@ -493,33 +403,48 @@ DB1M9:
     fit_omega_max: 0.065
     fit_window_length_min: 0.05
     fit_window_length_max: 0.10
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 15
       plateau_end: 24
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 12
       plateau_end: 18
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 5
       plateau_end: 8
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 6
       plateau_end: 10
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 15
     plateau_end: 24
   measure_spin12: True
+
+DB1M9*:
+  <<: *DB1
+  L: 20
+  T: 16
+  m: -1.5246
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_plaq: True
+  measure_polyakov: True
+
+DB1M9**:
+  <<: *DB1
+  L: 16
+  T: 12
+  m: -1.5246
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_plaq: True
+  measure_polyakov: True
 
 
 DB2M1:
@@ -535,25 +460,18 @@ DB2M1:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 9
       plateau_end: 12
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 8
       plateau_end: 12
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 3
       plateau_end: 6
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 9
     plateau_end: 12
+  measure_spin12: True
 
 DB2M2:
   <<: *DB2
@@ -568,30 +486,21 @@ DB2M2:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 7
       plateau_end: 12
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 8
       plateau_end: 12
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 4
       plateau_end: 6
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 3
       plateau_end: 5
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 9
     plateau_end: 12
+  measure_spin12: True
 
 DB2M3:
   <<: *DB2
@@ -606,25 +515,18 @@ DB2M3:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 8
       plateau_end: 12
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 8
       plateau_end: 12
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 4
       plateau_end: 7
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 9
     plateau_end: 12
+  measure_spin12: True
 
 DB2M4:
   <<: *DB2
@@ -639,30 +541,21 @@ DB2M4:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 11
       plateau_end: 16
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 10
       plateau_end: 16
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 4
       plateau_end: 7
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 4
       plateau_end: 7
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 10
     plateau_end: 16
+  measure_spin12: True
 
 DB2M5:
   <<: *DB2
@@ -677,25 +570,18 @@ DB2M5:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 8
       plateau_end: 16
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 9
       plateau_end: 16
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 5
       plateau_end: 9
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 9
     plateau_end: 16
+  measure_spin12: True
 
 DB2M6:
   <<: *DB2
@@ -710,25 +596,18 @@ DB2M6:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 14
       plateau_end: 24
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 14
       plateau_end: 24
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 5
       plateau_end: 8
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 17
     plateau_end: 24
+  measure_spin12: True
 
 DB2M6*:
   <<: *DB2
@@ -743,28 +622,18 @@ DB2M6*:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 12
       plateau_end: 20
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 13
       plateau_end: 19
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 6
       plateau_end: 9
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 6
       plateau_end: 10
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 12
     plateau_end: 20
 
@@ -788,30 +657,32 @@ DB2M7:
     fit_window_length_max: 0.08
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 12
       plateau_end: 32
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 12
       plateau_end: 22
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 6
       plateau_end: 10
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 8
       plateau_end: 13
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 12
     plateau_end: 32
+  measure_spin12: True
+
+DB2M7*:
+  <<: *DB2
+  L: 16
+  T: 12
+  m: -1.474
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_plaq: True
+  measure_polyakov: True
 
 
 DB3M1:
@@ -827,30 +698,21 @@ DB3M1:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 9
       plateau_end: 12
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 8
       plateau_end: 12
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 4
       plateau_end: 7
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 4
       plateau_end: 7
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 8
     plateau_end: 12
+  measure_spin12: True
 
 DB3M2:
   <<: *DB3
@@ -865,25 +727,18 @@ DB3M2:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 9
       plateau_end: 12
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 9
       plateau_end: 12
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 6
       plateau_end: 8
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 9
     plateau_end: 12
+  measure_spin12: True
 
 DB3M3:
   <<: *DB3
@@ -898,20 +753,15 @@ DB3M3:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 9
       plateau_end: 12
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 9
       plateau_end: 12
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 9
     plateau_end: 12
+  measure_spin12: True
 
 DB3M4:
   <<: *DB3
@@ -926,30 +776,21 @@ DB3M4:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 8
       plateau_end: 16
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 10
       plateau_end: 16
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 5
       plateau_end: 7
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 4
       plateau_end: 8
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 8
     plateau_end: 16
+  measure_spin12: True
 
 DB3M5:
   <<: *DB3
@@ -964,25 +805,18 @@ DB3M5:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 11
       plateau_end: 16
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 11
       plateau_end: 16
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 5
       plateau_end: 8
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 11
     plateau_end: 16
+  measure_spin12: True
 
 DB3M6:
   <<: *DB3
@@ -997,30 +831,21 @@ DB3M6:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 11
       plateau_end: 16
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 10
       plateau_end: 16
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 5
       plateau_end: 8
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 5
       plateau_end: 9
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 10
     plateau_end: 16
+  measure_spin12: True
 
 DB3M7:
   <<: *DB3
@@ -1035,30 +860,21 @@ DB3M7:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 9
       plateau_end: 24
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 9
       plateau_end: 24
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 6
       plateau_end: 11
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 6
       plateau_end: 10
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 11
     plateau_end: 24
+  measure_spin12: True
 
 DB3M8:
   <<: *DB3
@@ -1080,30 +896,44 @@ DB3M8:
     fit_window_length_max: 0.08
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 20
       plateau_end: 24
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 20
       plateau_end: 24
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 7
       plateau_end: 12
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 7
       plateau_end: 12
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 20
     plateau_end: 24
+  measure_spin12: True
+
+DB3M8*:
+  <<: *DB3
+  L: 16
+  T: 12
+  m: -1.422
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_plaq: True
+  measure_polyakov: True
+
+DB3M8**:
+  <<: *DB3
+  L: 16
+  T: 8
+  m: -1.422
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_plaq: True
+  measure_polyakov: True
+
 
 DB4M1:
   <<: *DB4
@@ -1118,25 +948,18 @@ DB4M1:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 9
       plateau_end: 12
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 10
       plateau_end: 12
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 4
       plateau_end: 7
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 9
     plateau_end: 12
+  measure_spin12: True
 
 DB4M2:
   <<: *DB4
@@ -1151,25 +974,18 @@ DB4M2:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 9
       plateau_end: 12
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 10
       plateau_end: 12
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 5
       plateau_end: 8
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 9
     plateau_end: 12
+  measure_spin12: True
 
 DB4M3:
   <<: *DB4
@@ -1184,28 +1000,18 @@ DB4M3:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 10
       plateau_end: 16
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 10
       plateau_end: 16
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 5
       plateau_end: 8
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 5
       plateau_end: 8
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 10
     plateau_end: 16
 
@@ -1220,32 +1026,26 @@ DB4M3*:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 4
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 10
       plateau_end: 12
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 10
       plateau_end: 12
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 5
       plateau_end: 8
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 5
       plateau_end: 8
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 10
     plateau_end: 12
+  measure_spin12: True
 
 DB4M4:
   <<: *DB4
@@ -1260,28 +1060,18 @@ DB4M4:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 10
       plateau_end: 16
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 10
       plateau_end: 16
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 6
       plateau_end: 9
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 6
       plateau_end: 10
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 10
     plateau_end: 16
 
@@ -1298,30 +1088,21 @@ DB4M4*:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 9
       plateau_end: 12
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 9
       plateau_end: 12
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 6
       plateau_end: 9
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 6
       plateau_end: 10
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 10
     plateau_end: 12
+  measure_spin12: True
 
 DB4M5:
   <<: *DB4
@@ -1336,30 +1117,21 @@ DB4M5:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 11
       plateau_end: 16
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 11
       plateau_end: 16
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 6
       plateau_end: 10
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 6
       plateau_end: 9
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 9
     plateau_end: 16
+  measure_spin12: True
 
 DB4M5*:
   <<: *DB4
@@ -1374,25 +1146,18 @@ DB4M5*:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 10
       plateau_end: 12
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 10
       plateau_end: 12
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 4
       plateau_end: 7
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 9
     plateau_end: 12
+  measure_spin12: True
 
 DB4M6:
   <<: *DB4
@@ -1407,25 +1172,18 @@ DB4M6:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 10
       plateau_end: 12
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 5
       plateau_end: 9
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 5
       plateau_end: 8
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 10
     plateau_end: 12
+  measure_spin12: True
 
 DB4M7:
   <<: *DB4
@@ -1440,30 +1198,21 @@ DB4M7:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 11
       plateau_end: 16
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 11
       plateau_end: 16
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 7
       plateau_end: 10
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 5
       plateau_end: 8
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 10
     plateau_end: 16
+  measure_spin12: True
 
 DB4M7*:
   <<: *DB4
@@ -1478,28 +1227,18 @@ DB4M7*:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 10
       plateau_end: 12
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 10
       plateau_end: 12
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 8
       plateau_end: 10
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 5
       plateau_end: 8
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 10
     plateau_end: 12
 
@@ -1516,30 +1255,21 @@ DB4M8:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 13
       plateau_end: 16
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 12
       plateau_end: 16
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 7
       plateau_end: 9
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 6
       plateau_end: 10
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 10
     plateau_end: 16
+  measure_spin12: True
 
 DB4M9:
   <<: *DB4
@@ -1554,30 +1284,21 @@ DB4M9:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 12
       plateau_end: 24
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 13
       plateau_end: 23
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 6
       plateau_end: 11
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 7
       plateau_end: 13
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 14
     plateau_end: 24
+  measure_spin12: True
 
 DB4M9*:
   <<: *DB4
@@ -1592,25 +1313,30 @@ DB4M9*:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 13
       plateau_end: 16
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 12
       plateau_end: 16
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 6
       plateau_end: 9
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 11
     plateau_end: 16
+
+DB4M9**:
+  <<: *DB4
+  L: 12
+  T: 24
+  m: -1.36
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_plaq: True
+  measure_gflow: True
+  measure_polyakov: True
+  measure_mesons: True
 
 DB4M10:
   <<: *DB4
@@ -1625,30 +1351,21 @@ DB4M10:
   measure_polyakov: True
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 13
       plateau_end: 24
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 13
       plateau_end: 24
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 9
       plateau_end: 14
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 7
       plateau_end: 14
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 14
     plateau_end: 24
+  measure_spin12: True
 
 DB4M11:
   <<: *DB4
@@ -1668,29 +1385,56 @@ DB4M11:
     fit_omega_max: 0.09
     fit_window_length_min: 0.05
     fit_window_length_max: 0.09
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
   measure_mesons:
     g5:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 13
       plateau_end: 24
     gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 14
       plateau_end: 24
     g5gk:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 11
       plateau_end: 15
     id:
-      configuration_separation: 5
-      ensemble_selection: 0
       plateau_start: 9
       plateau_end: 17
   measure_pcac:
-    configuration_separation: 5
-    ensemble_selection: 0
     plateau_start: 11
     plateau_end: 24
+  measure_spin12: True
+
+DB4M11*:
+  <<: *DB4
+  L: 20
+  T: 16
+  m: -1.378
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_plaq: True
+  measure_polyakov: True
+
+DB4M11**:
+  <<: *DB4
+  L: 16
+  T: 12
+  m: -1.378
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_plaq: True
+  measure_polyakov: True
+
+DB4M11***:
+  <<: *DB4
+  L: 16
+  T: 8
+  m: -1.378
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_plaq: True
+  measure_polyakov: True
