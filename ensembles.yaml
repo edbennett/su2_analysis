@@ -59,6 +59,9 @@ DB1M1:
   measure_gflow: True
   measure_plaq: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
   measure_mesons:
     g5:
       plateau_start: 7
@@ -81,6 +84,9 @@ DB1M1*:
   measure_gflow: True
   measure_plaq: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels:
   measure_mesons:
     g5:
       plateau_start: 7
@@ -106,6 +112,9 @@ DB1M2:
   measure_gflow: True
   measure_plaq: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
   measure_mesons:
     g5:
       plateau_start: 8
@@ -128,6 +137,9 @@ DB1M3:
   measure_gflow: True
   measure_plaq: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 4
   measure_mesons:
     g5:
       plateau_start: 8
@@ -150,6 +162,9 @@ DB1M4:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
   measure_mesons:
     g5:
       plateau_start: 7
@@ -178,6 +193,10 @@ DB1M4*:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 26
+    num_blocking_levels: 5
+    cfg_count: 4160
   measure_mesons:
     g5:
       plateau_start: 11
@@ -202,6 +221,10 @@ DB1M4**:
   measure_gflow: True
   measure_plaq: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 21
+    num_blocking_levels: 4
+    cfg_count: 4011
   measure_mesons:
     g5:
       plateau_start: 8
@@ -224,6 +247,9 @@ DB1M5:
   measure_gflow: True
   measure_plaq: False
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
   measure_mesons:
     g5:
       plateau_start: 11
@@ -252,6 +278,9 @@ DB1M6:
   measure_gflow: True
   measure_plaq: False
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
   measure_mesons:
     g5:
       plateau_start: 11
@@ -277,6 +306,9 @@ DB1M7:
   measure_gflow: True
   measure_plaq: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
   measure_mesons:
     g5:
       plateau_start: 14
@@ -303,6 +335,9 @@ DB1M7*:
   measure_gflow: True
   measure_plaq: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
   measure_mesons:
     g5:
       plateau_start: 7
@@ -338,6 +373,9 @@ DB1M8:
     fit_omega_max: 0.07
     fit_window_length_min: 0.05
     fit_window_length_max: 0.10
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
   measure_mesons:
     g5:
       plateau_start: 12
@@ -458,6 +496,9 @@ DB2M1:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 4
   measure_mesons:
     g5:
       plateau_start: 9
@@ -484,6 +525,9 @@ DB2M2:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 4
   measure_mesons:
     g5:
       plateau_start: 7
@@ -513,6 +557,9 @@ DB2M3:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 4
   measure_mesons:
     g5:
       plateau_start: 8
@@ -539,6 +586,9 @@ DB2M4:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
   measure_mesons:
     g5:
       plateau_start: 11
@@ -568,6 +618,9 @@ DB2M5:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
   measure_mesons:
     g5:
       plateau_start: 8
@@ -594,6 +647,9 @@ DB2M6:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
   measure_mesons:
     g5:
       plateau_start: 14
@@ -620,6 +676,9 @@ DB2M6*:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
   measure_mesons:
     g5:
       plateau_start: 12
@@ -655,6 +714,9 @@ DB2M7:
     fit_omega_max: 0.05
     fit_window_length_min: 0.02
     fit_window_length_max: 0.08
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 6
   measure_mesons:
     g5:
       plateau_start: 12
@@ -696,6 +758,9 @@ DB3M1:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 4
   measure_mesons:
     g5:
       plateau_start: 9
@@ -725,6 +790,9 @@ DB3M2:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 4
   measure_mesons:
     g5:
       plateau_start: 9
@@ -751,6 +819,9 @@ DB3M3:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 4
   measure_mesons:
     g5:
       plateau_start: 9
@@ -774,6 +845,9 @@ DB3M4:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
   measure_mesons:
     g5:
       plateau_start: 8
@@ -803,6 +877,10 @@ DB3M5:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
+    cfg_count: 4075
   measure_mesons:
     g5:
       plateau_start: 11
@@ -829,6 +907,9 @@ DB3M6:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
   measure_mesons:
     g5:
       plateau_start: 11
@@ -858,6 +939,9 @@ DB3M7:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
   measure_mesons:
     g5:
       plateau_start: 9
@@ -894,6 +978,9 @@ DB3M8:
     fit_omega_max: 0.08
     fit_window_length_min: 0.05
     fit_window_length_max: 0.08
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
   measure_mesons:
     g5:
       plateau_start: 20
@@ -946,6 +1033,9 @@ DB4M1:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 4
   measure_mesons:
     g5:
       plateau_start: 9
@@ -972,6 +1062,9 @@ DB4M2:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 20
+    num_blocking_levels: 4
   measure_mesons:
     g5:
       plateau_start: 9
@@ -998,6 +1091,9 @@ DB4M3:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
   measure_mesons:
     g5:
       plateau_start: 10
@@ -1058,6 +1154,9 @@ DB4M4:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
   measure_mesons:
     g5:
       plateau_start: 10
@@ -1086,6 +1185,9 @@ DB4M4*:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 4
   measure_mesons:
     g5:
       plateau_start: 9
@@ -1115,6 +1217,9 @@ DB4M5:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
   measure_mesons:
     g5:
       plateau_start: 11
@@ -1144,6 +1249,9 @@ DB4M5*:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 4
   measure_mesons:
     g5:
       plateau_start: 10
@@ -1170,6 +1278,10 @@ DB4M6:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 4
+    cfg_count: 4075
   measure_mesons:
     g5:
       plateau_start: 10
@@ -1196,6 +1308,9 @@ DB4M7:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
   measure_mesons:
     g5:
       plateau_start: 11
@@ -1225,6 +1340,9 @@ DB4M7*:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 4
   measure_mesons:
     g5:
       plateau_start: 10
@@ -1253,6 +1371,9 @@ DB4M8:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
   measure_mesons:
     g5:
       plateau_start: 13
@@ -1282,6 +1403,9 @@ DB4M9:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
   measure_mesons:
     g5:
       plateau_start: 12
@@ -1311,6 +1435,9 @@ DB4M9*:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
   measure_mesons:
     g5:
       plateau_start: 13
@@ -1336,6 +1463,9 @@ DB4M9**:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 4
   measure_mesons: True
 
 DB4M10:
@@ -1349,6 +1479,9 @@ DB4M10:
   measure_plaq: True
   measure_gflow: True
   measure_polyakov: True
+  measure_glueballs:
+    num_bins: 25
+    num_blocking_levels: 5
   measure_mesons:
     g5:
       plateau_start: 13

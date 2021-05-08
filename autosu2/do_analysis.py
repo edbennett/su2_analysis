@@ -22,6 +22,13 @@ from .modenumber import do_modenumber_fit
 DEBUG = True
 
 
+def filter_complete(ensembles):
+    return {
+        label: ensemble
+        for label, ensemble in ensembles.items()
+        if is_complete_descriptor(ensemble)
+    }
+
 def get_file_contents(filename):
     with open(filename, 'r') as f:
         return f.read()
@@ -151,7 +158,7 @@ def do_single_analysis(label, ensemble,
         elif DEBUG:
             print('    Already up to date')
 
-    if ensemble.get('measure_mesons', False) and not skip_mesons:
+    if isinstance(ensemble.get('measure_mesons'), dict) and not skip_mesons:
         # Mesonic observables
         for (channel_name,
              channel_parameters) in ensemble['measure_mesons'].items():
@@ -281,14 +288,10 @@ def main():
     parser.add_argument('--quenched', action='store_true')
     args = parser.parse_args()
 
-    ensembles = yaml.safe_load(get_file_contents(args.ensembles))
+    ensembles = filter_complete(
+        yaml.safe_load(get_file_contents(args.ensembles))
+    )
     ensembles_date = datetime.fromtimestamp(getmtime(args.ensembles))
-
-    ensembles = {
-        label: ensemble
-        for label, ensemble in ensembles.items()
-        if is_complete_descriptor(ensemble)
-    }
 
     if args.skip_calculation or args.only:
         print("Skipping calculation as requested")
