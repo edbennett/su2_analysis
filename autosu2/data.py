@@ -1,7 +1,9 @@
 from datetime import datetime
 from os.path import getmtime
 from csv import writer, QUOTE_MINIMAL
-from re import findall
+from re import findall, match
+from functools import lru_cache
+from numbers import Number
 
 from pandas import read_csv, DataFrame, concat
 from numpy import asarray, float64
@@ -74,19 +76,30 @@ def get_output_filename(basename, type, channel='', tstart='', tend='',
     return f'{basename}{type}{channel}{tstart}{tend}.{filetype}'
 
 
+def bin_correlator(correlator, bin_size):
+    binned_correlator = DataFrame()
+    num_bins = len(correlator) // bin_size
+    num_configs = num_bins * bin_size
+    for column_label, column_data in correlator.iteritems():
+        binned_correlator[column_label] = (
+            column_data.values[:num_configs].reshape(
+                (num_bins, bin_size)
+            ).mean(axis=1)
+        )
+    return binned_correlator
+
+
 def get_single_raw_correlator_set(all_correlators, channels, NT, NS,
                                   valence_masses,
                                   sign=+1,
-                                  ensemble_selection=0,
                                   initial_configuration=0,
-                                  configuration_separation=1):
+                                  bin_size=1):
     correlator_set = []
 
     all_relevant_correlators = concat((
         all_correlators[
             (all_correlators.channel == channel) &
-            (all_correlators.trajectory >= (initial_configuration *
-                                            configuration_separation))
+            (all_correlators.trajectory >= initial_configuration)
         ]
         for channel in channels
     ))
@@ -95,7 +108,7 @@ def get_single_raw_correlator_set(all_correlators, channels, NT, NS,
     for valence_mass in valence_masses:
         target_correlator = all_relevant_correlators[
             all_relevant_correlators.valence_mass == valence_mass
-        ].iloc[ensemble_selection::configuration_separation]
+        ]
 
         target_correlator.drop(['trajectory', 'valence_mass'],
                                axis=1, inplace=True)
@@ -113,11 +126,14 @@ def get_single_raw_correlator_set(all_correlators, channels, NT, NS,
         if target_correlator[range(1, NT // 2)].mean().mean() < 0:
             target_correlator = -target_correlator
 
-        correlator_set.append(target_correlator * NS ** 3)
+        correlator_set.append(
+            bin_correlator(target_correlator, bin_size) * NS ** 3
+        )
 
     return correlator_set
 
 
+@lru_cache(maxsize=8)
 def get_correlators_from_raw(filename, NT):
     configuration_index = 0
     reported_configuration_index = ''
@@ -170,10 +186,7 @@ def get_correlators_from_filtered(filename, NT):
 
 
 def get_target_correlator(filename, channel_sets, NT, NS, signs,
-                          ensemble_selection=0, initial_configuration=0,
-                          configuration_separation=1, from_raw=True):
-    assert ensemble_selection < configuration_separation
-
+                          initial_configuration=0, bin_size=1, from_raw=True):
     if from_raw:
         get_file_data = get_correlators_from_raw
     else:
@@ -184,7 +197,7 @@ def get_target_correlator(filename, channel_sets, NT, NS, signs,
     all_channels = set(all_correlators.channel)
 
     configuration_count = (len(all_correlators) // len(all_channels) //
-                           len(valence_masses) // configuration_separation - 1)
+                           len(valence_masses) // bin_size - 1)
 
     used_configuration_count = configuration_count - initial_configuration + 1
 
@@ -193,7 +206,7 @@ def get_target_correlator(filename, channel_sets, NT, NS, signs,
     for channels, sign in zip(channel_sets, signs):
         target_correlator_sets.append(get_single_raw_correlator_set(
             all_correlators, channels, NT, NS, valence_masses, sign,
-            ensemble_selection, initial_configuration, configuration_separation
+            initial_configuration, bin_size
         ))
         for raw_correlator in target_correlator_sets[-1]:
             assert (len(raw_correlator) - len(channels) <=
@@ -224,13 +237,26 @@ def get_flows(filename):
     return times, Eps, Ecs
 
 
-def get_flows_from_raw(filename):
+def bin_flows(flows, bin_size):
+    flows = asarray(flows)
+    num_bins = flows.shape[0] // bin_size
+    return flows[:num_bins * bin_size, :].reshape(
+        (num_bins, bin_size, flows.shape[1])
+    ).mean(axis=1)
+
+
+@lru_cache(maxsize=8)
+def get_flows_from_raw(filename, bin_size=1, limit_t_for_Q=None, raw_Qs=False):
     trajectories = []
     Eps = []
     Ecs = []
     times = []
     Qs = []
     times_acquired = None
+    if isinstance(limit_t_for_Q, Number):
+        t_max_for_Q = limit_t_for_Q
+    else:
+        t_max_for_Q = None
 
     with open(filename) as f:
         for line in f.readlines():
@@ -240,13 +266,29 @@ def get_flows_from_raw(filename):
                 trajectories.append(int(findall(r'.*n(\d+)]',
                                                 line_contents[1])[0]))
                 continue
+
+            if line_contents[0] == '[GEOMETRY][0]Global':
+                NT, NX, NY, NZ = map(
+                    int,
+                    match(
+                        '([0-9]+)x([0-9]+)x([0-9]+)x([0-9]+)',
+                        line_contents[3])
+                    .groups()
+                )
+                NL = min(NX, NY, NZ)
+                if limit_t_for_Q == 'L/2':
+                    t_max_for_Q = (NL / 2) ** 2 / 8
+
             if line_contents[0] != '[WILSONFLOW][0]WF':
                 continue
             flow_time = float(line_contents[4])
             if flow_time == 0.0:
                 Eps.append([])
                 Ecs.append([])
-                Qs.append(None)
+                if raw_Qs:
+                    Qs.append([])
+                else:
+                    Qs.append(None)
                 if times_acquired is None:
                     times_acquired = False
                 else:
@@ -254,18 +296,24 @@ def get_flows_from_raw(filename):
 
             Eps[-1].append(float(line_contents[5]))
             Ecs[-1].append(float(line_contents[7]))
-            Qs[-1] = float(line_contents[9])
+            if raw_Qs:
+                Qs[-1].append(float(line_contents[9]))
+            elif t_max_for_Q is None or flow_time <= t_max_for_Q:
+                Qs[-1] = float(line_contents[9])
             if not times_acquired:
                 times.append(float(line_contents[4]))
 
         assert (len(trajectories) == len(Eps) == len(Ecs) == len(Qs))
         for Ep, Ec in zip(Eps, Ecs):
             assert len(Ep) == len(Ec) == len(times)
+        if raw_Qs:
+            for Q in zip(Qs):
+                assert len(Q) == len(times)
 
     return (asarray(trajectories),
             asarray(times),
-            asarray(Eps),
-            asarray(Ecs),
+            bin_flows(Eps, bin_size),
+            bin_flows(Ecs, bin_size),
             asarray(Qs))
 
 
