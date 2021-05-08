@@ -60,7 +60,7 @@ def do_eff_mass_plot(masses, errors, filename=None, ymin=None, ymax=None,
     if tmin is None:
         tmin = 0
     if tmax is None:
-        tmax = len(masses) + 1
+        tmax = len(masses)
     t_range_start = ceil(tmin)
     t_range_end = min(len(masses), ceil(tmax))
 
@@ -74,7 +74,7 @@ def do_eff_mass_plot(masses, errors, filename=None, ymin=None, ymax=None,
     )
 
     if local_ax:
-        ax.set_xlim((tmin, tmax))
+        ax.set_xlim((tmin, tmax + 1))
         if ymin is None and ymax is None:
             ax.autoscale(axis='y', tight=True)
         else:
