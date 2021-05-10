@@ -14,6 +14,7 @@ from .do_analysis import (
 from .glue import read_glue_correlation_matrices
 from .modenumber import read_modenumber
 from .polyakov import get_loops_from_raw
+from .spin12 import get_correlators_spin12format
 
 
 def plaq_getter(filename_base, group, **params):
@@ -98,7 +99,6 @@ def glueball_getter(filename_base, group, **params):
     names = ['bctn', 'cor_L', 'vac_L', 'cor_L2', 'vac_L2', 'cor_0R', 'vac_0',
              'cor_ER', 'cor_TR']
     default_num_momenta = 7
-    default_num_blocking_levels = 4
 
     correlation_matrices = read_glue_correlation_matrices(
         filename=filename,
@@ -106,14 +106,32 @@ def glueball_getter(filename_base, group, **params):
         num_configs=params.get('cfg_count', group.attrs['cfg_count']),
         num_bins=params['num_bins'],
         num_momenta=default_num_momenta,
-        num_blocking_levels=params.get(
-            'num_blocking_levels', default_num_blocking_levels
-        )
+        num_blocking_levels=params['num_blocking_levels']
     )
 
     subgroup = group.create_group('gluonic_correlation_matrices')
     for name, matrix in zip(names, correlation_matrices):
         subgroup.create_dataset(name, data=matrix)
+
+
+def spin12_getter(filename_base, group, **params):
+    filename = filename_base + 'out_corr_spin12'
+    file_contents = get_correlators_spin12format(filename)
+    subgroup = group.create_group('correlators_spin12')
+    for key, value in file_contents.items():
+        if (
+                key.startswith('polyakov_line')
+                or key.endswith('plaquette')
+                or key == 'trajectories'
+        ):
+            subgroup.create_dataset(key, data=value)
+        elif key in ('Meson_corr', 'gluinoglue'):
+            corr_subgroup = subgroup.create_group(key)
+            metadata_subgroup = corr_subgroup.create_group('metadata')
+            for meta_key, meta_value in value.pop('metadata').items():
+                metadata_subgroup.create_dataset(meta_key, data=meta_value)
+            for corr_name, corr_data in value.items():
+                corr_subgroup.create_dataset(corr_name, data=corr_data)
 
 
 data_getters = {
@@ -123,6 +141,7 @@ data_getters = {
     'modenumber': modenumber_getter,
     'glueballs': glueball_getter,
     'mesons': mesons_getter,
+    'spin12': spin12_getter
 }
 
 def label_group(group, ensemble):
@@ -147,8 +166,6 @@ def label_group(group, ensemble):
 def process_raw_to_hdf5(ensembles, filename):
     with h5py.File(filename, 'w') as f:
         for label, ensemble in ensembles.items():
-            if label not in ('DB1M9', 'DB1M8', 'DB2M7', 'DB3M8', 'DB4M10'):
-                continue
             print(label, '         ')
             group = f.create_group(label)
             label_group(group, ensemble)
