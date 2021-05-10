@@ -86,7 +86,7 @@ DB1M1*:
   measure_polyakov: True
   measure_glueballs:
     num_bins: 25
-    num_blocking_levels:
+    num_blocking_levels: 4
   measure_mesons:
     g5:
       plateau_start: 7
@@ -663,7 +663,6 @@ DB2M6:
   measure_pcac:
     plateau_start: 17
     plateau_end: 24
-  measure_spin12: True
 
 DB2M6*:
   <<: *DB2
@@ -695,6 +694,7 @@ DB2M6*:
   measure_pcac:
     plateau_start: 12
     plateau_end: 20
+  measure_spin12: True
 
 DB2M7:
   <<: *DB2
