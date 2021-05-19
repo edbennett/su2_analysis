@@ -96,7 +96,7 @@ def mesons_getter(filename_base, group, **params):
 
 def glueball_getter(filename_base, group, **params):
     filename = filename_base + 'glue_correlation_matrix'
-    names = ['bctn', 'cor_L', 'vac_L', 'cor_L2', 'vac_L2', 'cor_0R', 'vac_0',
+    names = ['action', 'cor_L', 'vac_L', 'cor_L2', 'vac_L2', 'cor_0R', 'vac_0',
              'cor_ER', 'cor_TR']
     default_num_momenta = 7
 
