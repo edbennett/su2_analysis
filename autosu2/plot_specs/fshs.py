@@ -13,7 +13,7 @@ from .common import beta_colour_marker, add_figure_key
 def sm_residual(gamma_s, data, count_valid_points=False):
     beta_data = data.copy()
     beta_data['fshs_x'] = (
-        beta_data.L * beta_data.value_mpcac_mass ** (1 / (1 + gamma_s))
+        beta_data.L ** (1 + gamma_s) * beta_data.value_mpcac_mass
     )
     beta_data['LM_H'] = beta_data.L * beta_data.value_g5_mass
 
@@ -85,10 +85,10 @@ def do_plot(betas, merged_data):
     add_figure_key(fig)
 
     for ax in axes:
-        ax.set_ylabel('$M_{2^+_{\mathrm{s}}}$')
+        ax.set_ylabel('$L aM_{2^+_{\mathrm{s}}}$')
         ax.set_ylim((0, None))
 
-    axes[-1].set_xlabel(r'$Lm_{\mathrm{PCAC}}^{1/(1+\gamma_*)}$')
+    axes[-1].set_xlabel(r'$L (am_{\mathrm{PCAC}})^{1/(1+\gamma_*)}$')
     axes[-1].set_xlim((0, None))
 
     fig.tight_layout(pad=0.08, h_pad=0.5, rect=(0, 0, 1, 0.96))

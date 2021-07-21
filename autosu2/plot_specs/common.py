@@ -29,8 +29,8 @@ channel_labels = {
     'App': '$0^{++}$ scalar glueball',
     'Epp': '$2^{++}$ tensor glueball',
     'Tpp': '$2^{++}$ tensor glueball',
-    'spin12': r'$\breve{g}$',
-    'sqrtsigma': r'$\sqrt{\sigma}$',
+    'spin12': r'$\breve{g}$ hybrid fermion',
+    'sqrtsigma': r'$\sqrt{\sigma}$ string tension',
 }
 
 # TODO: get the numberes for the critical regions programmatically
