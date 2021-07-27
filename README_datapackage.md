@@ -18,7 +18,7 @@ Due to their size, raw gauge configurations are not included in this package.
 
 ### Raw data
 
-Raw data are stored in the `raw_data` directory. This directory tree has the following levels:
+Raw data are stored in the `raw_data.zip` file. This file contains a directory tree with the following levels:
 
 * The top level indicates the number of flavours and, where appropriate, the fermion representation. In this work, this is `nf1_ADJ`.
 * The next level indicates the value of the coupling `beta`, prefixed with the letter `b`. This work presents four values of `beta`, `b2.05`, `b2.15`, and `b2.2`.
