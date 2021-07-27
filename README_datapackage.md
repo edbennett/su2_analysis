@@ -20,9 +20,9 @@ Due to their size, raw gauge configurations are not included in this package.
 
 Raw data are stored in the `raw_data.zip` file. This file contains a directory tree with the following levels:
 
-* The top level indicates the number of flavours and, where appropriate, the fermion representation. In this work, this is `nf1_ADJ`.
-* The next level indicates the value of the coupling `beta`, prefixed with the letter `b`. This work presents four values of `beta`, `b2.05`, `b2.15`, and `b2.2`.
-* The next level indicates the dynamical fermion mass, where appropriate, prefixed by the letter `m`. See Table III of [arXiv:2103.10485][paper] for a full listing.
+* The top level indicates the number of flavours and, where appropriate, the fermion representation. In this work, directories are `nf0` and `nf1_ADJ`.
+* The next level indicates the value of the coupling `beta`, prefixed with the letter `b`. This work presents four values of `beta` for `nf1_ADJ`: `b2.05`, `b2.15`, and `b2.2`; and two values of `beta` for `nf0`: `b2.4` and `b2.55`.
+* The next level, where present, indicates the dynamical fermion mass, where appropriate, prefixed by the letter `m`. See Table III of [arXiv:2103.10485][paper] for a full listing.
 * The next level indicates the lattice volume, in the form `NTxNS`, where `NT` and `NS` are the number of sites in the temporal and spatial directions respectively. (The three spatial directions have equal size.) Again, see Table III of [arXiv:2103.10485][paper] for a full listing.
 
 This is sufficient to uniquely specify an ensemble. Within each such directory are one or more files, with filenames indicating their contents:
