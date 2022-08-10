@@ -4,7 +4,7 @@ from numpy import argmax
 from matplotlib.pyplot import subplots, close
 from argparse import ArgumentParser
 
-from .bootstrap import basic_bootstrap, bootstrap_1d
+from .bootstrap import basic_bootstrap, sample_bootstrap_1d, bootstrap_1d
 from .data import get_flows_from_raw
 from .db import (
     measurement_is_up_to_date, add_measurement, get_measurement,
@@ -20,17 +20,20 @@ def ensemble_w0(times, Es, W0, ax=None, plot_label=None):
     h = times[1] - times[0]
     t2E = times ** 2 * Es
     tdt2Edt = times[1:-1] * (t2E[:, 2:] - t2E[:, :-2]) / (2 * h)
+    tdt2Edt_samples = sample_bootstrap_1d(tdt2Edt)
+
     if ax:
-        tdt2Edt_avg, tdt2Edt_err = bootstrap_1d(tdt2Edt)
         ax.errorbar(
-            times[1:-1], tdt2Edt_avg, yerr=tdt2Edt_err,
+            times[1:-1],
+            tdt2Edt_samples.mean(axis=0),
+            yerr=tdt2Edt_samples.std(axis=0),
             fmt='.',
             label=plot_label
         )
 
-    positions = argmax(tdt2Edt > W0, axis=1)
-    W_positions_minus_one = tdt2Edt[tuple(zip(*enumerate(positions - 1)))]
-    W_positions = tdt2Edt[tuple(zip(*enumerate(positions)))]
+    positions = argmax(tdt2Edt_samples > W0, axis=1)
+    W_positions_minus_one = tdt2Edt_samples[tuple(zip(*enumerate(positions - 1)))]
+    W_positions = tdt2Edt_samples[tuple(zip(*enumerate(positions)))]
     w0_squared = times[positions] + h * (
         (W0 - W_positions_minus_one) /
         (W_positions - W_positions_minus_one)
@@ -50,11 +53,11 @@ def measure_w0(filename, W0, bin_size=1, ax=None):
     Returns (w0p, w0p_error), (w0c, w0c_error)'''
 
     trajectories, times, Eps, Ecs, _ = get_flows_from_raw(filename, bin_size)
-    w0ps = ensemble_w0(times, Eps, W0, ax=ax, plot_label=r'$w_0^p$')
-    w0cs = ensemble_w0(times, Ecs, W0, ax=ax, plot_label=r'$w_0^c$')
+    bs_w0ps = ensemble_w0(times, Eps, W0, ax=ax, plot_label=r'$w_0^p$')
+    bs_w0cs = ensemble_w0(times, Ecs, W0, ax=ax, plot_label=r'$w_0^c$')
 
-    w0p = basic_bootstrap(w0ps)
-    w0c = basic_bootstrap(w0cs)
+    w0p = bs_w0ps.mean(), bs_w0ps.std()
+    w0c = bs_w0cs.mean(), bs_w0cs.std()
 
     return w0p, w0c
 

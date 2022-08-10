@@ -245,6 +245,18 @@ def bin_flows(flows, bin_size):
     ).mean(axis=1)
 
 
+def complete_trajectory(
+        trajectories, Eps, Ecs, Qs,
+        trajectory, current_Eps, current_Ecs, current_Q, times
+):
+    if len(current_Eps) == len(current_Ecs) == len(times):
+        if (not isinstance(current_Q, list)) or (len(Qs) == len(times)):
+            trajectories.append(trajectory)
+            Eps.append(current_Eps)
+            Ecs.append(current_Ecs)
+            Qs.append(current_Q)
+
+
 @lru_cache(maxsize=8)
 def get_flows_from_raw(filename, bin_size=1, limit_t_for_Q=None, raw_Qs=False):
     trajectories = []
@@ -263,8 +275,7 @@ def get_flows_from_raw(filename, bin_size=1, limit_t_for_Q=None, raw_Qs=False):
             line_contents = line.split()
             if (line_contents[0] == '[IO][0]Configuration'
                     and line_contents[2] == 'read'):
-                trajectories.append(int(findall(r'.*n(\d+)]',
-                                                line_contents[1])[0]))
+                trajectory = int(findall(r'.*n(\d+)]', line_contents[1])[0])
                 continue
 
             if line_contents[0] == '[GEOMETRY][0]Global':
@@ -281,30 +292,42 @@ def get_flows_from_raw(filename, bin_size=1, limit_t_for_Q=None, raw_Qs=False):
 
             if line_contents[0] != '[WILSONFLOW][0]WF':
                 continue
-            flow_time = float(line_contents[4])
+            if line_contents[1].startswith('(ncnfg'):
+                del line_contents[3]
+            flow_time = float(line_contents[3])
+
             if flow_time == 0.0:
-                Eps.append([])
-                Ecs.append([])
-                if raw_Qs:
-                    Qs.append([])
-                else:
-                    Qs.append(None)
                 if times_acquired is None:
                     times_acquired = False
                 else:
                     times_acquired = True
+                    complete_trajectory(trajectories, Eps, Ecs, Qs,
+                                        trajectory, current_Eps, current_Ecs,
+                                        current_Q, times)
+                current_Eps = []
+                current_Ecs = []
+                if raw_Qs:
+                    current_Q = []
+                else:
+                    current_Q = None
 
-            Eps[-1].append(float(line_contents[5]))
-            Ecs[-1].append(float(line_contents[7]))
+
+            current_Eps.append(float(line_contents[4]))
+            current_Ecs.append(float(line_contents[6]))
             if raw_Qs:
-                Qs[-1].append(float(line_contents[9]))
+                current_Q.append(float(line_contents[8]))
             elif t_max_for_Q is None or flow_time <= t_max_for_Q:
-                Qs[-1] = float(line_contents[9])
+                current_Q = float(line_contents[8])
             if not times_acquired:
-                times.append(float(line_contents[4]))
+                times.append(float(line_contents[3]))
+
+        complete_trajectory(trajectories, Eps, Ecs, Qs, trajectory,
+                            current_Eps, current_Ecs, current_Q, times)
 
         assert (len(trajectories) == len(Eps) == len(Ecs) == len(Qs))
-        for Ep, Ec in zip(Eps, Ecs):
+        for i, (Ep, Ec) in enumerate(zip(Eps, Ecs)):
+            if len(Ep) != len(times):
+                breakpoint()
             assert len(Ep) == len(Ec) == len(times)
         if raw_Qs:
             for Q in zip(Qs):

@@ -1,4 +1,4 @@
-from numpy import ndarray, mean, std, arccosh, asarray, sinh, newaxis
+from numpy import ndarray, mean, std, arccosh, asarray, sinh, newaxis, empty
 from numpy.random import randint, choice
 
 BOOTSTRAP_SAMPLE_COUNT = 200
@@ -21,19 +21,23 @@ def bootstrap_susceptibility(values):
     return mean(samples, axis=0), std(samples)
 
 
-def bootstrap_1d(values):
+def sample_bootstrap_1d(values):
     values = asarray(values)
     bootstrap_sample_configurations = randint(
         values.shape[0],
-        size=(values.shape[0], BOOTSTRAP_SAMPLE_COUNT)
+        size=(BOOTSTRAP_SAMPLE_COUNT, values.shape[0])
     )
-    bootstrap_samples = []
+    bootstrap_samples = empty((BOOTSTRAP_SAMPLE_COUNT, values.shape[1]))
     for t_index in range(values.shape[1]):
-        bootstrap_samples.append(
-            values[bootstrap_sample_configurations, t_index].mean(axis=1)
-        )
-    bootstrap_samples = asarray(bootstrap_samples)
-    return mean(bootstrap_samples, axis=1), std(bootstrap_samples, axis=1)
+        bootstrap_samples[:, t_index] = values[
+            bootstrap_sample_configurations, t_index
+        ].mean(axis=1)
+    return asarray(bootstrap_samples)
+
+
+def bootstrap_1d(values):
+    bootstrap_samples = sample_bootstrap_1d(values)
+    return mean(bootstrap_samples, axis=0), std(bootstrap_samples, axis=0)
 
 
 def bootstrap_correlators(target_correlators):
