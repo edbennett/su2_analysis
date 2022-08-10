@@ -1,0 +1,3 @@
+[submodule "HiRep"]
+	path = HiRep
+	url = https://github.com/claudiopica/HiRep
