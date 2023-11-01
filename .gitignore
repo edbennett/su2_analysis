@@ -11,7 +11,12 @@ processing_params/*
 final_tables/*
 final_plots/*
 !*/.git_keep
-sp2n.sqlite
+*.sqlite
+*.yaml
+*.csv
+*.dat
+*.txt
+*.out
 **.pyc
 *.pdf
 **.ipynb_checkpoints
