@@ -2,33 +2,34 @@ from itertools import product
 
 import matplotlib.pyplot as plt
 
+from .common import beta_colour_marker
+
 from ..plots import set_plot_defaults, SYMBOL_LIST
-from ..derived_observables import merge_and_hat_quantities
+from ..derived_observables import merge_no_w0
 
 OBSERVABLES = 'mass', 'decay_const'
-CHANNELS = 'g5', 'g5gk', 'id'
-BETAS = 2.05, 2.1, 2.15, 2.2
+CHANNELS = 'g5', "gk", 'g5gk', 'id'
 OBSERVABLE_LABELS = 'm', 'f'
-CHANNEL_LABELS = r'\gamma_5', r'\gamma_5\gamma_k', r'1'
+CHANNEL_LABELS = r'\gamma_5', r"\gamma_k", r'\gamma_5\gamma_k', r'1'
 
 
-def generate(data, ensembles):
+def do_plot(data, Nf=1):
     set_plot_defaults()
-    filename = f'auxiliary_plots/spectra.pdf'
-    fig, axes = plt.subplots(ncols=2, nrows=4, figsize=(10, 18))
+    filename = f'auxiliary_plots/spectra_Nf{Nf}.pdf'
+    fig, axes = plt.subplots(ncols=2, nrows=len(beta_colour_marker[Nf]), figsize=(10, 2 + 4 * len(beta_colour_marker[Nf])), squeeze=False)
 
-    merged_data = merge_and_hat_quantities(
-        data,
+    merged_data = merge_no_w0(
+        data[data.Nf == Nf],
         [f'{channel}_{observable}' 
          for channel in CHANNELS 
          for observable in OBSERVABLES]
-        + ['mpcac_mass']
+        + ['mpcac_mass'],
     )
 
     for column, (observable, observable_label) in enumerate(
             zip(OBSERVABLES, OBSERVABLE_LABELS)
     ):
-        for row, beta in enumerate(BETAS):
+        for row, (beta, _, _) in enumerate(beta_colour_marker[Nf]):
             current_data = merged_data[merged_data.beta == beta]
             axes[row][column].set_title(f'$\\beta = {beta}$')
             axes[row][column].set_xlabel(r'$m_{\mathrm{PCAC}}$')
@@ -50,8 +51,13 @@ def generate(data, ensembles):
             axes[row][column].set_xlim((0, None))
             axes[row][column].set_ylim((0, None))
 
-    axes[3][1].legend(loc='lower right', frameon=False)
+    axes[-1][1].legend(loc='lower right', frameon=False)
 
     fig.tight_layout()
     fig.savefig(filename)
     plt.close(fig)
+
+
+def generate(data, ensembles):
+    do_plot(data, Nf=1)
+    do_plot(data, Nf=2)

@@ -9,7 +9,7 @@ from ..derived_observables import merge_quantities
 from ..plots import set_plot_defaults
 from ..derived_observables import merge_and_hat_quantities
 
-from .common import beta_colour_marker
+from .common import beta_colour_marker, preliminary
 
 
 def Xpt_fit_form(mpcac_w0, p):
@@ -46,28 +46,25 @@ def Xpt_fit(hatted_data):
     )
 
 
-def generate(data, ensembles):
-    filename = 'final_plots/Xpt.pdf'
+def generate_single_Nf(data, Nf):
+    filename = f'final_plots/Xpt_Nf{Nf}.pdf'
 
-    set_plot_defaults(markersize=3, capsize=1, linewidth=0.5)
+    set_plot_defaults(markersize=3, capsize=1, linewidth=0.5,
+                      preliminary=preliminary)
 
     observables = 'g5_mass', 'gk_mass'
     extra_observables = ('mpcac_mass',)
 
-    merged_data = merge_quantities(
-        data, observables + extra_observables
-    ).dropna(subset=('value_mpcac_mass',))
-
     hatted_data = merge_and_hat_quantities(
-        data,
+        data[data.Nf == Nf],
         ('mpcac_mass', 'g5_mass',)
     ).dropna(subset=('value_mpcac_mass', 'value_g5_mass_hat_squared'))
 
-    fit_result = Xpt_fit(hatted_data)
+    fit_result = Xpt_fit(hatted_data[hatted_data.value_mpcac_mass > 0])
 
     fig, ax = plt.subplots(figsize=(3.5, 2.5))
 
-    for beta, colour, marker in beta_colour_marker:
+    for beta, colour, marker in beta_colour_marker[Nf]:
         subset_data = hatted_data[hatted_data.beta == beta]
         subset_mpcac_dict = {
             'data': (subset_data['value_mpcac_mass'].values,
@@ -79,7 +76,7 @@ def generate(data, ensembles):
             subset_data.value_g5_mass_hat_squared,
             xerr=subset_data.uncertainty_mpcac_mass_hat,
             yerr=subset_data.uncertainty_g5_mass_hat_squared,
-            fmt='.',
+            linestyle='',
             label=f'$\\beta={beta}$',
             color=colour,
             marker=marker
@@ -104,7 +101,13 @@ def generate(data, ensembles):
     ax.set_xlim((0, None))
     ax.set_ylabel(r'$w_0^2 M_{2_{\mathrm{s}}^+}^2$')
     ax.set_xlabel(r'$w_0 m_{\mathrm{PCAC}}$')
-    ax.legend(loc='upper left', frameon=False, handletextpad=0, borderaxespad=0.2)
+    ax.legend(loc='upper left', frameon=False, handletextpad=0, borderaxespad=0.2,
+              ncol=2, columnspacing=0.5)
 
-    fig.tight_layout(pad=0.25)
+    fig.tight_layout(pad=0, rect=(0.04, 0.01, 0.99, 0.99))
     fig.savefig(filename)
+
+
+def generate(data, ensembles):
+    generate_single_Nf(data, Nf=1)
+    generate_single_Nf(data, Nf=2)

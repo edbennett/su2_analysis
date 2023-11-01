@@ -187,13 +187,14 @@ def generate(data, ensembles):
     fit_results_constrained = []
 
     betas_to_fit_set = [
-        (2.05, 2.1, 2.15, 2.2),
-        (2.1, 2.15, 2.2),
-        (2.15, 2.2)
+        (2.1, 2.15, 2.2, 2.3, 2.4),
+        (2.15, 2.2, 2.3, 2.4),
+        (2.2, 2.3, 2.4),
+        (2.3, 2.4),
     ]
 
     merged_data = merge_quantities(
-        data, ['g5_mass', 'mpcac_mass']
+        data[data.Nf == 1], ['g5_mass', 'mpcac_mass']
     ).dropna(
         subset=('value_mpcac_mass', 'value_g5_mass')
     )

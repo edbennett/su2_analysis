@@ -5,6 +5,13 @@ su2A1f: &su2A1f
   Nf: 1
   initial_configuration: 0
 
+su2A2f: &su2A2f
+  group_family: SUN
+  group_rank: 2
+  representation: ADJ
+  Nf: 2
+  initial_configuration: 0
+
 su2Q: &su2Q
   group_family: SUN
   group_rank: 2
@@ -27,25 +34,17 @@ DB4: &DB4
   <<: *su2A1f
   beta: 2.2
 
-QB1:
-  <<: *su2Q
-  beta: 2.4
-  L: 12
-  T: 12
-  first_cfg: 2001
-  last_cfg: 10000
-  cfg_count: 8000
-  measure_gflow: True
+DB5: &DB5
+  <<: *su2A1f
+  beta: 2.25
 
-QB2:
-  <<: *su2Q
-  beta: 2.55
-  L: 20
-  T: 20
-  first_cfg: 2001
-  last_cfg: 10000
-  cfg_count: 8000
-  measure_gflow: True
+DB6: &DB6
+  <<: *su2A1f
+  beta: 2.3
+
+DB7: &DB7
+  <<: *su2A1f
+  beta: 2.4
 
 
 DB1M1:
@@ -202,8 +201,6 @@ DB1M4*:
       plateau_start: 11
       plateau_end: 16
 #    gk:
-#      configuration_separation: 5
-#      ensemble_selection: 0
 #      plateau_start: 8
 #      plateau_end: 16
   measure_pcac:
@@ -367,6 +364,8 @@ DB1M8:
   measure_plaq: True
   measure_polyakov: True
   measure_modenumber:
+    method: julia
+    format: hirep
     plot_omega_min: 0.03
     plot_omega_max: 0.13
     fit_omega_min: 0.03
@@ -435,12 +434,14 @@ DB1M9:
   measure_gflow: True
   measure_polyakov: True
   measure_modenumber:
+    method: julia
+    format: hirep
     plot_omega_min: 0.03
-    plot_omega_max: 0.11
+    plot_omega_max: 0.18
     fit_omega_min: 0.03
-    fit_omega_max: 0.065
+    fit_omega_max: 0.3
     fit_window_length_min: 0.05
-    fit_window_length_max: 0.10
+    fit_window_length_max: 0.15
   measure_glueballs:
     num_bins: 25
     num_blocking_levels: 5
@@ -708,6 +709,8 @@ DB2M7:
   measure_gflow: True
   measure_polyakov: True
   measure_modenumber:
+    method: julia
+    format: hirep
     plot_omega_min: 0.03
     plot_omega_max: 0.11
     fit_omega_min: 0.03
@@ -972,6 +975,8 @@ DB3M8:
   measure_gflow: True
   measure_polyakov: True
   measure_modenumber:
+    method: julia
+    format: hirep
     plot_omega_min: 0.04
     plot_omega_max: 0.13
     fit_omega_min: 0.04
@@ -1512,12 +1517,14 @@ DB4M11:
   measure_gflow: True
   measure_polyakov: True
   measure_modenumber:
+    method: julia
+    format: hirep
     plot_omega_min: 0.05
-    plot_omega_max: 0.14
+    plot_omega_max: 0.2
     fit_omega_min: 0.05
-    fit_omega_max: 0.09
+    fit_omega_max: 0.3
     fit_window_length_min: 0.05
-    fit_window_length_max: 0.09
+    fit_window_length_max: 0.15
   measure_glueballs:
     num_bins: 25
     num_blocking_levels: 5
@@ -1571,3 +1578,1214 @@ DB4M11***:
   cfg_count: 4000
   measure_plaq: True
   measure_polyakov: True
+
+DB4M12:
+  <<: *DB4
+  L: 32
+  T: 64
+  m: -1.386
+  first_cfg: 1113
+  last_cfg: 3308
+  cfg_count: 4226
+  measure_gflow: True
+  measure_mesons:
+    g5:
+      plateau_start: 24
+      plateau_end: 30
+    gk:
+      plateau_start: 22
+      plateau_end: 30
+    g5gk:
+      plateau_start: 24
+      plateau_end: 28
+    id:
+      plateau_start: 22
+      plateau_end: 30
+  measure_pcac:
+    plateau_start: 25
+    plateau_end: 30
+
+DB4M13:
+  <<: *DB4
+  L: 48
+  T: 96
+  m: -1.39
+  first_cfg: 1000
+  last_cfg: 2886
+  cfg_count: 4049
+  measure_gflow: True
+  measure_mesons:
+    g5:
+      plateau_start: 24
+      plateau_end: 45
+    gk:
+      plateau_start: 30
+      plateau_end: 41
+    g5gk:
+      plateau_start: 24
+      plateau_end: 45
+    id:
+      plateau_start: 30
+      plateau_end: 45
+  measure_pcac:
+    plateau_start: 27
+    plateau_end: 35
+
+
+
+DB5M1:
+  <<: *DB5
+  L: 12
+  T: 24
+  m: -1.22
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_gflow: True
+  measure_plaq: True
+  measure_polyakov: True
+  measure_mesons:
+    g5:
+      plateau_start: 9
+      plateau_end: 11
+    gk:
+      plateau_start: 9
+      plateau_end: 11
+    g5gk:
+      plateau_start: 7
+      plateau_end: 11
+    id:
+      plateau_start: 9
+      plateau_end: 11
+  measure_pcac:
+    plateau_start: 9
+    plateau_end: 11
+
+DB5M2:
+  <<: *DB5
+  L: 12
+  T: 24
+  m: -1.24
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_gflow: True
+  measure_plaq: True
+  measure_polyakov: True
+  measure_mesons:
+    g5:
+      plateau_start: 7
+      plateau_end: 9
+    gk:
+      plateau_start: 9
+      plateau_end: 11
+    g5gk:
+      plateau_start: 7
+      plateau_end: 9
+    id:
+      plateau_start: 7
+      plateau_end: 11
+  measure_pcac:
+    plateau_start: 9
+    plateau_end: 11
+
+DB5M3:
+  <<: *DB5
+  L: 12
+  T: 24
+  m: -1.26
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_gflow: True
+  measure_plaq: True
+  measure_polyakov: True
+  measure_mesons:
+    g5:
+      plateau_start: 8
+      plateau_end: 9
+    gk:
+      plateau_start: 9
+      plateau_end: 11
+    g5gk:
+      plateau_start: 9
+      plateau_end: 11
+    id:
+      plateau_start: 9
+      plateau_end: 11
+  measure_pcac:
+    plateau_start: 9
+    plateau_end: 11
+
+DB5M4:
+  <<: *DB5
+  L: 16
+  T: 32
+  m: -1.28
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_gflow: True
+  measure_plaq: True
+  measure_polyakov: True
+  measure_mesons:
+    g5:
+      plateau_start: 10
+      plateau_end: 14
+    gk:
+      plateau_start: 13
+      plateau_end: 15
+    g5gk:
+      plateau_start: 10
+      plateau_end: 14
+    id:
+      plateau_start: 8
+      plateau_end: 14
+  measure_pcac:
+    plateau_start: 13
+    plateau_end: 15
+
+DB5M4*:
+  <<: *DB5
+  L: 12
+  T: 24
+  m: -1.28
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_gflow: True
+  measure_plaq: True
+  measure_polyakov: True
+
+DB5M5:
+  <<: *DB5
+  L: 16
+  T: 32
+  m: -1.3
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_gflow: True
+  measure_plaq: True
+  measure_polyakov: True
+  measure_mesons:
+    g5:
+      plateau_start: 11
+      plateau_end: 15
+    gk:
+      plateau_start: 13
+      plateau_end: 15
+    g5gk:
+      plateau_start: 8
+      plateau_end: 15
+    id:
+      plateau_start: 8
+      plateau_end: 15
+  measure_pcac:
+    plateau_start: 12
+    plateau_end: 14
+
+DB5M5*:
+  <<: *DB5
+  L: 12
+  T: 24
+  m: -1.3
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_gflow: True
+  measure_plaq: True
+  measure_polyakov: True
+  measure_pcac:
+    plateau_start: 8
+    plateau_end: 10
+
+DB5M6:
+  <<: *DB5
+  L: 16
+  T: 32
+  m: -1.31
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_gflow: True
+  measure_plaq: True
+  measure_polyakov: True
+  measure_mesons:
+    g5:
+      plateau_start: 11
+      plateau_end: 14
+    gk:
+      plateau_start: 11
+      plateau_end: 14
+    g5gk:
+      plateau_start: 11
+      plateau_end: 14
+    id:
+      plateau_start: 11
+      plateau_end: 14
+  measure_pcac:
+    plateau_start: 10
+    plateau_end: 14
+
+DB5M7:
+  <<: *DB5
+  L: 16
+  T: 32
+  m: -1.32
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_gflow: True
+  measure_plaq: True
+  measure_polyakov: True
+  measure_mesons:
+    g5:
+      plateau_start: 13
+      plateau_end: 15
+    gk:
+      plateau_start: 13
+      plateau_end: 15
+    g5gk:
+      plateau_start: 12
+      plateau_end: 14
+    id:
+      plateau_start: 10
+      plateau_end: 15
+  measure_pcac:
+    plateau_start: 11
+    plateau_end: 15
+
+DB5M8:
+  <<: *DB5
+  L: 16
+  T: 32
+  m: -1.33
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_gflow: True
+  measure_plaq: True
+  measure_polyakov: True
+  measure_mesons:
+    g5:
+      plateau_start: 11
+      plateau_end: 13
+    gk:
+      plateau_start: 13
+      plateau_end: 15
+    g5gk:
+      plateau_start: 11
+      plateau_end: 13
+    id:
+      plateau_start: 11
+      plateau_end: 15
+  measure_pcac:
+    plateau_start: 12
+    plateau_end: 15
+
+
+DB6M1:
+  <<: *DB6
+  L: 16
+  T: 32
+  m: -1.16
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_gflow: True
+  measure_plaq: True
+  measure_mesons:
+    g5:
+      plateau_start: 11
+      plateau_end: 15
+    gk:
+      plateau_start: 11
+      plateau_end: 15
+    g5gk:
+      plateau_start: 11
+      plateau_end: 15
+    id:
+      plateau_start: 11
+      plateau_end: 15
+  measure_pcac:
+    plateau_start: 11
+    plateau_end: 15
+
+
+DB6M1*:
+  <<: *DB6
+  L: 12
+  T: 24
+  m: -1.16
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_gflow: True
+  measure_plaq: True
+  measure_polyakov: True
+  measure_mesons:
+    g5:
+      plateau_start: 10
+      plateau_end: 11
+    gk:
+      plateau_start: 10
+      plateau_end: 11
+    g5gk:
+      plateau_start: 10
+      plateau_end: 11
+    id:
+      plateau_start: 9
+      plateau_end: 11
+  measure_pcac:
+    plateau_start: 10
+    plateau_end: 11
+
+DB6M2:
+  <<: *DB6
+  L: 16
+  T: 32
+  m: -1.18
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_gflow: True
+  measure_plaq: True
+  measure_mesons:
+    g5:
+      plateau_start: 11
+      plateau_end: 15
+    gk:
+      plateau_start: 11
+      plateau_end: 15
+    g5gk:
+      plateau_start: 11
+      plateau_end: 15
+    id:
+      plateau_start: 11
+      plateau_end: 15
+  measure_pcac:
+    plateau_start: 11
+    plateau_end: 15
+
+DB6M2*:
+  <<: *DB6
+  L: 12
+  T: 24
+  m: -1.18
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_gflow: True
+  measure_plaq: True
+  measure_polyakov: True
+  measure_mesons:
+    g5:
+      plateau_start: 10
+      plateau_end: 11
+    gk:
+      plateau_start: 10
+      plateau_end: 11
+    g5gk:
+      plateau_start: 7
+      plateau_end: 11
+    id:
+      plateau_start: 7
+      plateau_end: 11
+  measure_pcac:
+    plateau_start: 10
+    plateau_end: 11
+
+DB6M3:
+  <<: *DB6
+  L: 16
+  T: 32
+  m: -1.2
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_gflow: True
+  measure_plaq: True
+  measure_mesons:
+    g5:
+      plateau_start: 11
+      plateau_end: 15
+    gk:
+      plateau_start: 11
+      plateau_end: 15
+    g5gk:
+      plateau_start: 11
+      plateau_end: 15
+    id:
+      plateau_start: 11
+      plateau_end: 15
+  measure_pcac:
+    plateau_start: 11
+    plateau_end: 15
+
+DB6M3*:
+  <<: *DB6
+  L: 12
+  T: 24
+  m: -1.2
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_gflow: True
+  measure_plaq: True
+  measure_polyakov: True
+  measure_mesons:
+    g5:
+      plateau_start: 10
+      plateau_end: 11
+    gk:
+      plateau_start: 10
+      plateau_end: 11
+    g5gk:
+      plateau_start: 7
+      plateau_end: 11
+    id:
+      plateau_start: 9
+      plateau_end: 11
+  measure_pcac:
+    plateau_start: 10
+    plateau_end: 11
+
+DB6M4:
+  <<: *DB6
+  L: 16
+  T: 32
+  m: -1.22
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_gflow: True
+  measure_plaq: True
+  measure_polyakov: True
+  measure_mesons:
+    g5:
+      plateau_start: 8
+      plateau_end: 15
+    gk:
+      plateau_start: 8
+      plateau_end: 15
+    g5gk:
+      plateau_start: 8
+      plateau_end: 15
+    id:
+      plateau_start: 8
+      plateau_end: 15
+  measure_pcac:
+    plateau_start: 8
+    plateau_end: 15
+
+DB6M5:
+  <<: *DB6
+  L: 16
+  T: 32
+  m: -1.24
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_gflow: True
+  measure_plaq: True
+  measure_polyakov: True
+  measure_mesons:
+    g5:
+      plateau_start: 14
+      plateau_end: 15
+    gk:
+      plateau_start: 14
+      plateau_end: 15
+    g5gk:
+      plateau_start: 8
+      plateau_end: 14
+    id:
+      plateau_start: 10
+      plateau_end: 15
+  measure_pcac:
+    plateau_start: 12
+    plateau_end: 15
+
+DB6M5*:
+  <<: *DB6
+  L: 12
+  T: 24
+  m: -1.24
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_gflow: True
+  measure_plaq: True
+  measure_polyakov: True
+  measure_pcac:
+    plateau_start: 7
+    plateau_end: 10
+
+DB6M6:
+  <<: *DB6
+  L: 16
+  T: 32
+  m: -1.26
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_gflow: True
+  measure_plaq: True
+  measure_polyakov: True
+  measure_mesons:
+    g5:
+      plateau_start: 13
+      plateau_end: 15
+    gk:
+      plateau_start: 12
+      plateau_end: 15
+    g5gk:
+      plateau_start: 10
+      plateau_end: 15
+    id:
+      plateau_start: 10
+      plateau_end: 15
+  measure_pcac:
+    plateau_start: 12
+    plateau_end: 15
+
+DB6M6*:
+  <<: *DB6
+  L: 12
+  T: 24
+  m: -1.26
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_gflow: True
+  measure_plaq: True
+  measure_polyakov: True
+
+DB6M7:
+  <<: *DB6
+  L: 24
+  T: 48
+  m: -1.28
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_gflow: True
+  measure_plaq: True
+  measure_polyakov: False
+  measure_mesons:
+    g5:
+      plateau_start: 20
+      plateau_end: 23
+    gk:
+      plateau_start: 22
+      plateau_end: 23
+    g5gk:
+      plateau_start: 14
+      plateau_end: 21
+    id:
+      plateau_start: 14
+      plateau_end: 22
+  measure_pcac:
+    plateau_start: 16
+    plateau_end: 23
+
+DB6M7*:
+  <<: *DB6
+  L: 16
+  T: 32
+  m: -1.28
+  first_cfg: 1001
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_gflow: True
+  measure_plaq: True
+  measure_polyakov: True
+  measure_mesons:
+    g5:
+      plateau_start: 12
+      plateau_end: 14
+    gk:
+      plateau_start: 12
+      plateau_end: 14
+    g5gk:
+      plateau_start: 12
+      plateau_end: 14
+    id:
+      plateau_start: 12
+      plateau_end: 14
+  measure_pcac:
+    plateau_start: 13
+    plateau_end: 14
+
+DB6M8:
+  <<: *DB6
+  L: 32
+  T: 64
+  m: -1.304
+  first_cfg: 1282
+  last_cfg: 3705
+  cfg_count: 4285
+  measure_gflow: True
+  measure_mesons:
+    g5:
+      plateau_start: 27
+      plateau_end: 31
+    gk:
+      plateau_start: 20
+      plateau_end: 31
+    g5gk:
+      plateau_start: 24
+      plateau_end: 29
+    id:
+      plateau_start: 20
+      plateau_end: 31
+  measure_pcac:
+    plateau_start: 19
+    plateau_end: 31
+
+DB6M9:
+  <<: *DB6
+  L: 48
+  T: 96
+  m: -1.31
+  first_cfg: 1000
+  last_cfg: 2932
+  cfg_count: 4141
+  measure_gflow: True
+  measure_mesons:
+    g5:
+      plateau_start: 30
+      plateau_end: 44
+    gk:
+      plateau_start: 28
+      plateau_end: 43
+    g5gk:
+      plateau_start: 30
+      plateau_end: 43
+    id:
+      plateau_start: 28
+      plateau_end: 43
+  measure_pcac:
+    plateau_start: 28
+    plateau_end: 47
+
+
+DB7M1:
+  <<: *DB7
+  L: 12
+  T: 24
+  m: -1.1
+  first_cfg: 1000
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_plaq: True
+  measure_gflow: True
+  measure_mesons:
+    g5:
+      plateau_start: 10
+      plateau_end: 11
+    gk:
+      plateau_start: 10
+      plateau_end: 11
+    g5gk:
+      plateau_start: 10
+      plateau_end: 11
+    id:
+      plateau_start: 10
+      plateau_end: 11
+  measure_pcac:
+    plateau_start: 10
+    plateau_end: 11
+
+DB7M2:
+  <<: *DB7
+  L: 12
+  T: 24
+  m: -1.12
+  first_cfg: 1000
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_plaq: True
+  measure_gflow: True
+  measure_mesons:
+    g5:
+      plateau_start: 10
+      plateau_end: 11
+    gk:
+      plateau_start: 10
+      plateau_end: 11
+    g5gk:
+      plateau_start: 10
+      plateau_end: 11
+    id:
+      plateau_start: 10
+      plateau_end: 11
+  measure_pcac:
+    plateau_start: 10
+    plateau_end: 11
+
+DB7M3:
+  <<: *DB7
+  L: 12
+  T: 24
+  m: -1.14
+  first_cfg: 1000
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_plaq: True
+  measure_gflow: True
+  measure_mesons:
+    g5:
+      plateau_start: 10
+      plateau_end: 11
+    gk:
+      plateau_start: 10
+      plateau_end: 11
+    g5gk:
+      plateau_start: 10
+      plateau_end: 11
+    id:
+      plateau_start: 10
+      plateau_end: 11
+  measure_pcac:
+    plateau_start: 10
+    plateau_end: 11
+
+DB7M4:
+  <<: *DB7
+  L: 16
+  T: 32
+  m: -1.16
+  first_cfg: 1000
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_plaq: True
+  measure_gflow: True
+  measure_mesons:
+    g5:
+      plateau_start: 12
+      plateau_end: 15
+    gk:
+      plateau_start: 12
+      plateau_end: 15
+    g5gk:
+      plateau_start: 12
+      plateau_end: 15
+    id:
+      plateau_start: 12
+      plateau_end: 15
+  measure_pcac:
+    plateau_start: 11
+    plateau_end: 15
+
+DB7M5:
+  <<: *DB7
+  L: 16
+  T: 32
+  m: -1.18
+  first_cfg: 1000
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_plaq: True
+  measure_gflow: True
+  measure_mesons:
+    g5:
+      plateau_start: 13
+      plateau_end: 15
+    gk:
+      plateau_start: 13
+      plateau_end: 15
+    g5gk:
+      plateau_start: 13
+      plateau_end: 15
+    id:
+      plateau_start: 13
+      plateau_end: 15
+  measure_pcac:
+    plateau_start: 12
+    plateau_end: 15
+
+DB7M6:
+  <<: *DB7
+  L: 16
+  T: 32
+  m: -1.2
+  first_cfg: 1000
+  last_cfg: 5000
+  cfg_count: 4000
+  measure_plaq: True
+  measure_gflow: True
+  measure_mesons:
+    g5:
+      plateau_start: 12
+      plateau_end: 15
+    gk:
+      plateau_start: 12
+      plateau_end: 15
+    g5gk:
+      plateau_start: 12
+      plateau_end: 15
+    id:
+      plateau_start: 12
+      plateau_end: 15
+  measure_pcac:
+    plateau_start: 11
+    plateau_end: 15
+
+DB7M7:
+  <<: *DB7
+  L: 24
+  T: 48
+  m: -1.21
+  first_cfg: 1000
+  last_cfg: 3095
+  cfg_count: 4090
+  measure_gflow: True
+  measure_mesons:
+    g5:
+      plateau_start: 20
+      plateau_end: 23
+    gk:
+      plateau_start: 20
+      plateau_end: 23
+    g5gk:
+      plateau_start: 20
+      plateau_end: 23
+    id:
+      plateau_start: 20
+      plateau_end: 23
+  measure_pcac:
+    plateau_start: 20
+    plateau_end: 23
+
+DB7M8:
+  <<: *DB7
+  L: 24
+  T: 48
+  m: -1.222
+  first_cfg: 1000
+  last_cfg: 3403
+  cfg_count: 4702
+  measure_gflow: True
+  measure_mesons:
+    g5:
+      plateau_start: 21
+      plateau_end: 23
+    gk:
+      plateau_start: 21
+      plateau_end: 23
+    g5gk:
+      plateau_start: 21
+      plateau_end: 23
+    id:
+      plateau_start: 21
+      plateau_end: 23
+  measure_pcac:
+    plateau_start: 17
+    plateau_end: 21
+
+DB7M9:
+  <<: *DB7
+  L: 32
+  T: 64
+  m: -1.234
+  first_cfg: 1110
+  last_cfg: 3248
+  cfg_count: 4000
+  measure_gflow: True
+  measure_mesons:
+    g5:
+      plateau_start: 27
+      plateau_end: 31
+    gk:
+      plateau_start: 26
+      plateau_end: 31
+    g5gk:
+      plateau_start: 27
+      plateau_end: 31
+    id:
+      plateau_start: 26
+      plateau_end: 31
+  measure_pcac:
+    plateau_start: 15
+    plateau_end: 31
+
+DB7M10:
+  <<: *DB7
+  L: 48
+  T: 96
+  m: -1.243
+  first_cfg: 1000
+  last_cfg: 1941
+  cfg_count: 1736
+  measure_gflow: True
+  measure_mesons:
+    g5:
+      plateau_start: 30
+      plateau_end: 47
+    gk:
+      plateau_start: 32
+      plateau_end: 48
+    g5gk:
+      plateau_start: 30
+      plateau_end: 47
+    id:
+      plateau_start: 32
+      plateau_end: 48
+  measure_pcac:
+    plateau_start: 12
+    plateau_end: 47
+  measure_modenumber:
+    method: julia
+    format: colconf
+    plot_omega_min: 0.03
+    plot_omega_max: 0.17
+    fit_omega_min: 0.03
+    fit_omega_max: 0.2
+    fit_window_length_min: 0.05
+    fit_window_length_max: 0.10
+
+
+
+Nf2DB2: &Nf2DB2
+  <<: *su2A2f
+  beta: 2.35
+
+
+Nf2DB2M1:
+  <<: *Nf2DB2
+  L: 16
+  T: 32
+  m: -0.9
+  first_cfg: 1000
+  last_cfg: 5000
+  cfg_count: 4001
+  measure_gflow: hirep
+  measure_plaq: True
+  measure_mesons:
+    g5:
+      plateau_start: 13
+      plateau_end: 15
+    gk:
+      plateau_start: 13
+      plateau_end: 15
+  measure_pcac:
+    plateau_start: 12
+    plateau_end: 15
+
+Nf2DB2M2:
+  <<: *Nf2DB2
+  L: 16
+  T: 32
+  m: -0.95
+  first_cfg: 1000
+  last_cfg: 5000
+  cfg_count: 4001
+  measure_gflow: hirep
+  measure_plaq: True
+  measure_mesons:
+    g5:
+      plateau_start: 13
+      plateau_end: 15
+    gk:
+      plateau_start: 13
+      plateau_end: 15
+    g5gk:
+      plateau_start: 13
+      plateau_end: 15
+    id:
+      plateau_start: 13
+      plateau_end: 15
+  measure_pcac:
+    plateau_start: 12
+    plateau_end: 15
+
+Nf2DB2M3:
+  <<: *Nf2DB2
+  L: 24
+  T: 48
+  m: -1.0
+  first_cfg: 1000
+  last_cfg: 5000
+  cfg_count: 4001
+  measure_gflow: hirep
+  measure_plaq: True
+  measure_mesons:
+    g5:
+      plateau_start: 20
+      plateau_end: 23
+    gk:
+      plateau_start: 20
+      plateau_end: 23
+    g5gk:
+      plateau_start: 15
+      plateau_end: 20
+    id:
+      plateau_start: 15
+      plateau_end: 19
+  measure_pcac:
+    plateau_start: 18
+    plateau_end: 23
+
+Nf2DB2M4:
+  <<: *Nf2DB2
+  L: 24
+  T: 48
+  m: -1.03
+  first_cfg: 1000
+  last_cfg: 5000
+  cfg_count: 4001
+  measure_gflow: hirep
+  measure_plaq: True
+  measure_mesons:
+    g5:
+      plateau_start: 18
+      plateau_end: 23
+    gk:
+      plateau_start: 18
+      plateau_end: 23
+    g5gk:
+      plateau_start: 17
+      plateau_end: 21
+    id:
+      plateau_start: 14
+      plateau_end: 21
+  measure_pcac:
+    plateau_start: 18
+    plateau_end: 23
+
+Nf2DB2M5:
+  <<: *Nf2DB2
+  L: 32
+  T: 64
+  m: -1.05
+  first_cfg: 1000
+  last_cfg: 3362
+  cfg_count: 4086
+  measure_gflow: hirep
+  measure_plaq: False
+  measure_mesons:
+    g5:
+      plateau_start: 22
+      plateau_end: 29
+    gk:
+      plateau_start: 25
+      plateau_end: 29
+    g5gk:
+      plateau_start: 22
+      plateau_end: 27
+    id:
+      plateau_start: 28
+      plateau_end: 32
+  measure_pcac:
+    plateau_start: 18
+    plateau_end: 27
+
+Nf2DB2M6:
+  <<: *Nf2DB2
+  L: 48
+  T: 96
+  m: -1.09
+  first_cfg: 1000
+  last_cfg: 3322
+  cfg_count: 4309
+  measure_gflow: grid
+  measure_plaq: False
+  measure_mesons:
+    g5:
+      plateau_start: 35
+      plateau_end: 42
+    gk:
+      plateau_start: 35
+      plateau_end: 42
+    g5gk:
+      plateau_start: 35
+      plateau_end: 42
+    id:
+      plateau_start: 30
+      plateau_end: 45
+  measure_pcac:
+    plateau_start: 30
+    plateau_end: 40
+
+Nf2DB2M6*:
+  <<: *Nf2DB2
+  L: 32
+  T: 64
+  m: -1.09
+  first_cfg: 1000
+  last_cfg: 3408
+  cfg_count: 4332
+  measure_gflow: hirep
+  measure_plaq: False
+  measure_mesons:
+    g5:
+      plateau_start: 26
+      plateau_end: 30
+    gk:
+      plateau_start: 28
+      plateau_end: 30
+    g5gk:
+      plateau_start: 22
+      plateau_end: 26
+    id:
+      plateau_start: 24
+      plateau_end: 28
+  measure_pcac:
+    plateau_start: 20
+    plateau_end: 32
+
+Nf2DB2M7:
+  <<: *Nf2DB2
+  L: 64
+  T: 128
+  m: -1.11
+  first_cfg: 1000
+  last_cfg: 2586
+  cfg_count: 4428
+  measure_gflow: grid
+  measure_plaq: False
+  measure_mesons:
+    g5:
+      plateau_start: 35
+      plateau_end: 45
+    gk:
+      plateau_start: 35
+      plateau_end: 45
+    g5gk:
+      plateau_start: 30
+      plateau_end: 45
+    id:
+      plateau_start: 30
+      plateau_end: 60
+  measure_pcac:
+    plateau_start: 30
+    plateau_end: 45
+
+Nf2DB2M7*:
+  <<: *Nf2DB2
+  L: 48
+  T: 96
+  m: -1.11
+  first_cfg: 1000
+  last_cfg: 3248
+  cfg_count: 3945
+  measure_gflow: False
+  measure_plaq: False
+  measure_mesons:
+    g5:
+      plateau_start: 35
+      plateau_end: 43
+    gk:
+      plateau_start: 39
+      plateau_end: 43
+    g5gk:
+      plateau_start: 30
+      plateau_end: 47
+    id:
+      plateau_start: 35
+      plateau_end: 47
+  measure_pcac:
+    plateau_start: 25
+    plateau_end: 47

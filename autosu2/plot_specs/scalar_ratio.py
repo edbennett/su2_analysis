@@ -6,11 +6,12 @@ import matplotlib.pyplot as plt
 from ..plots import set_plot_defaults
 from ..derived_observables import merge_and_hat_quantities
 
-from .common import beta_colour_marker
+from .common import beta_colour_marker, figlegend_defaults, preliminary
 
 
 def generate(data, ensembles):
-    set_plot_defaults(markersize=2, capsize=1, linewidth=0.5)
+    set_plot_defaults(markersize=2, capsize=1, linewidth=0.5,
+                      preliminary=preliminary)
 
     filename = f'final_plots/scalar_ratio.pdf'
     fig, ax = plt.subplots(figsize=(3.5, 2.5))
@@ -35,6 +36,8 @@ def generate(data, ensembles):
             (hatted_data.beta == beta)
             & ~(hatted_data.label.str.endswith('*'))
         ]
+        if data_to_plot.value_ratio.isnull().all():
+            continue
 
         ax.errorbar(
             data_to_plot.value_mpcac_mass_hat,
@@ -47,7 +50,8 @@ def generate(data, ensembles):
             ls='none'
         )
 
-    ax.legend(loc='best', frameon=False, ncol=2, columnspacing=0.5)
+    ax.legend(ncol=3, columnspacing=1, handletextpad=0, borderpad=0,
+              loc="lower center", frameon=False)
 
     ax.set_xlim((0, None))
     ax.set_ylim((0, None))

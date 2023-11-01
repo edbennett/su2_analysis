@@ -2,12 +2,20 @@
 
 from numpy import nan
 
-beta_colour_marker = [
-    (2.05, 'r', 'o'),
-    (2.1, 'g', 'x'),
-    (2.15, 'b', '^'),
-    (2.2, 'k', '3')
-]
+preliminary = False
+
+beta_colour_marker = {
+    1: [
+        (2.05, 'r', 'o'),
+        (2.1, 'g', 'x'),
+        (2.15, 'b', '^'),
+        (2.2, 'k', '3'),
+        (2.25, 'y', '*'),
+        (2.3, 'm', '4'),
+        (2.4, 'c', 'v'),
+    ],
+    2: [(2.35, "orange", "+"),]
+}
 
 bare_channel_labels = {
     'g5': r'\gamma_5',
@@ -33,29 +41,34 @@ channel_labels = {
     'sqrtsigma': r'$\sqrt{\sigma}$ string tension',
 }
 
-# TODO: get the numberes for the critical regions programmatically
-critical_ms = [-1.5256, -1.4760, -1.4289, -1.3932]
+figlegend_defaults = {
+    "loc": 'upper center',
+    "frameon": False,
+    "columnspacing": 1.0,
+    "handletextpad": 0,
+    "borderpad": 0,
+}
+
+# TODO: get the numbers for the critical regions programmatically
+critical_ms = {
+    1: [-1.5256, -1.4760, -1.4289, -1.3932, None, None, None],
+    2: [None],
+}
 
 
-def add_figure_key(fig, markers=True):
+def add_figure_key(fig, markers=True, Nf=1):
     legend_contents = [
         fig.axes[0].errorbar(
             [-1], [-1], yerr=[nan], xerr=[nan],
             color=colour,
             marker=f'{marker if markers else ","}',
-            label=f"$\\beta={beta}$")
-        for beta, colour, marker in beta_colour_marker
+            label=f"$\\beta={beta}$",
+            linestyle='',
+        )
+        for beta, colour, marker in beta_colour_marker[Nf]
     ]
 
-    fig.legend(
-        handles=legend_contents,
-        loc='upper center',
-        frameon=False,
-        ncol=4,
-        columnspacing=1.0,
-        handletextpad=0,
-        borderpad=0
-    )
+    fig.legend(handles=legend_contents, ncol=7, **figlegend_defaults)
 
 
 def generate(*args, **kwargs):

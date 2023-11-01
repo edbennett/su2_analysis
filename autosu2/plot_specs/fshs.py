@@ -5,9 +5,9 @@ from uncertainties import ufloat
 
 from ..plots import set_plot_defaults
 from ..tables import generate_table_from_content, format_value_and_error
-from ..derived_observables import merge_quantities
+from ..derived_observables import merge_no_w0
 
-from .common import beta_colour_marker, add_figure_key
+from .common import beta_colour_marker, add_figure_key, preliminary
 
 
 def sm_residual(gamma_s, data, count_valid_points=False):
@@ -61,12 +61,14 @@ def sm_residual(gamma_s, data, count_valid_points=False):
         return P_b / valid_point_count
 
 
-def do_plot(betas, merged_data):
-    filename = f'final_plots/fshs.pdf'
-    fig, axes = plt.subplots(nrows=4, figsize=(3.5, 8), sharex=True)
+def do_plot(betas, fit_results, merged_data, Nf):
+    filename = f'final_plots/fshs_Nf{Nf}.pdf'
+    fig, axes = plt.subplots(ncols=len(betas), figsize=(2.5 + 1.5 * len(betas), 3.5), sharey=True, squeeze=False)
+    axes = axes.ravel()
 
-    for gamma, ax in zip(betas, axes):
-        for beta, colour, marker in beta_colour_marker:
+    for fit_beta, ax in zip(betas, axes):
+        gamma = fit_results[fit_beta]
+        for beta, colour, marker in beta_colour_marker[Nf]:
             subset_data = merged_data[merged_data.beta == beta]
             L = subset_data.L
             ax.errorbar(
@@ -80,25 +82,25 @@ def do_plot(betas, merged_data):
                 marker=marker, color=colour, ls='none'
             )
 
-        ax.set_title(r'$\gamma_*=' f'{gamma:.3}$')
+        ax.set_title(f'$\\beta={fit_beta} \\Rightarrow \\gamma_*={gamma:.3}$')
 
-    add_figure_key(fig)
+    add_figure_key(fig, Nf=Nf)
 
     for ax in axes:
-        ax.set_ylabel('$L aM_{2^+_{\mathrm{s}}}$')
-        ax.set_ylim((0, None))
+        ax.set_xlabel(r'$L (am_{\mathrm{PCAC}})^{1/(1+\gamma_*)}$')
+        ax.set_xlim((0, None))
 
-    axes[-1].set_xlabel(r'$L (am_{\mathrm{PCAC}})^{1/(1+\gamma_*)}$')
-    axes[-1].set_xlim((0, None))
+    axes[0].set_ylabel('$L aM_{2^+_{\mathrm{s}}}$')
+    axes[0].set_ylim((0, None))
 
-    fig.tight_layout(pad=0.08, h_pad=0.5, rect=(0, 0, 1, 0.96))
+    fig.tight_layout(pad=0.08, h_pad=0.5, rect=(0, 0, 1, 0.92))
 
     fig.savefig(filename)
     plt.close(fig)
 
 
-def do_table(results, merged_data):
-    filename = f'fshs_gamma.tex'
+def do_table(results, merged_data, Nf):
+    filename = f'fshs_gamma_Nf{Nf}.tex'
     columns = r'$\beta$', None, r'$\gamma_*$', r'$N_{\mathrm{points}}$'
     table_content = []
 
@@ -116,24 +118,35 @@ def do_table(results, merged_data):
     generate_table_from_content(filename, table_content, columns)
 
 
-def generate(data, ensembles):
-    set_plot_defaults(markersize=3, capsize=0.5, linewidth=0.3)
+def generate_single_Nf(data, Nf, betas_to_plot):
+    data = data[data.Nf == Nf]
 
     observables = 'g5_mass', 'gk_mass'
     extra_observables = ('mpcac_mass', 'g5_decay_const')
     observable_labels = r'\gamma_5', r'\gamma_k'
 
-    merged_data = merge_quantities(
+    merged_data = merge_no_w0(
         data,
         observables + extra_observables
-    ).dropna(subset=('value_mpcac_mass',))
+    ).dropna(subset=('value_mpcac_mass', 'value_g5_mass'))
 
     fit_results = {}
-    for beta in 2.05, 2.1, 2.15, 2.2:
+    for beta, _, _ in beta_colour_marker[Nf]:
         fit_results[beta] = minimize(
             sm_residual, 1.0, args=merged_data[merged_data.beta == beta]
         )
 
-    do_plot(sorted(result['x'][0] for result in fit_results.values()),
-            merged_data)
-    do_table(fit_results, merged_data)
+    do_plot(
+        betas_to_plot,
+        {beta: fit_results[beta]['x'][0] for beta, _, _ in beta_colour_marker[Nf]},
+        merged_data,
+        Nf,
+    )
+    do_table(fit_results, merged_data, Nf)
+
+
+def generate(data, ensembles):
+    set_plot_defaults(markersize=3, capsize=0.5, linewidth=0.3,
+                      preliminary=preliminary)
+    generate_single_Nf(data, 1, [2.05, 2.2, 2.4])
+    generate_single_Nf(data, 2, [2.35])

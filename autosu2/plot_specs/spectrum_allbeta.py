@@ -6,14 +6,15 @@ from ..plots import set_plot_defaults
 from ..derived_observables import merge_and_hat_quantities
 
 from .common import (
-    beta_colour_marker, critical_ms, channel_labels, add_figure_key
+    beta_colour_marker, critical_ms, channel_labels, add_figure_key,
+    preliminary
 )
 
 use_pcac = True
 
 plots = [
     {
-        'filename': 'final_plots/decayconst.pdf',
+        'filename': 'final_plots/decayconst_Nf{Nf}.pdf',
         'figsize': (3.5, 2.5),
         'subplots': [
             {
@@ -28,8 +29,8 @@ plots = [
         ]
     },
     {
-        'filename': 'final_plots/masses.pdf',
-        'figsize': (3.5, 5),
+        'filename': 'final_plots/masses_Nf{Nf}.pdf',
+        'figsize': (7, 3.5),
         'subplots': [
             {
                 'ylabel': r'$w_0 M$',
@@ -53,7 +54,6 @@ plots = [
                 ]
             },
             {
-                'ylabel': r'$w_0 M$',
                 'series': [
                     {
                         'channel': 'Epp',
@@ -78,29 +78,30 @@ plots = [
 ]
 
 
-def do_plot(hatted_data, plot_spec):
+def do_plot(hatted_data, plot_spec, Nf=1):
     fig, axes = plt.subplots(
-        nrows=len(plot_spec['subplots']),
-        sharex=True,
+        ncols=len(plot_spec['subplots']),
+        sharey=True,
         figsize=plot_spec['figsize']
     )
     if len(plot_spec['subplots']) == 1:
         axes = [axes]
 
-    if use_pcac:
-        axes[-1].set_xlabel(r'$w_0 m_{\mathrm{PCAC}}$')
-    else:
-        axes[-1].set_xlabel(r'$w_0 (m - m_c)$')
-
-    markers = '.', 'x', '+', '^', 'v', '1', '2', '*'
+    markers = '.', 'x', '*', '^', 'v', '1', '2', '+'
 
     for subplot, ax in zip(plot_spec['subplots'], axes):
-        ax.set_ylabel(subplot['ylabel'])
+        if use_pcac:
+            ax.set_xlabel(r'$w_0 m_{\mathrm{PCAC}}$')
+        else:
+            ax.set_xlabel(r'$w_0 (m - m_c)$')
+        if 'ylabel' in subplot:
+            ax.set_ylabel(subplot['ylabel'])
 
-        for (beta, colour, _), m_c in zip(beta_colour_marker, critical_ms):
+        for (beta, colour, _), m_c in zip(beta_colour_marker[Nf], critical_ms[Nf]):
             data_to_plot = hatted_data[
-                (hatted_data.beta == beta) &
-                ~(hatted_data.label.str.endswith('*'))
+                (hatted_data.beta == beta)
+                & ~(hatted_data.label.str.endswith('*'))
+                & (hatted_data.Nf == Nf)
             ]
             if use_pcac:
                 mhat = data_to_plot.value_mpcac_mass_hat
@@ -124,29 +125,31 @@ def do_plot(hatted_data, plot_spec):
             ax.scatter([-1], [-1], marker=marker, color='black',
                        label=f'{channel_labels[series["channel"]]}')
 
-        # Make room for legend
-        ax.set_ylim((0, None))
-        ylim = list(ax.get_ylim())
-        ylim[1] *= 1.25
-        ax.set_ylim(ylim)
         ax.legend(loc='upper left', frameon=False, handletextpad=0,
                   ncol=2, columnspacing=0.3, borderaxespad=0.2,
                   fontsize='small')
+        ax.set_xlim((0, None))
 
-    ax.set_xlim((0, None))
-    add_figure_key(fig, markers=False)
+    # Make room for legend
+    axes[0].set_ylim((0, None))
+    ylim = list(ax.get_ylim())
+    ylim[1] *= 1.2
+    axes[0].set_ylim(ylim)
+
+    add_figure_key(fig, markers=False, Nf=Nf)
 
     fig.tight_layout(
-        pad=0.12,
+        pad=0,
         h_pad=0.5,
-        rect=(0.05, 0, 1, 1 - 0.3 / plot_spec['figsize'][1])
+        rect=(0.02, 0.01, 1, 1 - 0.3 / plot_spec['figsize'][1])
     )
-    fig.savefig(plot_spec['filename'])
+    fig.savefig(plot_spec['filename'].format(Nf=Nf))
     plt.close(fig)
 
 
 def generate(data, ensembles):
-    set_plot_defaults(markersize=3, capsize=0.5, linewidth=0.5)
+    set_plot_defaults(markersize=3, capsize=0.5, linewidth=0.5,
+                      preliminary=preliminary)
 
     columns_to_hat = ['mpcac_mass'] + [
         '{channel}_{quantity}'.format(**series).strip('_')
@@ -158,4 +161,5 @@ def generate(data, ensembles):
     hatted_data = merge_and_hat_quantities(data, columns_to_hat)
 
     for plot_spec in plots:
-        do_plot(hatted_data, plot_spec)
+        for Nf in 1, 2:
+            do_plot(hatted_data, plot_spec, Nf=Nf)
