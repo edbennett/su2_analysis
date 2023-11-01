@@ -16,7 +16,22 @@ from numpy import isnan
 from pandas import read_sql
 
 Base = declarative_base()
-database_location = 'sqlite:///su2.sqlite'
+
+database_location = None
+engine = None
+Session = None
+
+
+def init_engine(new_database_location='sqlite:///su2.sqlite'):
+    # NB: Called automatically on module load, see below.
+
+    global database_location, engine, Session
+
+    database_location = new_database_location
+    engine = create_engine(new_database_location)
+    Session = sessionmaker(bind=engine)
+
+    Base.metadata.create_all(engine)
 
 
 class Simulation(Base):
@@ -83,11 +98,7 @@ class Measurement(Base):
 #        name='_each_observable_once'
 #    ),)
 
-
-engine = create_engine(database_location)
-Session = sessionmaker(bind=engine)
-Base.metadata.create_all(engine)
-
+init_engine()
 
 @contextmanager
 def session_scope():
