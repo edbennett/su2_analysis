@@ -69,6 +69,7 @@ def do_single_analysis(label, ensemble,
             flows_file=f'raw_data/{subdirectory}/out_wflow',
             output_file_history=f'processed_data/{subdirectory}/Q.pdf',
             output_file_autocorr=f'processed_data/{subdirectory}/Q_corr.pdf',
+            reader=ensemble["measure_gflow"],
         )
         if result and DEBUG:
             print("    {}".format(
@@ -86,7 +87,8 @@ def do_single_analysis(label, ensemble,
             filename=f'raw_data/{subdirectory}/out_wflow',
             plot_filename=(
                 f'processed_data/{subdirectory}/flows.pdf'
-            )
+            ),
+            reader=ensemble["measure_gflow"],
         )
         if result and DEBUG:
             w0p, w0c = result
@@ -103,6 +105,7 @@ def do_single_analysis(label, ensemble,
                     W0=W0,
                     simulation_descriptor=ensemble['descriptor'],
                     filename=f'raw_data/{subdirectory}/out_wflow',
+                    reader=ensemble["measure_gflow"],
                 )
                 if result and DEBUG:
                     w0p, w0c = result
@@ -119,7 +122,8 @@ def do_single_analysis(label, ensemble,
             filename=f'raw_data/{subdirectory}/out_wflow',
             plot_filename=(
                 f'processed_data/{subdirectory}/flows_t0.pdf'
-            )
+            ),
+            reader=ensemble["measure_gflow"],
         )
         if result and DEBUG:
             s8t0p, s8t0c = result
@@ -136,6 +140,7 @@ def do_single_analysis(label, ensemble,
                     E0=E0,
                     simulation_descriptor=ensemble['descriptor'],
                     filename=f'raw_data/{subdirectory}/out_wflow',
+                    reader=ensemble["measure_gflow"],
                 )
                 if result and DEBUG:
                     s8t0p, s8t0c = result
