@@ -12,6 +12,7 @@ final_tables/*
 final_plots/*
 !*/.git_keep
 *.sqlite
+*.h5
 *.yaml
 *.csv
 *.dat
