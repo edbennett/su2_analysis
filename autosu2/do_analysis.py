@@ -17,6 +17,7 @@ from .fit_effective_mass import plot_measure_and_save_mpcac
 from .one_loop_matching import do_one_loop_matching
 from .polyakov import fit_plot_and_save_polyakov_loops
 from .modenumber import do_modenumber_fit
+from .modenumber_julia import wrap_modenumber_fit_julia
 
 
 DEBUG = True
@@ -239,8 +240,21 @@ def do_single_analysis(label, ensemble,
             for direction, result in enumerate(fit_results):
                 print(f'    Direction {direction}:', result)
 
-    if ensemble.get('measure_modenumber', False):
-        # Mode number analysis for anomalous dimension
+    measure_modenumber = ensemble.get('measure_modenumber', None)
+    # Mode number analysis for anomalous dimension
+    if measure_modenumber and measure_modenumber["method"] == "julia":
+        if DEBUG:
+            print(f"  - Mode number (Julia)")
+
+        modenumber_result = wrap_modenumber_fit_julia(
+            ensemble=ensemble,
+            modenumber_directory=f'raw_data/{subdirectory}',
+            results_filename=f'processed_data/{subdirectory}/modenumber_fit_julia.csv',
+        )
+        if (modenumber_result is None) and DEBUG:
+            print('    Already up to date')
+
+    elif measure_modenumber:
         if DEBUG:
             print(f"  - Mode number")
         modenumber_result = do_modenumber_fit(

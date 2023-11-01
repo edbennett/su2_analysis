@@ -1,0 +1,12 @@
+[deps]
+ArgParse = "c7e460c6-2fb9-53a9-8c5b-16f535851c63"
+DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
+LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
+LsqFit = "2fda8390-95c7-5789-9bda-21331edee243"
+Measurements = "eff96d63-e80a-5855-80a2-b1b0885c5ab7"
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
+PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+jkvar = "e4585d4d-55b1-41d7-ac86-99e4a5f99749"
+modenumber = "478558b9-4adc-4341-8c84-408776520b5d"
