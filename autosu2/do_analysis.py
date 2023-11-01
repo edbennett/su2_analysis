@@ -265,15 +265,16 @@ def do_single_analysis(label, ensemble,
             print('    Already up to date')
 
 
-def do_analysis(ensembles, **kwargs):
+def do_analysis(ensembles, single_ensemble=None, **kwargs):
     for label, ensemble in ensembles.items():
-        do_single_analysis(label, ensemble, **kwargs)
+        if (not single_ensemble) or label == single_ensemble:
+            do_single_analysis(label, ensemble, **kwargs)
 
 
 def output_results(only=None, ensembles=None):
     data = get_dataframe()
 
-    for object_type in ('table', 'plot'):
+    for object_type in ('table', 'plot', 'data'):
         objects = [import_module(f'autosu2.{object_type}_specs.' + module[:-3])
                    for module in listdir(f'autosu2/{object_type}_specs')
                    if module[-3:] == '.py' and module[0] != '.']
@@ -303,8 +304,10 @@ def main():
     parser.add_argument('--ensembles', default='ensembles.yaml')
     parser.add_argument('--skip_mesons', action='store_true')
     parser.add_argument('--skip_calculation', action='store_true')
+    parser.add_argument('--skip_output', action='store_true')
     parser.add_argument('--only', default=None)
     parser.add_argument('--quenched', action='store_true')
+    parser.add_argument("--single_ensemble", default=None)
     args = parser.parse_args()
 
     ensembles = filter_complete(
@@ -315,14 +318,18 @@ def main():
     if args.skip_calculation or args.only:
         print("Skipping calculation as requested")
     else:
-        do_analysis(ensembles,
-                    ensembles_date=ensembles_date,
-                    skip_mesons=args.skip_mesons,
-                    only=args.only,
-                    quenched=args.quenched)
+        do_analysis(
+            ensembles,
+            ensembles_date=ensembles_date,
+            skip_mesons=args.skip_mesons,
+            only=args.only,
+            quenched=args.quenched,
+            single_ensemble=args.single_ensemble
+        )
 
-    print("Outputting results:")
-    output_results(args.only, ensembles=ensembles)
+    if not args.skip_output:
+        print("Outputting results:")
+        output_results(args.only, ensembles=ensembles)
 
 
 if __name__ == '__main__':
