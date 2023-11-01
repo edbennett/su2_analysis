@@ -4,6 +4,9 @@ from numpy import argmax
 from matplotlib.pyplot import subplots, close
 from argparse import ArgumentParser
 
+from flow_analysis.measurements.scales import compute_wt_t, measure_w0
+from flow_analysis.readers import readers
+
 from .bootstrap import basic_bootstrap, sample_bootstrap_1d, bootstrap_1d
 from .data import get_flows_from_raw
 from .db import (
@@ -16,52 +19,6 @@ from .data import get_filename
 DEFAULT_W0 = 0.2
 
 
-def ensemble_w0(times, Es, W0, ax=None, plot_label=None):
-    h = times[1] - times[0]
-    t2E = times ** 2 * Es
-    tdt2Edt = times[1:-1] * (t2E[:, 2:] - t2E[:, :-2]) / (2 * h)
-    tdt2Edt_samples = sample_bootstrap_1d(tdt2Edt)
-
-    if ax:
-        ax.errorbar(
-            times[1:-1],
-            tdt2Edt_samples.mean(axis=0),
-            yerr=tdt2Edt_samples.std(axis=0),
-            fmt='.',
-            label=plot_label
-        )
-
-    positions = argmax(tdt2Edt_samples > W0, axis=1)
-    W_positions_minus_one = tdt2Edt_samples[tuple(zip(*enumerate(positions - 1)))]
-    W_positions = tdt2Edt_samples[tuple(zip(*enumerate(positions)))]
-    w0_squared = times[positions] + h * (
-        (W0 - W_positions_minus_one) /
-        (W_positions - W_positions_minus_one)
-    )
-    if min(positions) == 0:
-        bad_ratio = sum(positions == 0) / len(positions)
-        warnings.warn(f"w0: {bad_ratio:%} of samples do not reach W0 = {W0}")
-        w0_squared = w0_squared[positions > 0]
-
-    return w0_squared ** 0.5
-
-
-def measure_w0(filename, W0, bin_size=1, ax=None):
-    '''Reads flows from`filename`, and finds the value t where  W(t) == W0.
-    Plots flows on `ax` if it is given.
-
-    Returns (w0p, w0p_error), (w0c, w0c_error)'''
-
-    trajectories, times, Eps, Ecs, _ = get_flows_from_raw(filename, bin_size)
-    bs_w0ps = ensemble_w0(times, Eps, W0, ax=ax, plot_label=r'$w_0^p$')
-    bs_w0cs = ensemble_w0(times, Ecs, W0, ax=ax, plot_label=r'$w_0^c$')
-
-    w0p = bs_w0ps.mean(), bs_w0ps.std()
-    w0c = bs_w0cs.mean(), bs_w0cs.std()
-
-    return w0p, w0c
-
-
 def plot_measure_and_save_w0(W0,
                              simulation_descriptor=None,
                              filename_formatter=None,
@@ -69,7 +26,7 @@ def plot_measure_and_save_w0(W0,
                              plot_filename_formatter=None,
                              plot_filename=None,
                              force=False,
-                             bin_size=1):
+                             reader="hirep"):
     '''Measure w0 via plaquette and clover for a given simulation described
     by `simulation_descriptor`, with gradient flow output file in either
     `filename_formatter(simulation_descriptor)` or `filename`.
@@ -97,23 +54,26 @@ def plot_measure_and_save_w0(W0,
         # Already up to date
         return
 
-    if simulation_descriptor and measurement_exists(
-            simulation_descriptor, 'Q_tau_exp'
-    ):
-        bin_size = int(
-            get_measurement(simulation_descriptor, 'Q_tau_exp').value
-        ) + 1
+    results = []
+    flows = readers[reader](filename)
 
     if plot_filename:
         fig, ax = subplots()
-    else:
-        fig, ax = None, None
 
-    w0p, w0c = measure_w0(filename, W0, bin_size=bin_size, ax=ax)
+    for operator, suffix in ("plaq", "p"), ("sym", "c"):
+        try:
+            w0 = measure_w0(flows, W0, operator=operator)
+        except ValueError:
+            w0 = None
 
-    if simulation_descriptor:
-        add_measurement(simulation_descriptor, 'w0p', *w0p, free_parameter=W0)
-        add_measurement(simulation_descriptor, 'w0c', *w0c, free_parameter=W0)
+        results.append(w0)
+
+        if w0 and simulation_descriptor:
+            add_measurement(simulation_descriptor, f'w0{suffix}', w0, free_parameter=W0)
+
+        if plot_filename:
+            w_mean, w_error = compute_wt_t(flows, W0)
+            ax.errorbar(flows.times[1:-1], w_mean, yerr=w_error, fmt=".", label=f"$w_0^{suffix}$")
 
     if plot_filename:
         ax.set_xlabel(r'$t$')
@@ -124,7 +84,7 @@ def plot_measure_and_save_w0(W0,
         fig.savefig(plot_filename)
         close(fig)
 
-    return w0p, w0c
+    return results
 
 
 def main():
@@ -134,7 +94,6 @@ def main():
     parser.add_argument('--W0', default=DEFAULT_W0, type=float)
     parser.add_argument('--plot', action='store_true')
     parser.add_argument('--silent', action='store_true')
-    parser.add_argument('--bin_size', default=1, type=int)
     args = parser.parse_args()
 
     if not args.output_filename_prefix:
@@ -149,25 +108,16 @@ def main():
         W0=args.W0,
         filename=args.filename,
         plot_filename=plot_filename,
-        bin_size=args.bin_size
     )
     if result:
         w0p, w0c = result
 
         if not args.silent:
-            print(f"w0p: {w0p[0]} ± {w0p[1]}")
-            print(f"w0c: {w0c[0]} ± {w0c[1]}")
+            print(f"w0p: {w0p}")
+            print(f"w0c: {w0c}")
 
     elif not args.silent:
         print("No results returned.")
-
-    # write_results(
-    #     filename=get_output_filename(
-    #         args.output_filename_prefix, 'w0', filetype='dat'
-    #     ),
-    #     headers=('w0p', 'w0p_error', 'w0c', 'w0c_error'),
-    #     values_set=(w0p, w0c)
-    # )
 
 
 if __name__ == '__main__':

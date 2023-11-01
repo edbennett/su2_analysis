@@ -1,6 +1,9 @@
 from numpy import argmax
 from matplotlib.pyplot import subplots, close
 
+from flow_analysis.measurements.scales import compute_t2E_t, measure_sqrt_8t0
+from flow_analysis.readers import readers
+
 from .bootstrap import basic_bootstrap, bootstrap_1d
 from .data import get_flows_from_raw
 from .db import (
@@ -12,47 +15,6 @@ from .data import get_filename
 DEFAULT_E0 = 0.2
 
 
-def ensemble_sqrt_8t0(times, Es, E0, ax=None, plot_label=None):
-    h = times[1] - times[0]
-    t2E = times ** 2 * Es
-    if ax:
-        t2E_avg, t2E_err = bootstrap_1d(t2E)
-
-        ax.errorbar(
-            times, t2E_avg, yerr=t2E_err,
-            fmt='.',
-            label=plot_label
-        )
-    positions = argmax(t2E > E0, axis=1)
-
-    T_positions_minus_one = t2E[tuple(zip(*enumerate(positions - 1)))]
-    T_positions = t2E[tuple(zip(*enumerate(positions)))]
-
-    t0 = times[positions] + h * (
-        (E0 - T_positions_minus_one) /
-        (T_positions - T_positions_minus_one)
-    )
-    return (8 * t0) ** 0.5
-
-
-def measure_t0(filename, E0, bin_size=1, ax=None):
-    '''Reads flows from`filename`, and finds the value t where  E(t) == `E0`.
-    Plots flows on `ax` if it is given.
-
-    Returns (s8t0p, s8t0p_error), (s8t0c, s8t0c_error)'''
-
-    trajectories, times, Eps, Ecs, _ = get_flows_from_raw(filename, bin_size)
-    s8t0ps = ensemble_sqrt_8t0(times, Eps, E0, ax=ax,
-                               plot_label=r'$\sqrt{8t_0^p}$')
-    s8t0cs = ensemble_sqrt_8t0(times, Ecs, E0, ax=ax,
-                               plot_label=r'$\sqrt{8t_0^c}$')
-
-    s8t0p = basic_bootstrap(s8t0ps)
-    s8t0c = basic_bootstrap(s8t0cs)
-
-    return s8t0p, s8t0c
-
-
 def plot_measure_and_save_sqrt_8t0(E0,
                                    simulation_descriptor=None,
                                    filename_formatter=None,
@@ -60,7 +22,7 @@ def plot_measure_and_save_sqrt_8t0(E0,
                                    plot_filename_formatter=None,
                                    plot_filename=None,
                                    force=False,
-                                   bin_size=1):
+                                   reader="hirep"):
     '''Measure sqrt{8t0} via plaquette and clover for a given simulation
     described by `simulation_descriptor`, with gradient flow output file in
     either `filename_formatter(simulation_descriptor)` or `filename`.
@@ -88,25 +50,28 @@ def plot_measure_and_save_sqrt_8t0(E0,
         # Already up to date
         return
 
-    if simulation_descriptor and measurement_exists(
-            simulation_descriptor, 'Q_tau_exp'
-    ):
-        bin_size = int(
-            get_measurement(simulation_descriptor, 'Q_tau_exp').value
-        ) + 1
+    results = []
+    flows = readers[reader](filename)
 
     if plot_filename:
         fig, ax = subplots()
     else:
         fig, ax = None, None
 
-    s8t0p, s8t0c = measure_t0(filename, E0, bin_size=bin_size, ax=ax)
+    for operator, suffix in ("plaq", "p"), ("sym", "c"):
+        try:
+            s8t0 = measure_sqrt_8t0(flows, E0, operator=operator)
+        except ValueError:
+            s8t0 = None
 
-    if simulation_descriptor:
-        add_measurement(simulation_descriptor, 's8t0p', *s8t0p,
-                        free_parameter=E0)
-        add_measurement(simulation_descriptor, 's8t0c', *s8t0c,
-                        free_parameter=E0)
+        results.append(s8t0)
+
+        if s8t0 and simulation_descriptor:
+            add_measurement(simulation_descriptor, f's8t0{suffix}', s8t0, free_parameter=E0)
+
+        if plot_filename:
+            t2E_mean, t2E_error = compute_t2E_t(flows, operator=operator)
+            ax.errorbar(flows.times, t2E_mean, yerr=t2E_error, fmt=".", label=f"$\\sqrt{{8t_0^{suffix}}}$")
 
     if plot_filename:
         ax.set_xlabel(r'$t$')
@@ -117,4 +82,4 @@ def plot_measure_and_save_sqrt_8t0(E0,
         fig.savefig(plot_filename)
         close(fig)
 
-    return s8t0p, s8t0c
+    return results

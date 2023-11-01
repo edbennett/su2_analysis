@@ -7,3 +7,5 @@ uncertainties
 numba
 pyyaml
 lsqfit
+./libs/flow_analysis
+./libs/meson_analysis

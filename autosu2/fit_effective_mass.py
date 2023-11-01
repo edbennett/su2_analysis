@@ -1,4 +1,5 @@
 from argparse import ArgumentParser
+import logging
 
 from .plots import do_eff_mass_plot, do_correlator_plot, set_plot_defaults
 from .data import get_target_correlator, get_output_filename
@@ -6,55 +7,37 @@ from .db import (
     measurement_is_up_to_date, add_measurement, measurement_exists,
     get_measurement, purge_measurement
 )
-from .bootstrap import (bootstrap_correlators, bootstrap_pcac_eff_mass,
-                        BOOTSTRAP_SAMPLE_COUNT)
-from .fitting import minimize_chisquare
 from .fit_correlation_function import (
     channel_set_options, symmetries_options, quantity_options, Incomplete
 )
 
+from meson_analysis.fits import pcac_eff_mass, fit_pcac
+from meson_analysis.readers import read_correlators_hirep
+
 
 def process_mpcac(
         correlator_filename,
-        NT, NS,
-        initial_configuration=0, bin_size=1,
-        bootstrap_sample_count=BOOTSTRAP_SAMPLE_COUNT,
         plateau_start=None, plateau_end=None,
         eff_mass_plot_ymin=None, eff_mass_plot_ymax=None,
         correlator_lowerbound=None, correlator_upperbound=None,
         output_filename_prefix='',
-        raw_correlators=True
 ):
     set_plot_defaults()
 
-    target_correlator_sets, valence_masses = get_target_correlator(
-        correlator_filename, channel_set_options['g5'], NT, NS,
-        symmetries_options['g5'], initial_configuration, bin_size=bin_size,
-        from_raw=raw_correlators
-    )
+    correlators = read_correlators_hirep(correlator_filename)
+    valence_masses = sorted(set(correlators.correlators.valence_mass))
 
     fit_results_set = []
 
-    for target_correlators, valence_mass in zip(
-            target_correlator_sets, valence_masses
-    ):
-        (bootstrap_mean_correlators, bootstrap_error_correlators,
-         bootstrap_correlator_samples_set) = bootstrap_correlators(
-             target_correlators
-         )
-
-        (
-            bootstrap_mean_eff_mass, bootstrap_error_eff_mass,
-            mass, mass_error, chisquare
-        ) = bootstrap_pcac_eff_mass(
-            bootstrap_correlator_samples_set,
-            plateau_start,
-            plateau_end
-        )
+    for valence_mass in valence_masses:
+        try:
+            eff_mass = pcac_eff_mass(correlators, valence_mass=valence_mass)
+        except ValueError:
+            logging.warn("pyerrors can't cope with this; skipping.")
+            continue
 
         do_eff_mass_plot(
-            bootstrap_mean_eff_mass,
-            bootstrap_error_eff_mass,
+            eff_mass,
             get_output_filename(output_filename_prefix, 'effmass',
                                 f'{valence_mass}_mpcac'),
             ymin=eff_mass_plot_ymin,
@@ -64,11 +47,12 @@ def process_mpcac(
         if not (plateau_start and plateau_end):
             continue
 
-        fit_results_set.append(((mass, mass_error), chisquare))
+        result = fit_pcac(correlators, [plateau_start, plateau_end], filters={"valence_mass": valence_mass}, full=True)
+
+        fit_results_set.append((result[0], result.chisquare_by_dof))
 
         do_eff_mass_plot(
-            bootstrap_mean_eff_mass,
-            bootstrap_error_eff_mass,
+            eff_mass,
             get_output_filename(output_filename_prefix,
                                 'effmass_withfit',
                                 channel=f'{valence_mass}_mpcac',
@@ -76,8 +60,7 @@ def process_mpcac(
                                 tend=plateau_end),
             ymin=eff_mass_plot_ymin,
             ymax=eff_mass_plot_ymax,
-            m=mass,
-            m_error=mass_error,
+            m=result[0],
             tmin=plateau_start - 0.5,
             tmax=plateau_end - 0.5
         )
@@ -122,22 +105,9 @@ def plot_measure_and_save_mpcac(simulation_descriptor, correlator_filename,
     if not need_to_run:
         return
 
-    if simulation_descriptor and measurement_exists(
-            simulation_descriptor, 'Q_tau_exp'
-    ):
-        bin_size = int(
-            get_measurement(simulation_descriptor, 'Q_tau_exp').value
-        ) + 1
-
     fit_results_set, valence_masses = process_mpcac(
         correlator_filename,
-        simulation_descriptor['T'],
-        simulation_descriptor['L'],
-        initial_configuration=simulation_descriptor.get(
-            'initial_configuration', 0
-        ),
         output_filename_prefix=output_filename_prefix,
-        bin_size=bin_size,
         **meson_parameters
     )
 
@@ -148,7 +118,7 @@ def plot_measure_and_save_mpcac(simulation_descriptor, correlator_filename,
             output_valence_masses = valence_masses
         for valence_mass, values in zip(output_valence_masses,
                                         fit_results_set):
-            add_measurement(simulation_descriptor, 'mpcac_mass', *values[0],
+            add_measurement(simulation_descriptor, 'mpcac_mass', values[0],
                             valence_mass=valence_mass)
             add_measurement(simulation_descriptor, 'mpcac_chisquare', 
                             values[1], valence_mass=valence_mass)
@@ -160,11 +130,8 @@ def main():
     parser = ArgumentParser()
 
     parser.add_argument('--correlator_filename', required=True)
-    parser.add_argument('--channel', choices=('g5', 'gk', 'g5gk'),
-                        required=True)
     parser.add_argument('--NT', required=True, type=int)
     parser.add_argument('--NS', required=True, type=int)
-    parser.add_argument('--bin_size', default=1, type=int)
     parser.add_argument('--initial_configuration', default=0, type=int)
     parser.add_argument('--bootstrap_sample_count', default=200, type=int)
     parser.add_argument('--silent', action='store_true')
@@ -174,12 +141,8 @@ def main():
     parser.add_argument('--plateau_end', default=None, type=int)
     parser.add_argument('--correlator_lowerbound', default=0.0, type=float)
     parser.add_argument('--correlator_upperbound', default=None, type=float)
-    parser.add_argument('--optimizer_intensity', default='default',
-                        choices=('default', 'intense'))
     parser.add_argument('--output_filename_prefix', default=None)
     parser.add_argument('--ignore', action='store_true')
-    parser.add_argument('--no_decay_const', action='store_true')
-    parser.add_argument('--raw_correlators', action='store_true')
     args = parser.parse_args()
 
     meson_parameters = {
@@ -187,16 +150,11 @@ def main():
             'eff_mass_plot_ymin', 'eff_mass_plot_ymax',
             'plateau_start', 'plateau_end',
             'correlator_lowerbound', 'correlator_upperbound',
-            'optimizer_intensity',
-            'no_decay_const',
-            'raw_correlators'
         ]
     }
     simulation_descriptor = {
         'L': args.NS,
         'T': args.NT,
-        'delta_traj': args.bin_size,
-        'initial_configuration': args.initial_configuration
     }
     if not args.ignore:
         try:
@@ -216,12 +174,10 @@ def main():
                 for valence_mass, fit_results in zip(
                         valence_masses, fit_results_set
                 ):
-                    mass, mass_error = fit_results[0][0]
-                    chisquare_value = fit_results[1]
+                    mass, chisquare_value = fit_results
 
-                    print(f'{args.channel} mass: {mass} ± {mass_error}')
-                    print(f'{args.channel} chi-square: '
-                          f'{chisquare_value}')
+                    print(f'PCAC mass: {mass}')
+                    print(f'PCAC chi-square: {chisquare_value}')
 
 
 if __name__ == '__main__':

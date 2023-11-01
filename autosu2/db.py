@@ -9,7 +9,8 @@ from sqlalchemy.orm import relationship, backref, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from uncertainties import ufloat
+from pyerrors import Obs
+from uncertainties import UFloat, ufloat
 
 from numpy import isnan
 from pandas import read_sql
@@ -190,6 +191,15 @@ def add_measurement(simulation_descriptor, observable, value, uncertainty=None,
     Ensures that a simulation exists to associate the measurement with,
     then checks if an existing measurement exists, and if so updates it.
     Otherwise creates a new measurement and stores the result there.'''
+
+    if isinstance(value, UFloat):
+        assert uncertainty is None
+        uncertainty = value.std_dev
+        value = value.nominal_value
+    elif isinstance(value, Obs):
+        assert uncertainty is None
+        uncertainty = value.dvalue
+        value = value.value
 
     if not isnan(value):
         with session_scope() as session:

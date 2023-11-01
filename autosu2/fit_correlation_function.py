@@ -1,15 +1,18 @@
 from argparse import ArgumentParser
+import logging
+
+from meson_analysis.fits import mean_multi_eff_mass, combine_multi_correlators, fit_multi_correlators
+from meson_analysis.fit_forms import get_fit_form
+from meson_analysis.readers import read_correlators_hirep
 
 from .plots import do_eff_mass_plot, do_correlator_plot, set_plot_defaults
 from .data import get_target_correlator, get_output_filename
 from .db import (
     measurement_is_up_to_date, add_measurement, purge_measurement,
-    measurement_exists, get_measurement
+    measurement_exists, get_measurement, single_simulation_exists,
 )
 from .bootstrap import (bootstrap_correlators, bootstrap_eff_masses,
                         BOOTSTRAP_SAMPLE_COUNT)
-from .fitting import (minimize_chisquare, ps_fit_form, ps_av_fit_form,
-                      v_fit_form)
 
 
 channel_set_options = {
@@ -25,10 +28,10 @@ correlator_names_options = {
     'g5': ('g5', 'g5_g0g5_re'),
     'g5_mass': ('g5',),
     'id': ('id',),
-    'gk': ('gk'),
-    'g5gk': ('g5gk'),
-    'g0gk': ('g0gk'),
-    'g0g5gk': ('g0g5gk'),
+    'gk': ('gk',),
+    'g5gk': ('g5gk',),
+    'g0gk': ('g0gk',),
+    'g0g5gk': ('g0g5gk',),
 }
 channel_latexes_options = {
     'g5': (r'\gamma_5,\gamma_5', r'\gamma_0\gamma_5,\gamma_5'),
@@ -40,13 +43,13 @@ channel_latexes_options = {
     'g0g5gk': (r'\gamma_0 \gamma_5 \gamma_k,\gamma_0 \gamma_5 \gamma_k',),
 }
 fit_forms_options = {
-    'g5': (ps_fit_form, ps_av_fit_form),
-    'g5_mass': (v_fit_form,),
-    'id': (v_fit_form,),
-    'gk': (v_fit_form,),
-    'g5gk': (v_fit_form,),
-    'g0gk': (v_fit_form,),
-    'g0g5gk': (v_fit_form,),
+    'g5': ("ps", "ps_av"),
+    'g5_mass': ("v",),
+    'id': ("v",),
+    'gk': ("v",),
+    'g5gk': ("v",),
+    'g0gk': ("v",),
+    'g0g5gk': ("v",),
 }
 symmetries_options = {
     'g5': (+1, -1),
@@ -86,7 +89,7 @@ def process_correlator(
         correlator_filename,
         channel_name, channel_set, channel_latexes, symmetries,
         correlator_names, fit_forms, NT, NS, parameter_ranges,
-        initial_configuration=0, bin_size=1,
+        initial_configuration=0,
         bootstrap_sample_count=BOOTSTRAP_SAMPLE_COUNT,
         plateau_start=None, plateau_end=None,
         eff_mass_plot_ymin=None, eff_mass_plot_ymax=None,
@@ -95,45 +98,40 @@ def process_correlator(
         raw_correlators=True, _iter=0, maxiter=4
 ):
     set_plot_defaults()
-    target_correlator_sets, valence_masses = get_target_correlator(
-        correlator_filename, channel_set, NT, NS, symmetries,
-        initial_configuration, bin_size=bin_size,
-        from_raw=raw_correlators
-    )
+
+    correlators = read_correlators_hirep(correlator_filename)
+    valence_masses = sorted(set(correlators.correlators.valence_mass))
 
     fit_results_set = []
 
-    for target_correlators, valence_mass in zip(
-            target_correlator_sets, valence_masses
-    ):
-        (bootstrap_mean_correlators, bootstrap_error_correlators,
-         bootstrap_correlator_samples_set) = bootstrap_correlators(
-             target_correlators
-         )
-
-        bootstrap_mean_eff_masses, bootstrap_error_eff_masses = (
-            bootstrap_eff_masses(bootstrap_correlator_samples_set)
-        )
+    for valence_mass in valence_masses:
+        try:
+            eff_mass = mean_multi_eff_mass(
+                correlators,
+                channels=channel_set[0],
+                parities={channel: symmetries[0] for channel in channel_set[0]},
+                valence_mass=valence_mass,
+            )
+        except ValueError:
+            logging.warn("pyerrors can't cope with this; skipping.")
+            continue
 
         do_eff_mass_plot(
-            bootstrap_mean_eff_masses[0],
-            bootstrap_error_eff_masses[0],
+            eff_mass,
             get_output_filename(output_filename_prefix, 'effmass',
-                                f'{valence_mass}_{channel_name}'),
+                                f'{valence_mass}_{correlator_names[0]}'),
             ymin=eff_mass_plot_ymin,
             ymax=eff_mass_plot_ymax
         )
 
-        for correlator_name, channel_latex, \
-                bootstrap_mean_correlator, bootstrap_error_correlator in zip(
+        for correlator_name, channel_latex, channel_names, symmetry in zip(
                     correlator_names,
                     channel_latexes,
-                    bootstrap_mean_correlators,
-                    bootstrap_error_correlators
+                    channel_set,
+                    symmetries,
                 ):
             do_correlator_plot(
-                bootstrap_mean_correlator,
-                bootstrap_error_correlator,
+                combine_multi_correlators(correlators, channel_names, valence_mass=valence_mass, parity=symmetry),
                 get_output_filename(output_filename_prefix, 'correlator',
                                     correlator_name),
                 channel_latex
@@ -142,75 +140,52 @@ def process_correlator(
         if not (plateau_start and plateau_end):
             continue
 
-        (fit_results,
-         (chisquare_value, chisquare_error),
-         _) = minimize_chisquare(
-            bootstrap_correlator_samples_set,
-            bootstrap_mean_correlators,
-            fit_forms,
-            parameter_ranges,
-            plateau_start,
-            plateau_end,
-            NT,
-            fit_means=True,
-            intensity=optimizer_intensity
+        result = fit_multi_correlators(
+            correlators,
+            [channel for channels in channel_set for channel in channels],
+            [plateau_start, plateau_end],
+            fit_forms={channel: get_fit_form(NT, fit_form) for channels, fit_form in zip(channel_set, fit_forms) for channel in channels},
+            valence_mass=valence_mass,
+            full=True,
         )
-        fit_result_values = tuple(fit_result[0] for fit_result in fit_results)
+        fit_result_values = tuple(fit_result.value for fit_result in result.fit_parameters)
 
-        for correlator_name, channel_latex, fit_form, \
-                bootstrap_mean_correlator, bootstrap_error_correlator in zip(
-                    correlator_names,
-                    channel_latexes,
-                    fit_forms,
-                    bootstrap_mean_correlators,
-                    bootstrap_error_correlators
-                ):
+        for correlator_name, channel_latex, channel_name, fit_form, symmetry in zip(
+                correlator_names,
+                channel_latexes,
+                channel_set,
+                fit_forms,
+                symmetries,
+        ):
             do_correlator_plot(
-                bootstrap_mean_correlator,
-                bootstrap_error_correlator,
+                combine_multi_correlators(correlators, channel_names, valence_mass=valence_mass, parity=symmetry),
                 get_output_filename(output_filename_prefix,
                                     'centrally_fitted_correlator',
-                                    channel=f'{valence_mass}_{channel_name}',
+                                    channel=f'{valence_mass}_{correlator_name}',
                                     tstart=plateau_start,
                                     tend=plateau_end),
                 channel_latex,
-                fit_function=fit_form,
-                fit_params=(*fit_result_values, NT),
-                fit_legend='Fit of central values',
+                fit_function=get_fit_form(NT, fit_form),
+                fit_params={"params": fit_result_values, "NT": NT},
+                fit_legend='Fit',
                 t_lowerbound=plateau_start - 3.5,
                 t_upperbound=plateau_end - 0.5,
                 corr_upperbound=correlator_upperbound,
                 corr_lowerbound=correlator_lowerbound
             )
 
-        (fit_results,
-         (chisquare_value, chisquare_error),
-         final_chisquare) = minimize_chisquare(
-            bootstrap_correlator_samples_set,
-            bootstrap_mean_correlators,
-            fit_forms,
-            parameter_ranges,
-            plateau_start,
-            plateau_end,
-            NT,
-            fit_means=False
-        )
-        (mass, mass_error), *_ = fit_results
-        fit_results_set.append((fit_results,
-                                final_chisquare))
+        fit_results_set.append((result.fit_parameters, result.chisquare / result.dof))
 
         do_eff_mass_plot(
-            bootstrap_mean_eff_masses[0],
-            bootstrap_error_eff_masses[0],
+            eff_mass,
             get_output_filename(output_filename_prefix,
                                 'effmass_withfit',
-                                channel=f'{valence_mass}_{channel_name}',
+                                channel=f'{valence_mass}_{correlator_names[0]}',
                                 tstart=plateau_start,
                                 tend=plateau_end),
             ymin=eff_mass_plot_ymin,
             ymax=eff_mass_plot_ymax,
-            m=mass,
-            m_error=mass_error,
+            m=result.fit_parameters[0],
             tmin=plateau_start - 0.5,
             tmax=plateau_end - 0.5
         )
@@ -220,36 +195,6 @@ def process_correlator(
             "Effective mass plot has been generated. "
             "Now specify the start and end of the plateau to "
             "perform the fit."
-        )
-    if chisquare_error > chisquare_value:
-        if optimizer_intensity == 'default':
-            optimizer_intensity = 'intense_de'
-            print('    Trying intense_de')
-        else:
-            if _iter >= maxiter:
-                print('    WARNING: max iters exceeded with '
-                      f'{bootstrap_sample_count} samples.')
-                return fit_results_set, valence_masses
-            else:
-                print('    Increasing boostrap samples to '
-                      f'{bootstrap_sample_count}...')
-                _iter = _iter + 1
-        return process_correlator(
-            correlator_filename,
-            channel_name, channel_set, channel_latexes, symmetries,
-            correlator_names, fit_forms, NT, NS, parameter_ranges,
-            initial_configuration=initial_configuration,
-            bin_size=bin_size,
-            bootstrap_sample_count=bootstrap_sample_count * 2,
-            plateau_start=plateau_start, plateau_end=plateau_end,
-            eff_mass_plot_ymin=eff_mass_plot_ymin,
-            eff_mass_plot_ymax=eff_mass_plot_ymax,
-            correlator_lowerbound=correlator_lowerbound,
-            correlator_upperbound=correlator_upperbound,
-            optimizer_intensity=optimizer_intensity,
-            output_filename_prefix=output_filename_prefix,
-            raw_correlators=raw_correlators,
-            _iter=_iter, maxiter=maxiter
         )
 
     return fit_results_set, valence_masses
@@ -295,13 +240,6 @@ def plot_measure_and_save_mesons(simulation_descriptor, correlator_filename,
     if not need_to_run:
         return
 
-    if simulation_descriptor and measurement_exists(
-            simulation_descriptor, 'Q_tau_exp'
-    ):
-        bin_size = int(
-            get_measurement(simulation_descriptor, 'Q_tau_exp').value
-        ) + 1
-
     channel_set = channel_set_options[channel_name]
     correlator_names = correlator_names_options[channel_name]
     channel_latexes = channel_latexes_options[channel_name]
@@ -320,7 +258,6 @@ def plot_measure_and_save_mesons(simulation_descriptor, correlator_filename,
         ),
         output_filename_prefix=output_filename_prefix,
         parameter_ranges=parameter_ranges,
-        bin_size=bin_size,
         **meson_parameters
     )
 
@@ -331,37 +268,18 @@ def plot_measure_and_save_mesons(simulation_descriptor, correlator_filename,
             output_valence_masses = valence_masses
         for valence_mass, values in zip(output_valence_masses,
                                         fit_results_set):
-            values = values[0] + ((values[1], None),)
+            values = values[0] + [values[1],]
             for quantity_name, value in zip(quantity_options[channel_name],
                                             values):
                 add_measurement(simulation_descriptor,
                                 f'{db_channel_name}_{quantity_name}',
-                                *value,
+                                value,
                                 valence_mass=valence_mass)
             if 'decay_const' not in quantity_options[channel_name]:
                 purge_measurement(simulation_descriptor,
                                   f'{db_channel_name}_decay_const',
                                   valence_mass=valence_mass)
 
-#    if len(valence_masses) > 1:
-#        filetype = 'long_dat'
-#        extras_set = (valence_masses,)
-#    else:
-#        filetype = 'dat'
-#        extras_set = ()
-
-#    write_results(
-#        filename=get_output_filename(
-#            output_filename_prefix, 'mass', channel_name,
-#            filetype=filetype
-#        ),
-#        channel_name=channel_name,
-#        headers=output_file_header_options[channel_name],
-#        values_set=[(*fit_results[0], fit_results[1])
-#                    for fit_results in fit_results_set],
-#        many=True,
-#        extras_set=extras_set
-#    )
     return valence_masses, fit_results_set
 
 
@@ -373,7 +291,6 @@ def main():
                         required=True)
     parser.add_argument('--NT', required=True, type=int)
     parser.add_argument('--NS', required=True, type=int)
-    parser.add_argument('--bin_size', default=1, type=int)
     parser.add_argument('--initial_configuration', default=0, type=int)
     parser.add_argument('--bootstrap_sample_count', default=200, type=int)
     parser.add_argument('--silent', action='store_true')
@@ -404,8 +321,6 @@ def main():
     simulation_descriptor = {
         'L': args.NS,
         'T': args.NT,
-        'delta_traj': args.bin_size,
-        'initial_configuration': args.initial_configuration
     }
     if not args.ignore:
         try:
@@ -426,18 +341,16 @@ def main():
                 for valence_mass, fit_results in zip(
                         valence_masses, fit_results_set
                 ):
-                    mass, mass_error = fit_results[0][0]
-                    decay_const, decay_const_error = fit_results[0][1]
+                    mass = fit_results[0][0]
+                    decay_const = fit_results[0][1]
                     if len(fit_results[0]) > 2:
-                        amplitude, amplitude_error = fit_results[0][2]
+                        amplitude = fit_results[0][2]
                     chisquare_value = fit_results[1]
 
-                    print(f'{args.channel} mass: {mass} ± {mass_error}')
-                    print(f'{args.channel} decay constant: '
-                          f'{decay_const} ± {decay_const_error}')
+                    print(f'{args.channel} mass: {mass}')
+                    print(f'{args.channel} decay constant: {decay_const}')
                     if len(fit_results[0]) > 2:
-                        print(f'{args.channel} amplitude: '
-                              f'{amplitude} ± {amplitude_error}')
+                        print(f'{args.channel} amplitude: {amplitude}')
                     print(f'{args.channel} chi-square: '
                           f'{chisquare_value}')
 

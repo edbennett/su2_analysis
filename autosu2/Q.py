@@ -4,46 +4,16 @@ from scipy.optimize import curve_fit
 from collections import Counter
 import argparse
 
+from flow_analysis.fit_forms import gaussian, exp_decay
+from flow_analysis.readers import readers
+from flow_analysis.measurements.Q import Q_mean, Q_fit, Q_susceptibility, flat_bin_Qs
+from flow_analysis.stats.autocorrelation import autocorr, exp_autocorrelation_fit
+
 from .bootstrap import basic_bootstrap, bootstrap_susceptibility
 from .data import get_flows_from_raw
 from .data import file_is_up_to_date
 from .db import measurement_is_up_to_date, add_measurement
 from .plots import set_plot_defaults
-
-
-def gaussian(x, A, x0, sigma):
-    '''
-    Gaussian fit form
-    Returns A e^(-(x - x0)^2 / 2 sigma^2)
-    '''
-
-    return A * np.exp(-(x - x0) ** 2 / (2 * sigma ** 2))
-
-
-def exp_decay(x, tau_exp):
-    '''
-    The fit form of an exponential decay.
-    Returns A e^(-x / tau_exp)
-    '''
-
-    return np.exp(-x / tau_exp)
-
-
-def autocorr(series, cutoff=None):
-    '''
-    Calculate the autocorrelation function of the `series`.
-    If `cutoff` isn't specified, it defaults to `len(series) // 2`.
-    '''
-
-    if not cutoff:
-        cutoff = len(series) // 2
-    acf = np.zeros(cutoff - 1)
-    zero_centered_series = series - np.mean(series)
-    acf[0] = 1
-    for i in range(1, cutoff - 1):
-        acf[i] = (np.mean(zero_centered_series[:-i] * zero_centered_series[i:])
-                  / np.var(zero_centered_series))
-    return acf
 
 
 def analyse_autocorrelation(series, filename, fit_range=10):
@@ -63,11 +33,9 @@ def analyse_autocorrelation(series, filename, fit_range=10):
     acf = autocorr(series)
     ax.scatter(np.arange(len(acf)), acf)
 
-    fit_result = curve_fit(exp_decay,
-                           np.arange(fit_range),
-                           acf[:fit_range])
+    tau_exp = exp_autocorrelation_fit(series, fit_range=fit_range)
     acf_domain = np.linspace(0, len(acf), 1000)
-    ax.plot(acf_domain, exp_decay(acf_domain, *fit_result[0]))
+    ax.plot(acf_domain, exp_decay(acf_domain, tau_exp.nominal_value))
 
     if filename:
         f.savefig(filename)
@@ -75,19 +43,10 @@ def analyse_autocorrelation(series, filename, fit_range=10):
         plt.show()
     plt.close(f)
 
-    tau_exp, tau_exp_error = fit_result[0][0], fit_result[1][0][0] ** 0.5
-
-    if tau_exp < 1 and tau_exp_error > 10 * tau_exp:
-        if np.std(acf[1:fit_range]) > np.mean(acf[1:fit_range]):
-            # Autocorrelation time is much less than 1
-            # Not enough resolution for fitter to determine precise location
-            tau_exp = 0
-            tau_exp_error = 0.5
-
-    return tau_exp, tau_exp_error
+    return tau_exp
 
 
-def plot_history_and_histogram(trajectories, Qs, output_file=None,
+def plot_history_and_histogram(flows, output_file=None,
                                title=True, extra_title='', legend=False,
                                history_ax=None, histogram_ax=None,
                                label_axes=True):
@@ -118,32 +77,21 @@ def plot_history_and_histogram(trajectories, Qs, output_file=None,
 
     history_ax.set_ylabel('$Q$')
 
+    Qs = flows.Q_history()
     Q_bins = Counter(Qs.round())
-    history_ax.step(trajectories, Qs)
+    history_ax.step(flows.trajectories, Qs)
 
-    # One extra to include a zero
-    range_min = min(min(Q_bins), -max(Q_bins)) - 1
-    # Add one to be inclusive
-    range_max = -range_min + 1
-
-    history_ax.set_ylim([range_min - 0.5, range_max - 0.5])
-
-    Q_range = np.arange(range_min, range_max)
-
-    Q_counts = np.asarray([Q_bins[Q] for Q in Q_range])
+    Q_range, Q_counts = flat_bin_Qs(Qs)
+    history_ax.set_ylim(min(Q_range) - 0.5, max(Q_range) + 0.5)
 
     histogram_ax.step(Q_counts, Q_range - 0.5, label="Histogram")
 
-    (A, Q0, sigma), pcov = curve_fit(
-        gaussian, Q_range, Q_counts,
-        sigma=(Q_counts + 1) ** 0.5, absolute_sigma=True
-    )
-    smooth_Q_range = np.linspace(range_min - 0.5, range_max - 0.5, 1000)
-    histogram_ax.plot(gaussian(smooth_Q_range, A, Q0, sigma),
+    A, Q0, sigma = Q_fit(flows, with_amplitude=True)
+
+    smooth_Q_range = np.linspace(min(Q_range) - 0.5, max(Q_range) + 0.5, 1000)
+    histogram_ax.plot(gaussian(smooth_Q_range, A.nominal_value, Q0.nominal_value, sigma.nominal_value),
                       smooth_Q_range, label="Fit")
     histogram_ax.set_xlim((-max(Q_counts) * 0.1, max(Q_counts) * 1.1))
-#    histogram.legend(loc=0, frameon=False)
-
 
     if f:
         f.tight_layout()
@@ -163,22 +111,13 @@ def plot_history_and_histogram(trajectories, Qs, output_file=None,
             f.savefig(output_file)
         plt.close(f)
 
-    return (
-        # r"$Q_0 = {:.2f} \pm {:.2f}$; $\sigma = {:.2f} \pm {:.2f}$".format(
-        (Q0, np.sqrt(pcov[1][1])), (abs(sigma), np.sqrt(pcov[2][2]))
-    )
-
-
-def topological_charge_susceptibility(Qs, V):
-    Q0 = basic_bootstrap(Qs)
-    chi_top = tuple(value / V for value in bootstrap_susceptibility(Qs))
-
-    return Q0, chi_top
+    return Q0, abs(sigma)
 
 
 def plot_measure_and_save_Q(flows_file, simulation_descriptor=None,
                             output_file_history=None,
-                            output_file_autocorr=None):
+                            output_file_autocorr=None,
+                            reader="hirep"):
     '''Reads in flows_file in HiRep~MILC format, calculates average
     Q and topological susceptibility, plots and histograms, saves
     to the database.'''
@@ -217,37 +156,37 @@ def plot_measure_and_save_Q(flows_file, simulation_descriptor=None,
     result = {}
 
     if do_fit_and_plot or do_bootstrap:
-        trajectories, *_, Qs = get_flows_from_raw(flows_file,
-                                                  limit_t_for_Q='L/2')
-        tau_exp = analyse_autocorrelation(Qs, output_file_autocorr)
+        flows = readers[reader](flows_file)
+        tau_exp = analyse_autocorrelation(flows.Q_history(), output_file_autocorr)
 
         fit_range = 20
-        while tau_exp[0] > fit_range and fit_range < len(Qs):
-            tau_exp = analyse_autocorrelation(Qs, output_file_autocorr,
+        while tau_exp.nominal_value > fit_range and fit_range < len(flows):
+            tau_exp = analyse_autocorrelation(flows, output_file_autocorr,
                                               fit_range=fit_range)
             fit_range *= 2
 
         if simulation_descriptor:
-            add_measurement(simulation_descriptor, 'Q_tau_exp', *tau_exp)
+            add_measurement(simulation_descriptor, 'Q_tau_exp', tau_exp)
 
     if do_fit_and_plot:
         fitted_Q0, Q_width = plot_history_and_histogram(
-            trajectories, Qs, output_file=output_file_history, title=False
+            flows, output_file=output_file_history, title=False
         )
         if simulation_descriptor:
-            add_measurement(simulation_descriptor, 'fitted_Q0', *fitted_Q0)
-            add_measurement(simulation_descriptor, 'Q_width', *Q_width)
+            add_measurement(simulation_descriptor, 'fitted_Q0', fitted_Q0)
+            add_measurement(simulation_descriptor, 'Q_width', Q_width)
         result['fitted_Q0'] = fitted_Q0
         result['Q_width'] = Q_width
 
     if do_bootstrap:
-        Q0, chi_top = topological_charge_susceptibility(
-            Qs, simulation_descriptor['T'] * simulation_descriptor['L'] ** 3
-        )
-        add_measurement(simulation_descriptor, 'Q0', *Q0)
-        add_measurement(simulation_descriptor, 'chi_top', *chi_top)
+        Q0 = Q_mean(flows)
+        add_measurement(simulation_descriptor, 'Q0', Q0)
         result['Q0'] = Q0
+
+        chi_top = Q_susceptibility(flows)
+        add_measurement(simulation_descriptor, 'chi_top', chi_top)
         result['chi_top'] = chi_top
+
     return result
 
 
