@@ -1,8 +1,9 @@
-matplotlib==2.0.0
-numpy==1.11.3
-pandas==0.25.0
-scipy==1.3.0
-SQLAlchemy==1.2.15
-uncertainties==3.1.2
-numba=0.45.1
+matplotlib
+numpy
+pandas
+scipy
+SQLAlchemy
+uncertainties
+numba
 pyyaml
+lsqfit
