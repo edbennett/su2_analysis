@@ -11,10 +11,10 @@ from ..tables import ObservableSpec
 from ..db import get_measurement
 
 observables = [
-    ObservableSpec('w0c', free_parameter=0.28125),
-    ObservableSpec('w0p', free_parameter=0.28125),
-    ObservableSpec('s8t0c', free_parameter=0.28125),
-    ObservableSpec('s8t0p', free_parameter=0.28125),
+    ObservableSpec('w0c', free_parameter=0.2),
+    ObservableSpec('w0p', free_parameter=0.2),
+    ObservableSpec('s8t0c', free_parameter=0.2),
+    ObservableSpec('s8t0p', free_parameter=0.2),
     ObservableSpec('Q0'),
     ObservableSpec('fitted_Q0'),
     ObservableSpec('Q_width'),
