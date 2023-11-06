@@ -1,5 +1,4 @@
 from ..tables import generate_table_from_db
-from ..db import get_measurement
 
 from .ensembles import ENSEMBLES
 

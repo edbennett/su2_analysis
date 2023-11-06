@@ -9,7 +9,7 @@ SMALLEST_RELATIVE_UNCERTAINTY = 1e-12
 
 
 def table_row(row_content):
-    if type(row_content) == str:
+    if isinstance(row_content, str):
         return "    " + row_content
     else:
         return "    " + " & ".join(row_content)
@@ -134,7 +134,7 @@ def generate_table_from_db(
 
         observable_found = False
         for observable in observables:
-            if type(observable) == str:
+            if isinstance(observable, str):
                 observable = ObservableSpec(observable)
             assert type(observable) == ObservableSpec
 

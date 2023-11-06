@@ -1,10 +1,8 @@
 from flow_analysis.readers import readers
-import numpy as np
 import matplotlib.pyplot as plt
 
 from .common import preliminary
 from ..db import get_measurement_as_ufloat
-from ..data import get_flows_from_raw
 from ..do_analysis import get_subdirectory_name
 from ..plots import set_plot_defaults
 from ..Q import plot_history_and_histogram

@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 
-from numpy import nan
 import matplotlib.pyplot as plt
 
 from ..plots import set_plot_defaults
 from ..derived_observables import merge_and_hat_quantities
 
-from .common import beta_colour_marker, figlegend_defaults, preliminary
+from .common import beta_colour_marker, preliminary
 
 
 def generate(data, ensembles):

@@ -1,18 +1,13 @@
 from argparse import ArgumentParser
 import logging
 
-from .plots import do_eff_mass_plot, do_correlator_plot, set_plot_defaults
-from .data import get_target_correlator, get_output_filename
+from .plots import do_eff_mass_plot, set_plot_defaults
+from .data import get_output_filename
 from .db import (
     measurement_is_up_to_date,
     add_measurement,
-    measurement_exists,
-    get_measurement,
-    purge_measurement,
 )
 from .fit_correlation_function import (
-    channel_set_options,
-    symmetries_options,
     quantity_options,
     Incomplete,
 )

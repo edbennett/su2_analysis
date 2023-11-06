@@ -273,8 +273,11 @@ def get_flows_from_raw(filename, bin_size=1, limit_t_for_Q=None, raw_Qs=False):
     trajectories = []
     Eps = []
     Ecs = []
+    current_Eps = None
+    current_Ecs = None
     times = []
     Qs = []
+    current_Q = None
     times_acquired = None
     if isinstance(limit_t_for_Q, Number):
         t_max_for_Q = limit_t_for_Q

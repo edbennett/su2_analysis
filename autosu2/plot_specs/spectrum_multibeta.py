@@ -1,5 +1,3 @@
-from itertools import product
-
 import matplotlib.pyplot as plt
 
 from .common import beta_colour_marker, preliminary

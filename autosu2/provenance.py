@@ -8,10 +8,6 @@ import socket
 import subprocess
 
 
-def get_user():
-    return environ["USERNAME"] if platform.startswith("win") else environ["USER"]
-
-
 def get_commit_id():
     return (
         subprocess.run(

@@ -2,10 +2,10 @@ from re import findall
 from os.path import getmtime
 
 from matplotlib.pyplot import show, subplots, close
-from numpy import arange, asarray, exp, histogram, inf, linspace, nan, ones
-from scipy.optimize import curve_fit, minimize
+from numpy import arange, asarray, exp, histogram, linspace, nan, ones
+from scipy.optimize import minimize
 
-from .db import measurement_is_up_to_date, add_measurement
+from .db import add_measurement
 from .data import get_filename
 from .plots import set_plot_defaults
 
@@ -87,8 +87,10 @@ def plot_loops(
 
     bins, histograms = loop_histograms
 
-    for direction, histogram in enumerate(histograms):
-        ax.plot(bins.real, histogram, drawstyle="steps-pre", label=f"{direction}")
+    for direction, single_histogram in enumerate(histograms):
+        ax.plot(
+            bins.real, single_histogram, drawstyle="steps-pre", label=f"{direction}"
+        )
 
     if fitted_params and fit_form:
         x_values = linspace(min(bins), max(bins), 1000)
@@ -124,19 +126,19 @@ def fit_loops(loop_histograms, fit_form):
     bin_centres = (bins[:-1] + bins[1:]) / 2
 
     fitted_params = []
-    for histogram in histograms:
-        p0 = (histogram.max(), SMALL_LOWER_BOUND, bins.mean())
+    for single_histogram in histograms:
+        p0 = (single_histogram.max(), SMALL_LOWER_BOUND, bins.mean())
 
         popt, pcov = curve_fit_with_minimize(
             fit_form,
             bin_centres,
-            histogram,
-            sigma=(histogram + 1) ** 0.5,
+            single_histogram,
+            sigma=(single_histogram + 1) ** 0.5,
             absolute_sigma=False,
             p0=p0,
             bounds=(
-                (0.1 * histogram.max(), 0, SMALL_LOWER_BOUND),
-                (10 * histogram.max(), bins.max(), bins.max()),
+                (0.1 * single_histogram.max(), 0, SMALL_LOWER_BOUND),
+                (10 * single_histogram.max(), bins.max(), bins.max()),
             ),
             # method='trf'
         )
@@ -271,11 +273,6 @@ def fit_plot_and_save_polyakov_loops(
     ):
         # Already up to date
         return
-
-    if simulation_descriptor and "first_cfg" in simulation_descriptor:
-        first_config = simulation_descriptor["first_cfg"]
-    else:
-        first_config = 0
 
     fit_results = fit_and_plot_polyakov_loops(
         filename,

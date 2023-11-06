@@ -3,9 +3,9 @@ from re import compile
 from argparse import ArgumentParser
 
 import numpy as np
-from numpy import array, asarray, isnan, mean, std, nanmin, nanmax
+from numpy import array, mean, std, nanmin, nanmax
 from numpy.random import randint, ranf
-from sys import *
+
 from scipy.optimize import curve_fit
 from pandas import DataFrame, read_csv
 from numba import vectorize
@@ -14,7 +14,6 @@ from matplotlib.pyplot import subplots, show
 from matplotlib.cm import plasma
 from matplotlib.colors import LogNorm
 
-from .plots import set_plot_defaults
 from .data import file_is_up_to_date
 
 
@@ -79,7 +78,6 @@ def old_fit(filename):
     ns = list(next(iter(nus.values())).keys())
     lambs = sorted(lambs)
     n_confs = len(ns)
-    n_lambs = len(lambs)
     n_array = array(ns)
 
     nubars = {}
@@ -108,11 +106,11 @@ def old_fit(filename):
 
     results = []
 
-    for I in range(len(lambs) - MIN_WINDOW_LENGTH):
-        for J in range(max(0, I + (MIN_WINDOW_LENGTH - 1)), len(lambs)):
-            lambs_window = lambs[I : J + 1]
-
-            p0 = [10000.0, 0.01, 1.0]
+    for lower_bound_idx in range(len(lambs) - MIN_WINDOW_LENGTH):
+        for upper_bound_idx in range(
+            max(0, lower_bound_idx + (MIN_WINDOW_LENGTH - 1)), len(lambs)
+        ):
+            lambs_window = lambs[lower_bound_idx : upper_bound_idx + 1]
 
             success = False
             count = 0
@@ -146,13 +144,26 @@ def old_fit(filename):
                     print(ex)
                     count += 1
                     if count == 50:
-                        print("Window", I, ",", J, "did not converge")
+                        print(
+                            "Window",
+                            lower_bound_idx,
+                            ",",
+                            upper_bound_idx,
+                            "did not converge",
+                        )
                         break
                 else:
                     success = True
                 if DEBUG:
                     if success:
-                        print("Initial fit for window", I, ",", J, "converged at ", p1)
+                        print(
+                            "Initial fit for window",
+                            lower_bound_idx,
+                            ",",
+                            upper_bound_idx,
+                            "converged at ",
+                            p1,
+                        )
             if not success:
                 continue
 
@@ -222,18 +233,34 @@ def old_fit(filename):
                 xx += 1
                 niter += 1
                 if niter == 10000:
-                    print("Window", I, ",", J, "giving up after 10,000 attempts")
+                    print(
+                        "Window",
+                        lower_bound_idx,
+                        ",",
+                        upper_bound_idx,
+                        "giving up after 10,000 attempts",
+                    )
                     break
             if badness == niter:
-                print("Window", I, ",", J, "has 100% badness")
+                print(
+                    "Window", lower_bound_idx, ",", upper_bound_idx, "has 100% badness"
+                )
                 continue
             if badness == -1:
-                print("Window", I, ",", J, "breaks m lies within window")
+                print(
+                    "Window",
+                    lower_bound_idx,
+                    ",",
+                    upper_bound_idx,
+                    "breaks m lies within window",
+                )
                 continue
             try:
                 avg_chisquare = mean(chisquareds)
             except Exception:
-                print("Caught exception in window", I, ",", J)
+                print(
+                    "Caught exception in window", lower_bound_idx, ",", upper_bound_idx
+                )
                 continue
             p_avgs = []
             p_stds = []
@@ -249,14 +276,14 @@ def old_fit(filename):
 
             if avg_chisquare < min_chisquare:
                 min_chisquare = avg_chisquare
-                minimal_window = [I, J]
+                minimal_window = [lower_bound_idx, upper_bound_idx]
                 minimal_params = p_avgs
 
             print(
                 "Window",
-                I,
+                lower_bound_idx,
                 ",",
-                J,
+                upper_bound_idx,
                 "chisquare",
                 avg_chisquare,
                 "±",
@@ -281,8 +308,8 @@ def old_fit(filename):
 
             results.append(
                 (
-                    lambs[I],
-                    lambs[J],
+                    lambs[lower_bound_idx],
+                    lambs[upper_bound_idx],
                     avg_chisquare,
                     std(chisquareds),
                     p_avgs[0],

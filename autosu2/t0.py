@@ -1,16 +1,11 @@
-from numpy import argmax
 from matplotlib.pyplot import subplots, close
 
 from flow_analysis.measurements.scales import compute_t2E_t, measure_sqrt_8t0
 from flow_analysis.readers import readers
 
-from .bootstrap import basic_bootstrap, bootstrap_1d
-from .data import get_flows_from_raw
 from .db import (
     measurement_is_up_to_date,
     add_measurement,
-    get_measurement,
-    measurement_exists,
 )
 from .data import get_filename
 

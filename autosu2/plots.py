@@ -6,7 +6,7 @@ import matplotlib.pyplot
 from matplotlib.figure import Figure
 from matplotlib.pyplot import subplots, rc, close
 from matplotlib.colors import XKCD_COLORS
-from numpy import linspace, arange
+from numpy import linspace
 
 from warnings import filterwarnings
 

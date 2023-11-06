@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-from itertools import product
-from numpy import dtype, empty
+from numpy import dtype
 from scipy.io import FortranFile
 
 

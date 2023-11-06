@@ -1,7 +1,5 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.optimize import curve_fit
-from collections import Counter
 import argparse
 
 from flow_analysis.fit_forms import gaussian, exp_decay
@@ -9,7 +7,6 @@ from flow_analysis.readers import readers
 from flow_analysis.measurements.Q import Q_mean, Q_fit, Q_susceptibility, flat_bin_Qs
 from flow_analysis.stats.autocorrelation import autocorr, exp_autocorrelation_fit
 
-from .bootstrap import basic_bootstrap, bootstrap_susceptibility
 from .data import get_flows_from_raw
 from .data import file_is_up_to_date
 from .db import measurement_is_up_to_date, add_measurement
@@ -86,7 +83,6 @@ def plot_history_and_histogram(
     history_ax.set_ylabel("$Q$")
 
     Qs = flows.Q_history()
-    Q_bins = Counter(Qs.round())
     history_ax.step(flows.trajectories, Qs)
 
     Q_range, Q_counts = flat_bin_Qs(Qs)
@@ -112,9 +108,7 @@ def plot_history_and_histogram(
         if title:
             f.suptitle(
                 ("" if extra_title is None else extra_title)
-                + r" $Q_0 = {:.2f} \pm {:.2f}$; $\sigma = {:.2f} \pm {:.2f}$".format(
-                    Q0, np.sqrt(pcov[1][1]), abs(sigma), np.sqrt(pcov[2][2])
-                )
+                + r" $Q_0 = {:.2uSL}$; $\sigma = {:.2uSL}$".format(Q0, abs(sigma))
             )
             f.subplots_adjust(top=0.8 if legend else 0.9)
 
@@ -249,7 +243,7 @@ def main():
             **{
                 k: vars(args)[k]
                 for k in ("output_file", "title", "legend", "extra_title")
-            }
+            },
         )
     )
 

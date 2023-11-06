@@ -8,7 +8,6 @@ from operator import or_
 import numpy as np
 
 from ..tables import ObservableSpec
-from ..db import get_measurement
 
 observables = [
     ObservableSpec("w0c", free_parameter=0.2),

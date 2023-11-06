@@ -6,6 +6,7 @@ SQLAlchemy
 uncertainties
 numba
 pyyaml
+pre-commit
 lsqfit
 ./libs/flow_analysis
 ./libs/meson_analysis

@@ -2,7 +2,7 @@
 
 from numpy import nan
 
-preliminary = False
+preliminary = True
 
 beta_colour_marker = {
     1: [

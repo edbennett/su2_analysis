@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import lsqfit
 import gvar as gv
 
-from ..derived_observables import merge_quantities
 from ..plots import set_plot_defaults
 from ..derived_observables import merge_and_hat_quantities
 
@@ -59,9 +58,6 @@ def generate_single_Nf(data, Nf):
     filename = f"final_plots/Xpt_Nf{Nf}.pdf"
 
     set_plot_defaults(markersize=3, capsize=1, linewidth=0.5, preliminary=preliminary)
-
-    observables = "g5_mass", "gk_mass"
-    extra_observables = ("mpcac_mass",)
 
     hatted_data = merge_and_hat_quantities(
         data[data.Nf == Nf],

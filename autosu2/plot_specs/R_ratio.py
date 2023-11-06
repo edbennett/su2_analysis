@@ -72,7 +72,7 @@ def generate(data, ensembles):
         R_value(3.6911, 3.3323, 4.1790),
         R_value(3.1640, 2.9379, 3.4791),
     )
-    filename = f"final_plots/R_ratio.pdf"
+    filename = "final_plots/R_ratio.pdf"
     fig, axes = plt.subplots(nrows=4, figsize=(3.5, 8), sharex=True)
     hatted_data = merge_and_hat_quantities(
         data, ("App_mass", "Epp_mass", "Tpp_mass", "spin12_mass", "sqrtsigma")
@@ -88,8 +88,7 @@ def generate(data, ensembles):
 
     for (beta, colour, marker), ax in zip(beta_colour_marker[1], axes):
         data_to_plot = hatted_data[
-            (hatted_data.beta == beta)
-            & (hatted_data.Nf == 1)
+            (hatted_data.beta == beta) & (hatted_data.Nf == 1)
             # R ratio is interesting at smaller volumes too
             # & ~(hatted_data.label.str.endswith('*'))
         ]

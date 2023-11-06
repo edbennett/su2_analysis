@@ -1,7 +1,5 @@
-from numpy import asarray, linspace, nan, ravel
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
-from uncertainties import ufloat
 
 from ..plots import set_plot_defaults
 from ..tables import generate_table_from_content, format_value_and_error
@@ -121,7 +119,6 @@ def generate_single_Nf(data, Nf, betas_to_plot):
 
     observables = "g5_mass", "gk_mass"
     extra_observables = ("mpcac_mass", "g5_decay_const")
-    observable_labels = r"\gamma_5", r"\gamma_k"
 
     merged_data = merge_no_w0(data, observables + extra_observables).dropna(
         subset=("value_mpcac_mass", "value_g5_mass")

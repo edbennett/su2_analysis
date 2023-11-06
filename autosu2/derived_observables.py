@@ -95,8 +95,7 @@ def merge_quantities(data, quantities, hat=False, how="left"):
             )
             merged_data[f"uncertainty_{quantity}_hat"] = (
                 merged_data.value_w0**2 * merged_data[f"uncertainty_{quantity}"] ** 2
-                + merged_data.uncertainty_w0**2
-                * merged_data[f"value_{quantity}"] ** 2
+                + merged_data.uncertainty_w0**2 * merged_data[f"value_{quantity}"] ** 2
             ) ** 0.5
 
             # Calculate squared hatted values

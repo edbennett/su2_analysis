@@ -203,7 +203,7 @@ def do_single_analysis(
     if ensemble.get("measure_pcac", False):
         # Mesonic observables
         if DEBUG:
-            print(f"  - PCAC mass")
+            print("  - PCAC mass")
         try:
             result = plot_measure_and_save_mpcac(
                 simulation_descriptor=ensemble["descriptor"],
@@ -223,7 +223,7 @@ def do_single_analysis(
     if ensemble.get("measure_polyakov", False):
         # Simple Polyakov loop analysis for centre symmetry
         if DEBUG:
-            print(f"  - Polyakov loops")
+            print("  - Polyakov loops")
         fit_results = fit_plot_and_save_polyakov_loops(
             simulation_descriptor=ensemble["descriptor"],
             filename=f"raw_data/{subdirectory}/out_pl",
@@ -238,7 +238,7 @@ def do_single_analysis(
     # Mode number analysis for anomalous dimension
     if measure_modenumber and measure_modenumber["method"] == "julia":
         if DEBUG:
-            print(f"  - Mode number (Julia)")
+            print("  - Mode number (Julia)")
 
         modenumber_result = wrap_modenumber_fit_julia(
             ensemble=ensemble,
@@ -250,7 +250,7 @@ def do_single_analysis(
 
     elif measure_modenumber:
         if DEBUG:
-            print(f"  - Mode number")
+            print("  - Mode number")
         modenumber_result = do_modenumber_fit(
             f"raw_data/{subdirectory}/out_modenumber",
             f"processed_data/{subdirectory}/modenumber_fit.csv",

@@ -1,6 +1,5 @@
 from argparse import ArgumentParser
 import pandas as pd
-from numpy import isnan
 from autosu2.sideload import import_data
 
 

@@ -3,9 +3,9 @@ from datetime import datetime
 from os.path import getmtime
 
 from sqlalchemy import Column, String, Integer, Float, DateTime
-from sqlalchemy import CheckConstraint, ForeignKey, UniqueConstraint
+from sqlalchemy import CheckConstraint, ForeignKey
 from sqlalchemy import create_engine
-from sqlalchemy.orm import relationship, backref, sessionmaker
+from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 
@@ -283,8 +283,8 @@ def single_simulation_exists(simulation_descriptor):
 
     with session_scope() as session:
         try:
-            simulation = get_simulation(simulation_descriptor, session)
-        except:
+            get_simulation(simulation_descriptor, session)
+        except Exception:
             return False
         else:
             return True

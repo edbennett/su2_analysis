@@ -6,8 +6,6 @@ from matplotlib.cm import plasma, ScalarMappable
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 import numpy as np
-import pandas as pd
-from scipy.optimize import curve_fit
 from uncertainties import ufloat
 
 from .common import preliminary

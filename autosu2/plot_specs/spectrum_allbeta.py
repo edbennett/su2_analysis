@@ -1,6 +1,4 @@
-from numpy import nan
 import matplotlib.pyplot as plt
-from matplotlib.lines import Line2D
 
 from ..plots import set_plot_defaults
 from ..derived_observables import merge_and_hat_quantities

@@ -2,7 +2,7 @@ import lsqfit
 import gvar as gv
 import numpy as np
 import matplotlib.pyplot as plt
-from numpy import asarray, linspace, ravel
+from numpy import linspace
 from uncertainties import ufloat
 
 from .common import preliminary
@@ -22,7 +22,6 @@ def fit(merged_data, betas_to_fit, gamma_star=None):
     L = merged_data.L.values
     beta_values = merged_data.beta.values
     mpcac = merged_data.value_mpcac_mass.values
-    mpcac_e = merged_data.uncertainty_mpcac_mass.values
     mg5 = merged_data.value_g5_mass.values
     mg5_e = merged_data.uncertainty_g5_mass.values * 2
 
@@ -77,7 +76,7 @@ def fit(merged_data, betas_to_fit, gamma_star=None):
 def plot(data, fit_result, betas_to_fit, filename=None):
     set_plot_defaults(preliminary=preliminary)
     fig, ax = plt.subplots()
-    if type(fit_result.p["ym"]) == float:
+    if isinstance(fit_result.p["ym"], float):
         ym = fit_result.p["ym"]
         ym_sd = 0
     else:
@@ -166,7 +165,7 @@ def tabulate(fit_results, filename):
         p = fit_result.p
         ym = p["ym"]
         gamma_star = ym - 1
-        if type(gamma_star) == float:
+        if isinstance(gamma_star, float):
             gamma_star_text = f"{gamma_star:.2f}"
             ym_text = f"{ym:.2f}"
         else:
