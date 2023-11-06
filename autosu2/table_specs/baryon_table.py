@@ -28,15 +28,16 @@ def generate(data, **kwargs):
         "id_mass",
         "id_decay_const",
     )
-    filename = "baryons.tex"
+    filename = "baryons_Nf{Nf}.tex"
 
-    generate_table_from_db(
-        data=data,
-        ensembles=ENSEMBLES,
-        observables=observables,
-        filename=filename,
-        columns=columns,
-        error_digits=ERROR_DIGITS,
-        exponential=EXPONENTIAL,
-        suppress_zeroes=True,
-    )
+    for Nf, ensemble_set in ENSEMBLES.items():
+        generate_table_from_db(
+            data=data,
+            ensembles=ensemble_set,
+            observables=observables,
+            filename=filename.format(Nf=Nf),
+            columns=columns,
+            error_digits=ERROR_DIGITS,
+            exponential=EXPONENTIAL,
+            suppress_zeroes=True,
+        )

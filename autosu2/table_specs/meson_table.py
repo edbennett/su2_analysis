@@ -15,15 +15,16 @@ def generate(data, **kwargs):
         r"$am_{\breve{g}}$",
     ]
     observables = "gk_mass", "gk_decay_const", "spin12_mass"
-    filename = "mesons.tex"
+    filename = "mesons_Nf{Nf}.tex"
 
-    generate_table_from_db(
-        data=data,
-        ensembles=ENSEMBLES,
-        observables=observables,
-        filename=filename,
-        columns=columns,
-        error_digits=ERROR_DIGITS,
-        exponential=EXPONENTIAL,
-        suppress_zeroes=True,
-    )
+    for Nf, ensemble_set in ENSEMBLES.items():
+        generate_table_from_db(
+            data=data,
+            ensembles=ensemble_set,
+            observables=observables,
+            filename=filename.format(Nf=Nf),
+            columns=columns,
+            error_digits=ERROR_DIGITS,
+            exponential=EXPONENTIAL,
+            suppress_zeroes=True,
+        )
