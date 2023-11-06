@@ -182,7 +182,7 @@ def tabulate(fit_results, filename):
 
 
 def generate(data, ensembles):
-    filename = 'auxiliary_plots/nearmarginal_{}beta{}.pdf'
+    filename = '{}_plots/nearmarginal_{}beta{}.pdf'
     table_filename = 'nearmarginal{}.tex'
     fit_results_free = []
     fit_results_constrained = []
@@ -204,13 +204,13 @@ def generate(data, ensembles):
         fit_result = fit(merged_data, betas_to_fit)
         fit_results_free.append((betas_to_fit, fit_result))
         plot(merged_data, fit_result, betas_to_fit,
-             filename.format(len(betas_to_fit), ''))
+             filename.format("final", len(betas_to_fit), ''))
 
         for gamma_star in linspace(0.1, 1.05, 20):
             fit_result = fit(merged_data, betas_to_fit, gamma_star=gamma_star)
             fit_results_constrained.append((betas_to_fit, fit_result))
             plot(merged_data, fit_result, betas_to_fit,
-                 filename.format(len(betas_to_fit), f'_gamma{gamma_star:.2f}'))
+                 filename.format("auxiliary", len(betas_to_fit), f'_gamma{gamma_star:.2f}'))
         fit_results_constrained.append((None, None))
 
     tabulate(fit_results_free, table_filename.format(''))
