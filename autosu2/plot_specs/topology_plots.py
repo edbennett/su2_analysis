@@ -1,3 +1,4 @@
+from flow_analysis.readers import readers
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -25,24 +26,28 @@ def do_plot(ensembles, ensemble_names, filename_base):
         sharex='col',
         gridspec_kw={'width_ratios': [3, 1]},
         figsize=(3.5, 0.5 + 1.5 * len(ensemble_names)),
-        squeeze=False
+        squeeze=False,
+        layout="constrained",
     )
 
     for ensemble, ax_row in zip(ensemble_names, ax):
         directory = get_subdirectory_name(ensembles[ensemble])
         ax_row[0].set_title(ensemble)
-        trajectories, *_, Qs = get_flows_from_raw(
-            'raw_data/' + directory + '/out_wflow'
-        )
+        reader_name = ensembles[ensemble].get("measure_gflow")
+        if reader_name is True:
+            reader_name = "hirep"
+        if not reader_name:
+            continue
+
+        flows = readers[reader_name]("raw_data/" + directory + "/out_wflow")
         plot_history_and_histogram(
-            np.arange(len(Qs)), Qs,
+            flows,
             history_ax=ax_row[0], histogram_ax=ax_row[1], label_axes=False
         )
 
     ax[-1][0].set_xlabel('Trajectory')
     ax[-1][1].set_xlabel('Count')
 
-    fig.tight_layout(pad=0.08)
     fig.savefig(OUTPUT_DIR + '/' + filename_base + '.pdf')
     plt.close(fig)
 
