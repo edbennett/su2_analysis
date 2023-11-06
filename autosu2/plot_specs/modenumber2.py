@@ -190,7 +190,7 @@ def tabulate(fit_results, ensembles):
 
 
 def generate(data, ensembles):
-    plot_filename = "final_plots/modenumber.pdf"
+    plot_filename = "final_plots/modenumber_old.pdf"
     ensembles_to_plot = "DB1M8", "DB1M9", "DB2M7", "DB3M8", "DB4M11"
     fit_results = {}
 
