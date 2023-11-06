@@ -20,7 +20,7 @@ def reformat_modenumbers_hirep(filename):
     by the Julia code."""
 
     modenumbers = read_modenumber(filename)
-    reformatted_file = NamedTemporaryFile('w')
+    reformatted_file = NamedTemporaryFile("w")
     for omega, omega_modenumbers in modenumbers.items():
         for nu in omega_modenumbers.values():
             print(f"[ {omega} ] = {nu}", file=reformatted_file)
@@ -38,21 +38,16 @@ def read_modenumber_result(filename_or_file):
         to_close = False
 
     result["label"] = re.match(
-        "# Results for ensemble (.*)",
-        to_read.readline()
+        "# Results for ensemble (.*)", to_read.readline()
     ).groups()[0]
     result["gamma"], result["gamma_err"], result["syst_err"] = map(
         float,
         re.match(
             r"# γ\* = ([0-9.]+) ± ([0-9.]+)\s+\(syst\. err\. = ([0-9.]*)\)",
             to_read.readline(),
-        ).groups()
+        ).groups(),
     )
-    result["raw_gammas"] = pd.read_csv(
-        to_read,
-        comment='#',
-        delim_whitespace=True
-    )
+    result["raw_gammas"] = pd.read_csv(to_read, comment="#", delim_whitespace=True)
 
     if to_close:
         to_read.close()
@@ -61,9 +56,9 @@ def read_modenumber_result(filename_or_file):
 
 
 def wrap_modenumber_fit_julia(
-        modenumber_directory,
-        ensemble,
-        results_filename=None,
+    modenumber_directory,
+    ensemble,
+    results_filename=None,
 ):
     modenumber_pars = ensemble["measure_modenumber"]
     volume = ensemble["L"] ** 3 * ensemble["T"]
@@ -81,16 +76,13 @@ def wrap_modenumber_fit_julia(
     else:
         raise NotImplementedError(f"Format {file_format} is not recognised")
 
-    if file_is_up_to_date(
-            results_filename,
-            compare_file=modenumber_filename
-    ):
+    if file_is_up_to_date(results_filename, compare_file=modenumber_filename):
         return
 
     if results_filename:
         results_file = None
     else:
-        results_file = NamedTemporaryFile('r')
+        results_file = NamedTemporaryFile("r")
         results_filename = results_file.name
 
     subprocess.run(

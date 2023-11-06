@@ -4,8 +4,8 @@ from pandas import read_csv, concat
 
 def main():
     parser = ArgumentParser()
-    parser.add_argument('filename', nargs='+')
-    parser.add_argument('--output', required=True)
+    parser.add_argument("filename", nargs="+")
+    parser.add_argument("--output", required=True)
     args = parser.parse_args()
 
     frames = []
@@ -15,9 +15,8 @@ def main():
 
     full_data = concat(frames)
 
-    full_data.to_csv(path_or_buf=args.output, sep='\t', na_rep='?',
-                     index=False)
+    full_data.to_csv(path_or_buf=args.output, sep="\t", na_rep="?", index=False)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

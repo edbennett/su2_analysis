@@ -19,22 +19,24 @@ from .data import file_is_up_to_date
 
 
 CONFIGURATION_GETTER = compile(
-    r'\[IO\]\[0\]Configuration \[.*n(?P<configuration>[0-9]+)'
+    r"\[IO\]\[0\]Configuration \[.*n(?P<configuration>[0-9]+)"
 )
+
 
 def read_modenumber(filename):
     configuration = None
     modenumbers = defaultdict(dict)
     configuration_numbers = set()
 
-    with open(filename, 'r') as f:
+    with open(filename, "r") as f:
         for line in f:
-            if line.startswith('[IO][0]Configuration'):
-                configuration = int(CONFIGURATION_GETTER.match(line)
-                                    .group("configuration"))
+            if line.startswith("[IO][0]Configuration"):
+                configuration = int(
+                    CONFIGURATION_GETTER.match(line).group("configuration")
+                )
                 configuration_numbers.add(configuration)
 
-            elif line.startswith('[MODENUMBER][0]nu['):
+            elif line.startswith("[MODENUMBER][0]nu["):
                 split_line = line.split()
                 omega = float(split_line[1])
                 nu = float(split_line[4])
@@ -47,11 +49,12 @@ def read_modenumber(filename):
     return modenumbers
 
 
-# a^{-4} \overline{\nu} \approx
+# a^{-4} \overline{\nu} \approx
 #     a^{-4} \overline{\nu}_0 + A [(a\Lambda)^2 - (am)^2]^{\frac{2}{1+\gamma_*}}
 @vectorize
 def nubar_3param(lamb, A, am, gamma_star):
-    return A * (lamb ** 2 - am ** 2) ** (2 / (1 + gamma_star))
+    return A * (lamb**2 - am**2) ** (2 / (1 + gamma_star))
+
 
 @vectorize
 def nubar_4param(lamb, A, am, gamma_star, nubar0):
@@ -62,8 +65,7 @@ def nubar_4param(lamb, A, am, gamma_star, nubar0):
 def chisquare(func, indep, dep, sigma, params):
     chisquare = 0.0
     for point in range(len(indep)):
-        chisquare += ((func(indep[point], *params) - dep[point]) ** 2
-                      / sigma[point] ** 2)
+        chisquare += (func(indep[point], *params) - dep[point]) ** 2 / sigma[point] ** 2
     return chisquare / len(indep)
 
 
@@ -88,29 +90,27 @@ def old_fit(filename):
     minimal_window = None
     p_avgs = None
 
-    #SET UP BASIC AVERAGE ARRAYS
+    # SET UP BASIC AVERAGE ARRAYS
     for lamb in lambs:
         nu_arrays[lamb] = array(list(nus[lamb].values()), dtype=np.float)
         nu_estimates[lamb] = []
         nubars[lamb] = mean(nu_arrays[lamb])
         nr = len(nu_arrays[lamb])
         for xx in range(1000):
-            nu_estimates[lamb].append(
-                mean(nu_arrays[lamb][randint(nr,size=nr)])
-            )
+            nu_estimates[lamb].append(mean(nu_arrays[lamb][randint(nr, size=nr)]))
         Snubars[lamb] = std(nu_estimates[lamb])
-#        if DEBUG:
-#            print(lamb, nubars[lamb], Snubars[lamb])
+    #        if DEBUG:
+    #            print(lamb, nubars[lamb], Snubars[lamb])
 
     min_chisquare = float("inf")
-    #WINDOWING
+    # WINDOWING
     MIN_WINDOW_LENGTH = 6
 
     results = []
 
-    for I in range(len(lambs)-MIN_WINDOW_LENGTH):
-        for J in range(max(0,I+(MIN_WINDOW_LENGTH-1)),len(lambs)):
-            lambs_window = lambs[I:J+1]
+    for I in range(len(lambs) - MIN_WINDOW_LENGTH):
+        for J in range(max(0, I + (MIN_WINDOW_LENGTH - 1)), len(lambs)):
+            lambs_window = lambs[I : J + 1]
 
             p0 = [10000.0, 0.01, 1.0]
 
@@ -118,19 +118,21 @@ def old_fit(filename):
             count = 0
             while not success:
                 try:
-                    #print(lambs_window)
-                    #print([nubars[lamb] for lamb in lambs_window])
-                    #print([Snubars[lamb] for lamb in lambs_window])
+                    # print(lambs_window)
+                    # print([nubars[lamb] for lamb in lambs_window])
+                    # print([Snubars[lamb] for lamb in lambs_window])
                     p1, p1sigma = curve_fit(
                         nubar_3param,
                         lambs_window,
                         [nubars[lamb] for lamb in lambs_window],
-                        p0=[10000.0 * (1.0 + ranf()),
+                        p0=[
+                            10000.0 * (1.0 + ranf()),
                             0.01 * (1 + ranf()),
-                            ranf() * 0.1],
-                        sigma=[Snubars[lamb] for lamb in lambs_window]
+                            ranf() * 0.1,
+                        ],
+                        sigma=[Snubars[lamb] for lamb in lambs_window],
                     )
-                    if DEBUG: 
+                    if DEBUG:
                         pass
                         # print(p1)
                         # print(len(p1sigma), p1sigma)
@@ -150,12 +152,11 @@ def old_fit(filename):
                     success = True
                 if DEBUG:
                     if success:
-                        print("Initial fit for window", I, ",", J,
-                              "converged at ", p1)
+                        print("Initial fit for window", I, ",", J, "converged at ", p1)
             if not success:
                 continue
 
-            #NOW START BOOTSTRAPPING THIS WINDOW
+            # NOW START BOOTSTRAPPING THIS WINDOW
             chisquareds = []
             ps = []
             for xx in range(4):
@@ -167,25 +168,27 @@ def old_fit(filename):
             while xx < 1000:
                 nubar_bs = []
                 Snubar_bs = []
-                n_set = n_array[randint(n_confs, size=2*n_confs)]
-                #print(n_set)
+                n_set = n_array[randint(n_confs, size=2 * n_confs)]
+                # print(n_set)
 
                 for lamb in lambs_window:
                     # print(nu_arrays[lamb])
                     nubar_bs.append(mean([nus[lamb][n] for n in n_set]))
                     Snubar_bs.append(std([nus[lamb][n] for n in n_set]))
                 try:
-                    p1_new = [p1[0] * (1.0 + (ranf() - 0.5)/10.0),
-                              p1[1] * (1.0 + (ranf() - 0.5)/1.0),
-                              p1[2] * (1.0 + (ranf() - 0.5)/10.0),
-                              1000.0 * ranf()]
-                    #if DEBUG:
-                        # print("p1_new = ", p1_new)
-                    p2, p2sigma = curve_fit(nubar_4param, lambs_window,
-                                            nubar_bs,
-                                            p0=p1_new, sigma=Snubar_bs)
-                    #if DEBUG:
-                        # print(p2, p2sigma)
+                    p1_new = [
+                        p1[0] * (1.0 + (ranf() - 0.5) / 10.0),
+                        p1[1] * (1.0 + (ranf() - 0.5) / 1.0),
+                        p1[2] * (1.0 + (ranf() - 0.5) / 10.0),
+                        1000.0 * ranf(),
+                    ]
+                    # if DEBUG:
+                    # print("p1_new = ", p1_new)
+                    p2, p2sigma = curve_fit(
+                        nubar_4param, lambs_window, nubar_bs, p0=p1_new, sigma=Snubar_bs
+                    )
+                    # if DEBUG:
+                    # print(p2, p2sigma)
                     if p2[3] < 0:
                         raise Exception
                     if abs(p2[1]) > lambs_window[0]:
@@ -193,7 +196,7 @@ def old_fit(filename):
                         break
                     if len(p2sigma) < 3:
                         raise Exception
-                except (KeyboardInterrupt,SystemExit):
+                except (KeyboardInterrupt, SystemExit):
                     raise
                 except Exception:
                     badness += 1
@@ -205,20 +208,21 @@ def old_fit(filename):
                     if len(p2) == 0:
                         niter += 1
                         continue
-                    if not float('-inf') < float(p2[0]) < float('inf'):
+                    if not float("-inf") < float(p2[0]) < float("inf"):
                         niter += 1
                         continue
                 for yy in range(4):
                     ps[yy].append(p2[yy])
                 # print(p2)
-                chisquareds.append(chisquare(
-                    nubar_4param, lambs_window, nubar_bs, Snubar_bs, tuple(p2)
-                ))
+                chisquareds.append(
+                    chisquare(
+                        nubar_4param, lambs_window, nubar_bs, Snubar_bs, tuple(p2)
+                    )
+                )
                 xx += 1
                 niter += 1
                 if niter == 10000:
-                    print("Window", I, ",", J,
-                          "giving up after 10,000 attempts")
+                    print("Window", I, ",", J, "giving up after 10,000 attempts")
                     break
             if badness == niter:
                 print("Window", I, ",", J, "has 100% badness")
@@ -248,68 +252,115 @@ def old_fit(filename):
                 minimal_window = [I, J]
                 minimal_params = p_avgs
 
-            print("Window", I, ",", J,
-                  "chisquare", avg_chisquare, "±", std(chisquareds),
-                  ", parameters", p_avgs[0], "±", p_stds[0],
-                  p_avgs[1], "±", p_stds[1],
-                  p_avgs[2], "±", p_stds[2],
-                  p_avgs[3], "±", p_stds[3],
-                  "badness", badness/10.0, "%")
+            print(
+                "Window",
+                I,
+                ",",
+                J,
+                "chisquare",
+                avg_chisquare,
+                "±",
+                std(chisquareds),
+                ", parameters",
+                p_avgs[0],
+                "±",
+                p_stds[0],
+                p_avgs[1],
+                "±",
+                p_stds[1],
+                p_avgs[2],
+                "±",
+                p_stds[2],
+                p_avgs[3],
+                "±",
+                p_stds[3],
+                "badness",
+                badness / 10.0,
+                "%",
+            )
 
-            results.append((
-                lambs[I], lambs[J],
-                avg_chisquare, std(chisquareds),
-                p_avgs[0], p_stds[0],
-                p_avgs[1], p_stds[1],
-                p_avgs[2], p_stds[2],
-                p_avgs[3], p_stds[3],
-                badness / 10.0
-            ))
-                
+            results.append(
+                (
+                    lambs[I],
+                    lambs[J],
+                    avg_chisquare,
+                    std(chisquareds),
+                    p_avgs[0],
+                    p_stds[0],
+                    p_avgs[1],
+                    p_stds[1],
+                    p_avgs[2],
+                    p_stds[2],
+                    p_avgs[3],
+                    p_stds[3],
+                    badness / 10.0,
+                )
+            )
 
     print("====================================================")
-    print("Minimal chisquare of", min_chisquare, "at",
-          minimal_window, "with fitted parameters", minimal_params)
+    print(
+        "Minimal chisquare of",
+        min_chisquare,
+        "at",
+        minimal_window,
+        "with fitted parameters",
+        minimal_params,
+    )
 
-    return DataFrame(results, columns=(
-        'omega_lower_bound', 'omega_upper_bound',
-        'chisquare', 'chisquare_error',
-        'A', 'A_error', 'am', 'am_error',
-        'gamma_star', 'gamma_star_error', 'nubar0', 'nubar0_error',
-        'badness'
-    ))
+    return DataFrame(
+        results,
+        columns=(
+            "omega_lower_bound",
+            "omega_upper_bound",
+            "chisquare",
+            "chisquare_error",
+            "A",
+            "A_error",
+            "am",
+            "am_error",
+            "gamma_star",
+            "gamma_star_error",
+            "nubar0",
+            "nubar0_error",
+            "badness",
+        ),
+    )
 
 
 def plot_modenumber_fits(results, output=None):
-#    set_plot_defaults()
+    #    set_plot_defaults()
     from matplotlib.pyplot import rc
-    rc('lines', markersize=1)
+
+    rc("lines", markersize=1)
 
     fig, axes = subplots(nrows=2, ncols=2, sharex=True, figsize=(12, 8))
 
     for ax in axes[1]:
-        ax.set_xlabel(r'$\Omega_{\mathrm{upper}}$')
-        ax.set_xscale('log')
-        ax.set_xlim((results.omega_upper_bound.min(),
-                     results.omega_upper_bound.max()))
+        ax.set_xlabel(r"$\Omega_{\mathrm{upper}}$")
+        ax.set_xscale("log")
+        ax.set_xlim((results.omega_upper_bound.min(), results.omega_upper_bound.max()))
 
-    colour_norm = LogNorm(vmin=results.omega_lower_bound.min(),
-                          vmax=results.omega_lower_bound.max())
+    colour_norm = LogNorm(
+        vmin=results.omega_lower_bound.min(), vmax=results.omega_lower_bound.max()
+    )
 
     colours = plasma(colour_norm(results.omega_lower_bound.values))
     colours[:, 3] -= results.badness.values.clip(max=100) / 100
 
     omega_upper_bounds = results.omega_upper_bound.values
 
-    results['am2'] = results.am ** 2
-    results['am2_error'] = 2 * results.am * results.am_error
+    results["am2"] = results.am**2
+    results["am2_error"] = 2 * results.am * results.am_error
 
-    for (variable_label, variable_column, v_min, v_max), ax in zip((
+    for (variable_label, variable_column, v_min, v_max), ax in zip(
+        (
             (r"A", "A", 0.9, 1.0),
             (r"(am)^2", "am2", 0.9, 0.01),
             (r"\gamma_*", "gamma_star", 0.9, 1.1),
-            (r"\overline{\nu}", "nubar0", 0.2, 0.1)
-    ), axes.ravel()):
+            (r"\overline{\nu}", "nubar0", 0.2, 0.1),
+        ),
+        axes.ravel(),
+    ):
         ax.set_ylabel(f"${variable_label}$")
         values = results[variable_column].values
         min_value = v_min * nanmin(values)
@@ -320,7 +371,7 @@ def plot_modenumber_fits(results, output=None):
             values,
             yerr=results[f"{variable_column}_error"].values,
             ecolor=colours,
-            fmt='None'
+            fmt="None",
         )
         ax.set_ylim([min_value, max_value])
 
@@ -333,10 +384,8 @@ def plot_modenumber_fits(results, output=None):
         fig.savefig(output)
 
 
-def do_modenumber_fit(modenumber_filename,
-                      results_filename=None):
-    if file_is_up_to_date(results_filename,
-                          compare_file=modenumber_filename):
+def do_modenumber_fit(modenumber_filename, results_filename=None):
+    if file_is_up_to_date(results_filename, compare_file=modenumber_filename):
         return
 
     results = old_fit(modenumber_filename)
@@ -349,11 +398,11 @@ def do_modenumber_fit(modenumber_filename,
 
 def main():
     parser = ArgumentParser()
-    parser.add_argument('modenumber_filename')
-    parser.add_argument('--output', default=None)
-    parser.add_argument('--reload', action='store_true')
-    parser.add_argument('--plot', action='store_true')
-    parser.add_argument('--plot_filename', default=None)
+    parser.add_argument("modenumber_filename")
+    parser.add_argument("--output", default=None)
+    parser.add_argument("--reload", action="store_true")
+    parser.add_argument("--plot", action="store_true")
+    parser.add_argument("--plot_filename", default=None)
     args = parser.parse_args()
 
     if args.reload:
@@ -368,5 +417,5 @@ def main():
         results.to_csv(args.output)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

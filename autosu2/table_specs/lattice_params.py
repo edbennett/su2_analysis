@@ -8,11 +8,10 @@ EXPONENTIAL = False
 
 
 def lattice_params(data, **kwargs):
-    columns = ['', None, r'$\beta$', '$am$', r'$N_t \times N_s^3$',
-               r'$N_{\rm conf.}$']
-    constants = ('beta', 'm', 'V', 'cfg_count')
+    columns = ["", None, r"$\beta$", "$am$", r"$N_t \times N_s^3$", r"$N_{\rm conf.}$"]
+    constants = ("beta", "m", "V", "cfg_count")
     observables = []
-    filename = 'lattice_params.tex'
+    filename = "lattice_params.tex"
 
     generate_table_from_db(
         data=data,
@@ -22,7 +21,7 @@ def lattice_params(data, **kwargs):
         columns=columns,
         constants=constants,
         error_digits=ERROR_DIGITS,
-        exponential=EXPONENTIAL
+        exponential=EXPONENTIAL,
     )
 
 
