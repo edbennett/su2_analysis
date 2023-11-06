@@ -150,21 +150,21 @@ def generate_table_from_db(
             else:
                 observable_found = True
 
-            if float(measurement.value) > 0 and (
-                    float(measurement.uncertainty) / float(measurement.value) <
+            if measurement.value.iloc[0] > 0 and (
+                    measurement.uncertainty.iloc[0] / measurement.value.iloc[0] <
                     SMALLEST_RELATIVE_UNCERTAINTY
             ):
                 print("WARNING: very small uncertainty found", measurement)
                 uncertainty = 0
             else:
-                uncertainty = measurement.uncertainty
+                uncertainty = measurement.uncertainty.iloc[0]
 
-            if (measurement.value == 0).bool() and suppress_zeroes:
+            if (measurement.value.iloc[0] == 0) and suppress_zeroes:
                 row_content.append(r'\ll 1')
             else:
                 row_content.append(format_value_and_error(
-                    float(measurement.value),
-                    float(uncertainty),
+                    measurement.value.iloc[0],
+                    uncertainty,
                     error_digits=error_digits,
                     exponential=exponential
                 ))

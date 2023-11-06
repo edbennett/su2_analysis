@@ -41,10 +41,10 @@ def sm_residual(gamma_s, data, count_valid_points=False):
                 == set_p[set_p.fshs_x > point_i.fshs_x].fshs_x.min()
             ]
 
-            LM_H_below = float(point_below.LM_H)
-            LM_H_above = float(point_above.LM_H)
-            x_below = float(point_below.fshs_x)
-            x_above = float(point_above.fshs_x)
+            LM_H_below = float(point_below.LM_H.iloc[0])
+            LM_H_above = float(point_above.LM_H.iloc[0])
+            x_below = float(point_below.fshs_x.iloc[0])
+            x_above = float(point_above.fshs_x.iloc[0])
 
             interp_LM_H = (
                 LM_H_below
