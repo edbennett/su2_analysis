@@ -52,6 +52,7 @@ def plot_history_and_histogram(
     history_ax=None,
     histogram_ax=None,
     label_axes=True,
+    count_axis="absolute",
 ):
     """Histograms, amd plots to the screen or a PDF if specified,
     the topological charges in Qs, with trajectory numbers provided in
@@ -86,11 +87,16 @@ def plot_history_and_histogram(
     history_ax.step(flows.trajectories, Qs)
 
     Q_range, Q_counts = flat_bin_Qs(Qs)
+    A, Q0, sigma = Q_fit(flows, with_amplitude=True)
+
     history_ax.set_ylim(min(Q_range) - 0.5, max(Q_range) + 0.5)
 
-    histogram_ax.step(Q_counts, Q_range - 0.5, label="Histogram")
+    if count_axis == "relative":
+        total_count = sum(Q_counts)
+        Q_counts = Q_counts / total_count
+        A /= total_count
 
-    A, Q0, sigma = Q_fit(flows, with_amplitude=True)
+    histogram_ax.step(Q_counts, Q_range - 0.5, label="Histogram")
 
     smooth_Q_range = np.linspace(min(Q_range) - 0.5, max(Q_range) + 0.5, 1000)
     histogram_ax.plot(
@@ -100,7 +106,6 @@ def plot_history_and_histogram(
         smooth_Q_range,
         label="Fit",
     )
-    histogram_ax.set_xlim((-max(Q_counts) * 0.1, max(Q_counts) * 1.1))
 
     if f:
         f.tight_layout()

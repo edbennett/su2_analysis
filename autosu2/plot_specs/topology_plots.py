@@ -40,11 +40,11 @@ def do_plot(ensembles, ensemble_names, filename_base):
 
         flows = readers[reader_name]("raw_data/" + directory + "/out_wflow")
         plot_history_and_histogram(
-            flows, history_ax=ax_row[0], histogram_ax=ax_row[1], label_axes=False
+            flows, history_ax=ax_row[0], histogram_ax=ax_row[1], label_axes=False, count_axis="relative"
         )
 
     ax[-1][0].set_xlabel("Trajectory")
-    ax[-1][1].set_xlabel("Count")
+    ax[-1][1].set_xlabel("Proportion")
 
     fig.savefig(OUTPUT_DIR + "/" + filename_base + ".pdf")
     plt.close(fig)
