@@ -4,7 +4,7 @@ from pandas import read_csv
 from ..derived_observables import merge_quantities
 from ..plots import set_plot_defaults
 
-from .common import beta_colour_marker
+from .common import beta_colour_marker, preliminary
 
 
 def uncertainty_ratio_sqrtsigma(suscept, suscept_err, sqrtsigma, sqrtsigma_err):
@@ -39,7 +39,7 @@ def add_sideload_data(ax):
 
 
 def generate(data, ensembles):
-    set_plot_defaults(markersize=2, capsize=0.2, linewidth=0.5)
+    set_plot_defaults(markersize=2, capsize=0.2, linewidth=0.5, preliminary=preliminary)
 
     filename = 'final_plots/susceptibility.pdf'
     fig, ax = plt.subplots(figsize=(3.5, 2.5))

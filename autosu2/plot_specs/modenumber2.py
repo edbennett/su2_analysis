@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit
 
+from .common import preliminary
 from ..plots import set_plot_defaults
 from ..tables import generate_table_from_content, format_value_and_error
 from ..do_analysis import get_subdirectory_name
@@ -43,7 +44,7 @@ def do_plot(data, filename=None, omega_min=None, omega_max=None, ensemble=None,
         ax_supplied = True
     else:
         ax_supplied = False
-        set_plot_defaults(linewidth=0.5, capsize=0)
+        set_plot_defaults(linewidth=0.5, capsize=0, preliminary=preliminary)
         fig, ax = plt.subplots(figsize=(3.5, 2))
 
     colour_norm = LogNorm(vmin=l_min, vmax=l_max)
@@ -188,7 +189,7 @@ def generate(data, ensembles):
     fit_results = {}
 
     # capsize=1 breaks multicolour plots so don't set this here
-    set_plot_defaults(linewidth=0.5, capsize=0)
+    set_plot_defaults(linewidth=0.5, capsize=0, preliminary=preliminary)
     fig, axes = plt.subplots(nrows=5, figsize=(3.5, 8))
 
     for ensemble_name, ax in zip(ensembles_to_plot, axes):

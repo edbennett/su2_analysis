@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+from .common import preliminary
 from ..db import get_measurement_as_ufloat
 from ..data import get_flows_from_raw
 from ..do_analysis import get_subdirectory_name
@@ -15,7 +16,7 @@ CAPTION = r'Polyakov loop histograms, for the ensembles {ensembles}.'
 
 
 def do_plot(ensembles, ensemble_names, filename_base):
-    set_plot_defaults(linewidth=0.5)
+    set_plot_defaults(linewidth=0.5, preliminary=preliminary)
     fig, axes = plt.subplots(
         len(ensemble_names),
         sharex=True,

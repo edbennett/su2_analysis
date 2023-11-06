@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from numpy import asarray, linspace, ravel
 from uncertainties import ufloat
 
+from .common import preliminary
 from ..plots import set_plot_defaults
 from ..tables import generate_table_from_content, table_row
 from ..derived_observables import merge_quantities
@@ -78,7 +79,7 @@ def fit(merged_data, betas_to_fit, gamma_star=None):
 
 
 def plot(data, fit_result, betas_to_fit, filename=None):
-    set_plot_defaults()
+    set_plot_defaults(preliminary=preliminary)
     fig, ax = plt.subplots()
     if type(fit_result.p['ym']) == float:
         ym = fit_result.p['ym']

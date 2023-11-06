@@ -2,7 +2,7 @@ from itertools import product
 
 import matplotlib.pyplot as plt
 
-from .common import beta_colour_marker
+from .common import beta_colour_marker, preliminary
 
 from ..plots import set_plot_defaults, SYMBOL_LIST
 from ..derived_observables import merge_no_w0
@@ -14,7 +14,7 @@ CHANNEL_LABELS = r'\gamma_5', r"\gamma_k", r'\gamma_5\gamma_k', r'1'
 
 
 def do_plot(data, Nf=1):
-    set_plot_defaults()
+    set_plot_defaults(preliminary=preliminary)
     filename = f'auxiliary_plots/spectra_Nf{Nf}.pdf'
     fig, axes = plt.subplots(ncols=2, nrows=len(beta_colour_marker[Nf]), figsize=(10, 2 + 4 * len(beta_colour_marker[Nf])), squeeze=False)
 

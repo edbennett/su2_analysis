@@ -8,7 +8,7 @@ from matplotlib.patches import Patch
 from ..plots import set_plot_defaults
 from ..derived_observables import merge_and_hat_quantities
 
-from .common import beta_colour_marker
+from .common import beta_colour_marker, preliminary
 
 ALPHA = 0.3
 R_value = namedtuple("R_value", ["centre", "lower", "upper"])
@@ -63,7 +63,7 @@ def shade_prediction(colour, R, ax):
 
 
 def generate(data, ensembles):
-    set_plot_defaults(markersize=4, capsize=1.0, linewidth=0.5)
+    set_plot_defaults(markersize=4, capsize=1.0, linewidth=0.5, preliminary=preliminary)
     predicted_Rs = (
         R_value(7.1511, 4.7955, None),
         R_value(5.3377, 3.5782, None),

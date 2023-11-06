@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from numpy import nan
 
+from .common import preliminary
 from ..plots import set_plot_defaults, COLOR_LIST
 
 ENSEMBLES = (
@@ -14,7 +15,7 @@ EXPONENTIAL = False
 def generate(data, ensembles):
     filename = 'auxiliary_plots/W0_selection.pdf'
 
-    set_plot_defaults()
+    set_plot_defaults(preliminary=preliminary)
 
     fig, (t_ax, w_ax) = plt.subplots(figsize=(3.5, 6), nrows=2, sharex=True)
 

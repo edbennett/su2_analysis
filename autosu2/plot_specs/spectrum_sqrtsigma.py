@@ -4,11 +4,11 @@ import matplotlib.pyplot as plt
 from ..plots import set_plot_defaults
 from ..derived_observables import merge_quantities
 
-from .common import beta_colour_marker, critical_ms
+from .common import beta_colour_marker, critical_ms, preliminary
 
 
 def generate(data, ensembles):
-    set_plot_defaults(markersize=3, capsize=0.5, linewidth=0.3)
+    set_plot_defaults(markersize=3, capsize=0.5, linewidth=0.3, preliminary=preliminary)
 
     use_pcac = True
 

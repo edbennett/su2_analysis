@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 from numpy import linspace
 from scipy.optimize import curve_fit
 
+from .common import preliminary
 from ..plots import set_plot_defaults
 
 
@@ -10,7 +11,7 @@ def fit_form_mPS(m, B, m_c, D):
 
 
 def generate(data, ensembles):
-    set_plot_defaults()
+    set_plot_defaults(preliminary=preliminary)
     for beta, m_index_max in ((2.05, 9), (2.1, 6), (2.15, 7), (2.2, 11)):
         filename = f'auxiliary_plots/crit_mf_b{beta}.pdf'
 
