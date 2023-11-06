@@ -16,6 +16,7 @@ from .fit_correlation_function import plot_measure_and_save_mesons, Incomplete
 from .fit_effective_mass import plot_measure_and_save_mpcac
 from .one_loop_matching import do_one_loop_matching
 from .polyakov import fit_plot_and_save_polyakov_loops
+from .provenance import stamp_provenance
 from .modenumber import do_modenumber_fit
 from .modenumber_julia import wrap_modenumber_fit_julia
 
@@ -294,9 +295,6 @@ def output_results(only=None, ensembles=None):
                     )
                 else:
                     raise ex
-#            except Exception as ex:
-#                import pdb; pdb.set_trace()
-#                print(' - FAILED: ', ex)
 
 
 def main():
@@ -330,6 +328,9 @@ def main():
     if not args.skip_output:
         print("Outputting results:")
         output_results(args.only, ensembles=ensembles)
+
+    if not (args.only or args.skip_mesons or args.skip_output or args.skip_analysis or args.single_ensemble):
+        stamp_provenance(ensembles_filename=args.ensembles)
 
 
 if __name__ == '__main__':
