@@ -13,7 +13,7 @@ def generate(data, ensembles):
     set_plot_defaults(markersize=2, capsize=1, linewidth=0.5,
                       preliminary=preliminary)
 
-    filename = f'final_plots/scalar_ratio.pdf'
+    filename = 'final_plots/scalar_ratio_Nf{Nf}.pdf'
     fig, ax = plt.subplots(figsize=(3.5, 2.5))
     hatted_data = merge_and_hat_quantities(
         data,
@@ -31,31 +31,33 @@ def generate(data, ensembles):
     ax.set_xlabel(r'$w_0 m_{\mathrm{PCAC}}$')
     ax.set_ylabel(r'$\frac{M_{0^{++}}}{M_{2^+_{\mathrm{s}}}}$')
 
-    for beta, colour, marker in beta_colour_marker:
-        data_to_plot = hatted_data[
-            (hatted_data.beta == beta)
-            & ~(hatted_data.label.str.endswith('*'))
-        ]
-        if data_to_plot.value_ratio.isnull().all():
-            continue
+    for Nf in 1, 2:
+        for beta, colour, marker in beta_colour_marker[Nf]:
+            data_to_plot = hatted_data[
+                (hatted_data.beta == beta)
+                & ~(hatted_data.label.str.endswith('*'))
+                & (hatted_data.Nf == Nf)
+            ]
+            if data_to_plot.value_ratio.isnull().all():
+                continue
 
-        ax.errorbar(
-            data_to_plot.value_mpcac_mass_hat,
-            data_to_plot.value_ratio,
-            xerr=data_to_plot.uncertainty_mpcac_mass_hat,
-            yerr=data_to_plot.uncertainty_ratio,
-            color=colour,
-            marker=marker,
-            label=f"$\\beta={beta}$",
-            ls='none'
-        )
+            ax.errorbar(
+                data_to_plot.value_mpcac_mass_hat,
+                data_to_plot.value_ratio,
+                xerr=data_to_plot.uncertainty_mpcac_mass_hat,
+                yerr=data_to_plot.uncertainty_ratio,
+                color=colour,
+                marker=marker,
+                label=f"$\\beta={beta}$",
+                ls='none'
+            )
 
-    ax.legend(ncol=3, columnspacing=1, handletextpad=0, borderpad=0,
-              loc="lower center", frameon=False)
+        ax.legend(ncol=3, columnspacing=1, handletextpad=0, borderpad=0,
+                  loc="lower center", frameon=False)
 
-    ax.set_xlim((0, None))
-    ax.set_ylim((0, None))
+        ax.set_xlim((0, None))
+        ax.set_ylim((0, None))
 
-    fig.tight_layout(pad=0.28)
-    fig.savefig(filename)
-    plt.close(fig)
+        fig.tight_layout(pad=0.28)
+        fig.savefig(filename.format(Nf=Nf))
+        plt.close(fig)

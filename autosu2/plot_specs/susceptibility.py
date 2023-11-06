@@ -74,31 +74,33 @@ def generate(data, ensembles):
         ax.set_ylabel(r'$w_0 \chi^{\frac{1}{4}}$')
     ax.set_xlabel(r'$a^2 \sigma$')
 
-    for beta, colour, marker in beta_colour_marker:
-        data_to_plot = merged_data[
-            (merged_data.beta == beta) &
-            ~(merged_data.label.str.endswith('*'))
-        ]
-        x_values = data_to_plot.value_sqrtsigma ** 2
-        x_uncertainties = (2 * data_to_plot.value_sqrtsigma
-                           * data_to_plot.uncertainty_sqrtsigma)
-        if with_sqrtsigma:
-            y_values = data_to_plot.value_chi_top_14_over_sqrtsigma
-            y_uncertainties = data_to_plot.uncertainty_chi_top_14_over_sqrtsigma
-        else:
-            y_values = data_to_plot.value_chi_top_14_hat
-            y_uncertainties = data_to_plot.uncertainty_chi_top_14_hat
+    for Nf in 1, 2:
+        for beta, colour, marker in beta_colour_marker[Nf]:
+            data_to_plot = merged_data[
+                (merged_data.beta == beta)
+                & ~(merged_data.label.str.endswith('*'))
+                & (merged_data.Nf == Nf)
+            ]
+            x_values = data_to_plot.value_sqrtsigma ** 2
+            x_uncertainties = (2 * data_to_plot.value_sqrtsigma
+                               * data_to_plot.uncertainty_sqrtsigma)
+            if with_sqrtsigma:
+                y_values = data_to_plot.value_chi_top_14_over_sqrtsigma
+                y_uncertainties = data_to_plot.uncertainty_chi_top_14_over_sqrtsigma
+            else:
+                y_values = data_to_plot.value_chi_top_14_hat
+                y_uncertainties = data_to_plot.uncertainty_chi_top_14_hat
 
-        ax.errorbar(
-            x_values,
-            y_values,
-            xerr=x_uncertainties,
-            yerr=y_uncertainties,
-            color=colour,
-            marker=marker,
-            ls='none',
-            label=f"$\\beta={beta}$"
-        )
+            ax.errorbar(
+                x_values,
+                y_values,
+                xerr=x_uncertainties,
+                yerr=y_uncertainties,
+                color=colour,
+                marker=marker,
+                ls='none',
+                label=f"$N_{{\mathrm{{f}}}}={Nf}, \\beta={beta}$"
+            )
 
     if with_sqrtsigma:
         add_sideload_data(ax)

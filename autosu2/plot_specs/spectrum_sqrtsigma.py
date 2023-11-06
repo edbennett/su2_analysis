@@ -12,7 +12,7 @@ def generate(data, ensembles):
 
     use_pcac = True
 
-    filename = f'auxiliary_plots/spectrum_sqrtsigma.pdf'
+    filename = 'auxiliary_plots/spectrum_sqrtsigma_Nf{Nf}.pdf'
     fig, axes = plt.subplots(nrows=3, sharex=True, figsize=(4.5, 8))
     quantities = (
         'mpcac_mass', 'g5_mass', 'g5_decay_const', 'gk_mass', 'gk_decay_const'
@@ -47,51 +47,57 @@ def generate(data, ensembles):
                       'A^{++}', 'E^{++}', 'T^{++}', r'\breve{g}')
     markers = '.', 'x', '+', '^', 'v', '1', '*'
 
-    for (beta, colour, _), m_c in zip(beta_colour_marker, critical_ms):
-        data_to_plot = merged_data[
-            (merged_data.beta == beta) &
-            ~(merged_data.label.str.endswith('*'))
-        ]
-        if use_pcac:
-            m_over_sqrtsigma = data_to_plot.value_mpcac_mass_over_sqrtsigma
-            m_over_sqrtsigma_err = data_to_plot.uncertainty_mpcac_mass_over_sqrtsigma
-        else:
-            m_over_sqrtsigma = (data_to_plot.m - m_c) / data_to_plot.value_sqrtsigma
-            m_over_sqrtsigma_err = (
-                (data_to_plot.m - m_c) * data_to_plot.uncertainty_sqrtsigma
-                / data_to_plot.value_sqrtsigma ** 2
-            )
+    for Nf in 1, 2:
+        for (beta, colour, _), m_c in zip(beta_colour_marker[Nf], critical_ms[Nf]):
+            data_to_plot = merged_data[
+                (merged_data.beta == beta)
+                & ~(merged_data.label.str.endswith('*'))
+                & (merged_data.Nf == Nf)
+            ]
+            if use_pcac:
+                m_over_sqrtsigma = data_to_plot.value_mpcac_mass_over_sqrtsigma
+                m_over_sqrtsigma_err = data_to_plot.uncertainty_mpcac_mass_over_sqrtsigma
+            else:
+                m_over_sqrtsigma = (data_to_plot.m - m_c) / data_to_plot.value_sqrtsigma
+                m_over_sqrtsigma_err = (
+                    (data_to_plot.m - m_c) * data_to_plot.uncertainty_sqrtsigma
+                    / data_to_plot.value_sqrtsigma ** 2
+                )
 
-        for observable in 'mass', 'decay_const':
-            for channel, symbol in zip(channels_to_plot, markers):
-                if observable == 'decay_const':
-                    ax = axes[2]
-                elif channel in ('id', 'g5', 'g5gk', 'gk'):
-                    ax = axes[0]
-                else:
-                    ax = axes[1]
-                suffix = f'{channel}_{observable}_over_sqrtsigma'
-                if f'value_{suffix}' in data_to_plot:
-                    ax.errorbar(m_over_sqrtsigma,
-                                data_to_plot[f'value_{suffix}'],
-                                xerr=m_over_sqrtsigma_err,
-                                yerr=data_to_plot[f'uncertainty_{suffix}'],
-                                fmt=f'{colour}{symbol}')
+            for observable in 'mass', 'decay_const':
+                for channel, marker in zip(channels_to_plot, markers):
+                    if observable == 'decay_const':
+                        ax = axes[2]
+                    elif channel in ('id', 'g5', 'g5gk', 'gk'):
+                        ax = axes[0]
+                    else:
+                        ax = axes[1]
+                    suffix = f'{channel}_{observable}_over_sqrtsigma'
+                    if f'value_{suffix}' in data_to_plot:
+                        ax.errorbar(
+                            m_over_sqrtsigma,
+                            data_to_plot[f'value_{suffix}'],
+                            xerr=m_over_sqrtsigma_err,
+                            yerr=data_to_plot[f'uncertainty_{suffix}'],
+                            color=colour,
+                            marker=marker,
+                            linestyle="none",
+                        )
 
-        axes[0].errorbar([-1], [-1], yerr=[nan], xerr=[nan],
-                         fmt=f'{colour},', label=f"$\\beta={beta}$")
+            axes[0].errorbar([-1], [-1], yerr=[nan], xerr=[nan],
+                             color=colour, marker=",", label=f"$\\beta={beta}$")
 
-    for channel_label, marker in zip(channel_labels, markers):
-        axes[0].scatter([-1], [-1], marker=marker, color='black',
-                        label=f'${channel_label}$')
+        for channel_label, marker in zip(channel_labels, markers):
+            axes[0].scatter([-1], [-1], marker=marker, color='black',
+                            label=f'${channel_label}$')
 
-    axes[0].legend(loc='lower right', frameon=False, ncol=4, columnspacing=1.0,
-                   bbox_to_anchor=(0, 1.02, 1, 0.25))
+        axes[0].legend(loc='lower right', frameon=False, ncol=4, columnspacing=1.0,
+                       bbox_to_anchor=(0, 1.02, 1, 0.25))
 
-    axes[0].set_xlim((0, None))
-    for ax in axes:
-        ax.set_ylim((0, None))
+        axes[0].set_xlim((0, None))
+        for ax in axes:
+            ax.set_ylim((0, None))
 
-    fig.tight_layout()
-    fig.savefig(filename)
-    plt.close(fig)
+        fig.tight_layout()
+        fig.savefig(filename.format(Nf=Nf))
+        plt.close(fig)

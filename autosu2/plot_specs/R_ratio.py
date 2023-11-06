@@ -87,15 +87,16 @@ def generate(data, ensembles):
     ) ** 0.5
     axes[-1].set_xlabel(r'$L M_{0^{++}}$')
 
-    for (beta, colour, marker), ax in zip(beta_colour_marker, axes):
+    for (beta, colour, marker), ax in zip(beta_colour_marker[1], axes):
         data_to_plot = hatted_data[
             (hatted_data.beta == beta)
+            & (hatted_data.Nf == 1)
             # R ratio is interesting at smaller volumes too
             # & ~(hatted_data.label.str.endswith('*'))
         ]
         plot_points(data_to_plot, beta, colour, marker, ax)
 
-    for (_, colour, _), R, ax in zip(beta_colour_marker, predicted_Rs, axes):
+    for (_, colour, _), R, ax in zip(beta_colour_marker[1], predicted_Rs, axes):
         shade_prediction(colour, R, ax)
 
     legend_elements = [
