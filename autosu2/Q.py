@@ -84,7 +84,11 @@ def plot_history_and_histogram(
     history_ax.set_ylabel("$Q$")
 
     Qs = flows.Q_history()
-    history_ax.step(flows.trajectories, Qs)
+    for ensemble_trajectories, Q_ensemble in zip(
+        flows.group(flows.trajectories),
+        flows.group(Qs),
+    ):
+        history_ax.step(ensemble_trajectories, Q_ensemble)
 
     Q_range, Q_counts = flat_bin_Qs(Qs)
     A, Q0, sigma = Q_fit(flows, with_amplitude=True)
