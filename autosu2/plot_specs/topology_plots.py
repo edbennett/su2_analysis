@@ -1,7 +1,7 @@
 from flow_analysis.readers import readers
 import matplotlib.pyplot as plt
 
-from .common import preliminary
+from .common import format_ensembles_list, preliminary
 from ..db import get_measurement_as_ufloat
 from ..do_analysis import get_subdirectory_name
 from ..plots import set_plot_defaults
@@ -66,13 +66,7 @@ def do_caption(filename_base, ensembles, caption, figlabel):
         else:
             observables[f"{ensemble}_tauexp"] = f"={tau_exp:.1uSL}"
 
-    if len(ensembles) > 2:
-        observables["ensembles"] = "{}, and {}".format(ensembles[:-1], ensembles[-1])
-    elif len(ensembles) == 2:
-        observables["ensembles"] = "{} and {}".format(*ensembles)
-    elif len(ensembles) == 1:
-        observables["ensembles"] = "{}".format(*ensembles)
-
+    observables["ensembles"] = format_ensembles_list(ensembles)
     caption = caption.format(**observables)
 
     with open(OUTPUT_DIR + "/" + filename_base + ".tex", "w") as f:

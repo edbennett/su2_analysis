@@ -1614,6 +1614,7 @@ DB4M13:
   last_cfg: 2886
   cfg_count: 4049
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       plateau_start: 24
@@ -2253,6 +2254,7 @@ DB6M9:
   last_cfg: 2932
   cfg_count: 4141
   measure_gflow: True
+  measure_polyakov: True
   measure_mesons:
     g5:
       plateau_start: 30

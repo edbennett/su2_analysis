@@ -76,5 +76,15 @@ def add_figure_key(fig, markers=True, Nf=1):
     fig.legend(handles=legend_contents, ncol=7, **figlegend_defaults)
 
 
+def format_ensembles_list(ensemble_names):
+    if len(ensemble_names) > 2:
+        return "{}, and {}".format(", ".join(ensemble_names[:-1]), ensemble_names[-1])
+    elif len(ensemble_names) == 2:
+        return "{} and {}".format(*ensemble_names)
+    elif len(ensemble_names) == 1:
+        return "{}".format(*ensemble_names)
+    return ""
+
+
 def generate(*args, **kwargs):
     pass
