@@ -1,14 +1,14 @@
-import lsqfit
 import gvar as gv
-import numpy as np
+import lsqfit
 import matplotlib.pyplot as plt
-from numpy import linspace
+import numpy as np
+import pandas as pd
 from uncertainties import ufloat
 
 from .common import preliminary
 from ..plots import set_plot_defaults
 from ..tables import generate_table_from_content, table_row
-from ..derived_observables import merge_quantities
+from ..derived_observables import merge_no_w0
 
 
 def quadratic(x, a, b, c):
@@ -112,11 +112,11 @@ def plot(data, fit_result, betas_to_fit, filename=None):
     ax.set_ylim((0, None))
 
     xlim = ax.get_xlim()
-    xrange = linspace(*xlim, 1000)
+    xrange = np.linspace(*xlim, 1000)
     ax.plot(
         xrange,
         quadratic(xrange, alpha0, alpha1, alpha2),
-        label=f"${alpha0:.2}+{alpha1:.2}x+{alpha2:.2}x^2$",
+        label=f"${alpha0:.2f}+{alpha1:.2f}x+{alpha2:.2f}x^2$",
     )
 
     ax.set_title(
@@ -198,22 +198,11 @@ def tabulate(fit_results, filename):
     generate_table_from_content(filename, table_content, columns=columns)
 
 
-def generate(data, ensembles):
-    filename = "{}_plots/nearmarginal_{}beta{}.pdf"
-    table_filename = "nearmarginal{}.tex"
+def generate_single_Nf(Nf, betas_to_fit_set, merged_data, ensembles):
+    filename = f"{{}}_plots/Nf{Nf}_nearmarginal_{{}}beta{{}}.pdf"
+    table_filename = f"Nf{Nf}_nearmarginal{{}}.tex"
     fit_results_free = []
     fit_results_constrained = []
-
-    betas_to_fit_set = [
-        (2.1, 2.15, 2.2, 2.3, 2.4),
-        (2.15, 2.2, 2.3, 2.4),
-        (2.2, 2.3, 2.4),
-        (2.3, 2.4),
-    ]
-
-    merged_data = merge_quantities(
-        data[data.Nf == 1], ["g5_mass", "mpcac_mass"]
-    ).dropna(subset=("value_mpcac_mass", "value_g5_mass"))
 
     for betas_to_fit in betas_to_fit_set:
         fit_result = fit(merged_data, betas_to_fit)
@@ -225,7 +214,7 @@ def generate(data, ensembles):
             filename.format("final", len(betas_to_fit), ""),
         )
 
-        for gamma_star in linspace(0.1, 1.05, 20):
+        for gamma_star in np.linspace(0.1, 1.05, 20):
             fit_result = fit(merged_data, betas_to_fit, gamma_star=gamma_star)
             fit_results_constrained.append((betas_to_fit, fit_result))
             plot(
@@ -240,3 +229,28 @@ def generate(data, ensembles):
 
     tabulate(fit_results_free, table_filename.format(""))
     tabulate(fit_results_constrained[:-1], table_filename.format("_fixbeta"))
+
+def generate(data, ensembles):
+    merged_data = {
+        Nf:
+        merge_no_w0(
+            data[data.Nf == Nf], ["g5_mass", "mpcac_mass"]
+        ).dropna(subset=("value_mpcac_mass", "value_g5_mass"))
+        for Nf in (1, 2)
+    }
+    betas_to_fit_set = {
+        1: [
+            (2.1, 2.15, 2.2, 2.3, 2.4),
+            (2.15, 2.2, 2.3, 2.4),
+            (2.2, 2.3, 2.4),
+            (2.3, 2.4),
+        ],
+        2: [(2.25, 2.35)],
+    }
+    breakpoint()
+
+    extra_data_Nf2 = pd.read_csv("external_data/su2_nf2_b2.25.csv")
+    merged_data[2] = pd.concat([merged_data[2], extra_data_Nf2], ignore_index=True)
+
+    for Nf in 1, 2:
+        generate_single_Nf(Nf, betas_to_fit_set[Nf], merged_data[Nf], ensembles)

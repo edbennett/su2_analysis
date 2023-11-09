@@ -16,6 +16,7 @@ final_plots/*
 *.yaml
 !.pre-commit-config.yaml
 *.csv
+!external_data/*.csv
 *.dat
 *.txt
 *.out
