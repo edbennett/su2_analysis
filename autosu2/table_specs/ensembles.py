@@ -100,5 +100,5 @@ ENSEMBLES = {
         "Nf2DB2M6*",
         "Nf2DB2M7",
         "Nf2DB2M7*",
-    )
+    ),
 }

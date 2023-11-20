@@ -230,12 +230,12 @@ def generate_single_Nf(Nf, betas_to_fit_set, merged_data, ensembles):
     tabulate(fit_results_free, table_filename.format(""))
     tabulate(fit_results_constrained[:-1], table_filename.format("_fixbeta"))
 
+
 def generate(data, ensembles):
     merged_data = {
-        Nf:
-        merge_no_w0(
-            data[data.Nf == Nf], ["g5_mass", "mpcac_mass"]
-        ).dropna(subset=("value_mpcac_mass", "value_g5_mass"))
+        Nf: merge_no_w0(data[data.Nf == Nf], ["g5_mass", "mpcac_mass"]).dropna(
+            subset=("value_mpcac_mass", "value_g5_mass")
+        )
         for Nf in (1, 2)
     }
     betas_to_fit_set = {
