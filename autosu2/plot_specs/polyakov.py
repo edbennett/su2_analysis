@@ -31,7 +31,9 @@ def do_plot(ensembles, ensemble_names_to_plot, filename_base):
                 label_axes=False,
             )
         except FileNotFoundError:
-            print(f"Skipping plotting Polyakov loop for {ensemble_name} as file is missing.")
+            print(
+                f"Skipping plotting Polyakov loop for {ensemble_name} as file is missing."
+            )
         ax.autoscale(axis="x")
 
     ax.set_xlabel(r"$\langle P_\mu\rangle$")
