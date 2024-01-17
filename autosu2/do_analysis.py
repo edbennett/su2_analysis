@@ -170,22 +170,6 @@ def do_single_analysis(
                 else:
                     print("    Already up to date")
 
-            if ensemble.get("measure_plaq", False):
-                if DEBUG:
-                    print("    * One-loop matching:")
-                try:
-                    result = do_one_loop_matching(
-                        ensemble["descriptor"], channel_name, channel_parameters
-                    )
-                except KeyError:
-                    print("      Missing data for this ensemble")
-                except ValueError:
-                    print("      No Z known for this channel")
-
-                if result and DEBUG:
-                    print("     ", result)
-                else:
-                    print("      Already up to date")
     if isinstance(spin12_params := ensemble.get("measure_spin12"), dict):
         # Spin-1/2 state
         if DEBUG:
