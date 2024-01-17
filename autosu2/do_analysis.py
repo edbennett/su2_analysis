@@ -5,6 +5,7 @@ from os import listdir, makedirs
 from importlib import import_module
 from datetime import datetime
 from os.path import getmtime
+import logging
 
 from .data import get_subdirectory_name
 from .db import is_complete_descriptor, describe_ensemble, get_dataframe
@@ -311,6 +312,9 @@ def main():
     parser.add_argument("--quenched", action="store_true")
     parser.add_argument("--single_ensemble", default=None)
     args = parser.parse_args()
+
+    if DEBUG:
+        logging.getLogger().setLevel(logging.INFO)
 
     ensembles = filter_complete(yaml.safe_load(get_file_contents(args.ensembles)))
     ensembles_date = datetime.fromtimestamp(getmtime(args.ensembles))
