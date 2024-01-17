@@ -125,7 +125,7 @@ def generate_single_Nf(data, Nf):
     )
 
     fig.tight_layout(pad=0, rect=(0.04, 0.01, 0.99, 0.99))
-    fig.savefig(filename)
+    fig.savefig(filename, transparent=True)
 
 
 def generate(data, ensembles):

@@ -73,7 +73,7 @@ def generate(data, ensembles):
         R_value(3.1640, 2.9379, 3.4791),
     )
     filename = "final_plots/R_ratio.pdf"
-    fig, axes = plt.subplots(nrows=4, figsize=(3.5, 8), sharex=True)
+    fig, axes = plt.subplots(nrows=7, figsize=(3.5, 13), sharex=True)
     hatted_data = merge_and_hat_quantities(
         data, ("A1++_mass", "E++_mass", "T2++_mass", "spin12_mass", "sqrtsigma")
     )
@@ -120,5 +120,5 @@ def generate(data, ensembles):
         handletextpad=0.4,
     )
     fig.tight_layout(pad=0.28, rect=(0, 0.04, 1, 1))
-    fig.savefig(filename)
+    fig.savefig(filename, transparent=True)
     plt.close(fig)
