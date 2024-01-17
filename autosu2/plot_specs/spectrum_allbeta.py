@@ -34,12 +34,12 @@ plots = [
                     {"channel": "g5", "quantity": "mass"},
                     {"channel": "g5gk", "quantity": "mass"},
                     {"channel": "id", "quantity": "mass"},
-                    {"channel": "App", "quantity": "mass"},
+                    {"channel": "A1++", "quantity": "mass"},
                 ],
             },
             {
                 "series": [
-                    {"channel": "Epp", "quantity": "mass"},
+                    {"channel": "E++", "quantity": "mass"},
                     {"channel": "gk", "quantity": "mass"},
                     {"channel": "spin12", "quantity": "mass"},
                     {"channel": "sqrtsigma", "quantity": ""},

@@ -10,19 +10,19 @@ def do_import(filename):
         skiprows=1,
         names=(
             "Ensemble",
-            "App_mass_value",
-            "App_mass_uncertainty",
-            "Epp_mass_value",
-            "Epp_mass_uncertainty",
-            "Tpp_mass_value",
-            "Tpp_mass_uncertainty",
+            "A1++_mass_value",
+            "A1++_mass_uncertainty",
+            "E++_mass_value",
+            "E++_mass_uncertainty",
+            "T2++_mass_value",
+            "T2++_mass_uncertainty",
             "sqrtsigma_value",
             "sqrtsigma_uncertainty",
         ),
         na_values=("0.0000",),
     )
 
-    import_data(data, observables=("App_mass", "Epp_mass", "Tpp_mass", "sqrtsigma"))
+    import_data(data, observables=("A1++_mass", "E++_mass", "T2++_mass", "sqrtsigma"))
 
 
 def main():

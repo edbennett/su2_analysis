@@ -15,6 +15,7 @@ from .Q import plot_measure_and_save_Q
 from .avr_plaquette import measure_and_save_avr_plaquette
 from .fit_correlation_function import plot_measure_and_save_mesons, Incomplete
 from .fit_effective_mass import plot_measure_and_save_mpcac
+from .fit_glue import plot_measure_and_save_glueballs
 from .one_loop_matching import do_one_loop_matching
 from .polyakov import fit_plot_and_save_polyakov_loops
 from .provenance import stamp_provenance
@@ -182,6 +183,33 @@ def do_single_analysis(
                     print("     ", result)
                 else:
                     print("      Already up to date")
+    if isinstance(ensemble.get("measure_glueballs"), dict):
+        # Glueballs
+        glue_channels = ["torelon", "A1++", "E++", "T2++"]
+        for channel_name, channel_parameters in ensemble["measure_glueballs"].items():
+            if channel_name not in glue_channels:
+                continue
+            if DEBUG:
+                print(f"  - Glueballs, {channel_name}")
+            try:
+                result = plot_measure_and_save_glueballs(
+                    simulation_descriptor=ensemble["descriptor"],
+                    correlator_filename=f"raw_data/{subdirectory}/out_corr_{channel_name}",
+                    vev_filename=f"raw_data/{subdirectory}/out_vev_{channel_name}",
+                    num_configs=ensemble["measure_glueballs"].get("cfg_count") or ensemble["cfg_count"],
+                    channel_name=channel_name,
+                    glue_parameters=channel_parameters,
+                    parameter_date=ensembles_date,
+                    output_filename_prefix=f"processed_data/{subdirectory}/",
+                )
+            except Incomplete as ex:
+                print(f"    INCOMPLETE: {ex.message}")
+            else:
+                if DEBUG:
+                    if result:
+                        print("   ", result)
+                    else:
+                        print("    Already up to date")
 
     if ensemble.get("measure_pcac", False):
         # Mesonic observables

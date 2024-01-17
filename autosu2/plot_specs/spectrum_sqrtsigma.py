@@ -21,9 +21,9 @@ def generate(data, ensembles):
         "gk_mass",
         "gk_decay_const" "g5gk_mass",
         "id_mass",
-        "App_mass",
-        "Epp_mass",
-        "Tpp_mass",
+        "A1++_mass",
+        "E++_mass",
+        "T2++_mass",
         "spin12_mass",
     )
 
@@ -49,7 +49,7 @@ def generate(data, ensembles):
     axes[1].set_ylabel(r"$M / \sqrt{\sigma}$")
     axes[2].set_ylabel(r"$f / \sqrt{\sigma}$")
 
-    channels_to_plot = "g5", "g5gk", "id", "App", "Epp", "Tpp", "spin12"
+    channels_to_plot = "g5", "g5gk", "id", "A1++", "E++", "T2++", "spin12"
     channel_labels = (
         r"\gamma_5",
         r"\gamma_5\gamma_k",
