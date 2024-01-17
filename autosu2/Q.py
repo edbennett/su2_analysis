@@ -181,7 +181,7 @@ def plot_measure_and_save_Q(
         fit_range = 20
         while tau_exp.nominal_value > fit_range and fit_range < len(flows):
             tau_exp = analyse_autocorrelation(
-                flows, output_file_autocorr, fit_range=fit_range
+                flows.Q_history(), output_file_autocorr, fit_range=fit_range
             )
             fit_range *= 2
 
