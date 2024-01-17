@@ -230,7 +230,7 @@ def process_correlator(
             ymax=eff_mass_plot_ymax,
             m=result.fit_parameters[0],
             tmin=plateau_start - 0.5,
-            tmax=plateau_end - 0.5,
+            tmax=plateau_end + 0.5,
         )
 
     if not (plateau_start and plateau_end):
