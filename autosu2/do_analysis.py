@@ -15,6 +15,7 @@ from .t0 import plot_measure_and_save_sqrt_8t0, DEFAULT_E0
 from .Q import plot_measure_and_save_Q
 from .avr_plaquette import measure_and_save_avr_plaquette
 from .fit_correlation_function import plot_measure_and_save_mesons, Incomplete
+from .fit_spin12 import plot_measure_and_save_spin12
 from .fit_effective_mass import plot_measure_and_save_mpcac
 from .fit_glue import plot_measure_and_save_glueballs
 from .one_loop_matching import do_one_loop_matching
@@ -184,6 +185,26 @@ def do_single_analysis(
                     print("     ", result)
                 else:
                     print("      Already up to date")
+    if isinstance(spin12_params := ensemble.get("measure_spin12"), dict):
+        # Spin-1/2 state
+        if DEBUG:
+            print(f"  - Spin-1/2")
+        try:
+            result = plot_measure_and_save_spin12(
+                simulation_descriptor=ensemble["descriptor"],
+                correlator_directory=f"raw_data/{subdirectory}",
+                spin12_parameters=spin12_params,
+                parameter_date=ensembles_date,
+                output_filename_prefix=f"processed_data/{subdirectory}/",
+            )
+        except Incomplete as ex:
+            print(f"    INCOMPLETE: {ex.message}")
+        else:
+            if result and DEBUG:
+                print("   ", result)
+            else:
+                print("    Already up to date")
+
     if isinstance(ensemble.get("measure_glueballs"), dict):
         # Glueballs
         glue_channels = ["torelon", "A1++", "E++", "T2++"]
