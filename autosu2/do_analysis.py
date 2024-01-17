@@ -23,6 +23,7 @@ from .polyakov import fit_plot_and_save_polyakov_loops
 from .provenance import stamp_provenance
 from .modenumber import do_modenumber_fit
 from .modenumber_julia import wrap_modenumber_fit_julia
+from .sideload import callback_string_tension, import_data_sql
 
 
 DEBUG = True
@@ -330,6 +331,7 @@ def main():
     parser.add_argument("--skip_calculation", action="store_true")
     parser.add_argument("--skip_output", action="store_true")
     parser.add_argument("--only", default=None)
+    parser.add_argument("--sideload", default=None)
     parser.add_argument("--quenched", action="store_true")
     parser.add_argument("--single_ensemble", default=None)
     args = parser.parse_args()
@@ -350,6 +352,19 @@ def main():
             only=args.only,
             quenched=args.quenched,
             single_ensemble=args.single_ensemble,
+        )
+
+    if args.sideload:
+        import_data_sql(
+            args.sideload,
+            list(ensembles.keys()),
+            ["App_mass", "Epp_mass", "Tpp_mass", "sqrtsigma", "spin12_mass"],
+            observable_names={
+                "App_mass": "A1++_mass",
+                "Epp_mass": "E++_mass",
+                "Tpp_mass": "T2++_mass",
+            },
+            callback=callback_string_tension,
         )
 
     if not args.skip_output:
