@@ -6,6 +6,7 @@ from importlib import import_module
 from datetime import datetime
 from os.path import getmtime
 
+from .data import get_subdirectory_name
 from .db import is_complete_descriptor, describe_ensemble, get_dataframe
 
 from .w0 import plot_measure_and_save_w0, DEFAULT_W0
@@ -35,24 +36,6 @@ def filter_complete(ensembles):
 def get_file_contents(filename):
     with open(filename, "r") as f:
         return f.read()
-
-
-def get_subdirectory_name(descriptor):
-    return ("nf{Nf}{rep_suffix}/b{beta}{m_suffix}/{T}x{L}{directory_suffix}").format(
-        Nf=descriptor["Nf"],
-        L=descriptor["L"],
-        T=descriptor["T"],
-        beta=descriptor["beta"],
-        m_suffix=f'/m{descriptor["m"]}' if "m" in descriptor else "",
-        rep_suffix=(
-            f'_{descriptor["representation"]}' if "representation" in descriptor else ""
-        ),
-        directory_suffix=(
-            f'_{descriptor["directory_suffix"]}'
-            if "directory_suffix" in descriptor
-            else ""
-        ),
-    )
 
 
 def do_single_analysis(
