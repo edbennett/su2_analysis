@@ -1,3 +1,4 @@
+import numpy as np
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 
@@ -45,10 +46,15 @@ def sm_residual(gamma_s, data, count_valid_points=False):
             P_b += (point_i.LM_H - interp_LM_H) ** 2
             valid_point_count += 1
 
-    if count_valid_points:
-        return P_b / valid_point_count, valid_point_count
+    if valid_point_count == 0:
+        result = np.inf
     else:
-        return P_b / valid_point_count
+        result = P_b / valid_point_count
+
+    if count_valid_points:
+        return result, valid_point_count
+    else:
+        return result
 
 
 def do_plot(betas, fit_results, merged_data, Nf):
