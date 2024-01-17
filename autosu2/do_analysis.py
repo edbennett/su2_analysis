@@ -359,7 +359,7 @@ def main():
         args.only
         or args.skip_mesons
         or args.skip_output
-        or args.skip_analysis
+        or args.skip_calculation
         or args.single_ensemble
     ):
         stamp_provenance(ensembles_filename=args.ensembles)
