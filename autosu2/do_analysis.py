@@ -218,7 +218,7 @@ def do_single_analysis(
                     else:
                         print("    Already up to date")
 
-    if ensemble.get("measure_pcac", False):
+    if ensemble.get("measure_pcac", False) and not skip_mesons:
         # Mesonic observables
         if DEBUG:
             print("  - PCAC mass")
