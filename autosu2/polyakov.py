@@ -1,5 +1,6 @@
 from re import findall
 from os.path import getmtime
+from pathlib import Path
 
 from matplotlib.pyplot import show, subplots, close
 from numpy import arange, asarray, exp, histogram, linspace, nan, ones
@@ -260,6 +261,8 @@ def fit_plot_and_save_polyakov_loops(
     plot_filename = get_filename(
         simulation_descriptor, plot_filename_formatter, plot_filename, optional=True
     )
+    if not Path(plot_filename).exists():
+        force = True
 
     if (
         simulation_descriptor
