@@ -9,10 +9,10 @@ from ..derived_observables import merge_no_w0
 from .common import beta_colour_marker, add_figure_key, preliminary
 
 
-def sm_residual(gamma_s, data, count_valid_points=False):
+def sm_residual(gamma_s, data, count_valid_points=False, observable="value_g5_mass"):
     beta_data = data.copy()
     beta_data["fshs_x"] = beta_data.L ** (1 + gamma_s) * beta_data.value_mpcac_mass
-    beta_data["LM_H"] = beta_data.L * beta_data.value_g5_mass
+    beta_data["LM_H"] = beta_data.L * beta_data[observable]
 
     valid_point_count = 0
     P_b = 0
