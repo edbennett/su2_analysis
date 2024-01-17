@@ -6,7 +6,7 @@ import matplotlib.pyplot
 from matplotlib.figure import Figure
 from matplotlib.pyplot import subplots, rc, close
 from matplotlib.colors import XKCD_COLORS
-from numpy import linspace
+import numpy as np
 
 from warnings import filterwarnings
 
@@ -117,7 +117,10 @@ def do_eff_mass_plot(
     if local_ax:
         ax.set_xlim((tmin, tmax + 1))
         if ymin is None and ymax is None:
-            ax.autoscale(axis="y", tight=True)
+            if (mass_error / np.abs(mass) > 1).any():
+                ax.set_ylim(-0.2, 2.2)
+            else:
+                ax.autoscale_view(tight=True, scaley=True, scalex=False)
         else:
             ax.set_ylim((ymin, ymax))
 
@@ -177,7 +180,7 @@ def do_correlator_plot(
     if fit_function:
         if not fit_params:
             fit_params = {}
-        t_range = linspace(t_lowerbound, t_upperbound, 1000)
+        t_range = np.linspace(t_lowerbound, t_upperbound, 1000)
         ax.plot(t_range, fit_function(t=t_range, **fit_params), label=fit_legend)
         ax.legend()
     fig.tight_layout()
