@@ -14,10 +14,12 @@ def generate(data, ensembles):
     filename = "final_plots/scalar_ratio_Nf{Nf}.pdf"
     fig, ax = plt.subplots(figsize=(3.5, 2.5))
     hatted_data = merge_and_hat_quantities(data, ("A1++_mass", "g5_mass", "mpcac_mass"))
-    hatted_data["value_ratio"] = hatted_data["value_A1++_mass"] / hatted_data.value_g5_mass
+    hatted_data["value_ratio"] = (
+        hatted_data["value_A1++_mass"] / hatted_data.value_g5_mass
+    )
     hatted_data["uncertainty_ratio"] = (
-        hatted_data["uncertainty_A1++_mass"]**2 / hatted_data.value_g5_mass**2
-        + hatted_data["value_A1++_mass"]**2
+        hatted_data["uncertainty_A1++_mass"] ** 2 / hatted_data.value_g5_mass**2
+        + hatted_data["value_A1++_mass"] ** 2
         * hatted_data.uncertainty_g5_mass**2
         / hatted_data.value_g5_mass**2
     ) ** 0.5

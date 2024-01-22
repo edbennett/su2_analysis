@@ -79,9 +79,7 @@ def process_correlator(
 
     do_correlator_plot(
         correlator,
-        get_output_filename(
-            output_filename_prefix, "correlator", "spin12"
-        ),
+        get_output_filename(output_filename_prefix, "correlator", "spin12"),
         r"\breve{g}",
     )
 

@@ -18,7 +18,6 @@ from .fit_correlation_function import plot_measure_and_save_mesons, Incomplete
 from .fit_spin12 import plot_measure_and_save_spin12
 from .fit_effective_mass import plot_measure_and_save_mpcac
 from .fit_glue import plot_measure_and_save_glueballs
-from .one_loop_matching import do_one_loop_matching
 from .polyakov import fit_plot_and_save_polyakov_loops
 from .provenance import stamp_provenance
 from .modenumber import do_modenumber_fit
@@ -173,7 +172,7 @@ def do_single_analysis(
     if isinstance(spin12_params := ensemble.get("measure_spin12"), dict):
         # Spin-1/2 state
         if DEBUG:
-            print(f"  - Spin-1/2")
+            print("  - Spin-1/2")
         try:
             result = plot_measure_and_save_spin12(
                 simulation_descriptor=ensemble["descriptor"],
@@ -203,7 +202,8 @@ def do_single_analysis(
                     simulation_descriptor=ensemble["descriptor"],
                     correlator_filename=f"raw_data/{subdirectory}/out_corr_{channel_name}",
                     vev_filename=f"raw_data/{subdirectory}/out_vev_{channel_name}",
-                    num_configs=ensemble["measure_glueballs"].get("cfg_count") or ensemble["cfg_count"],
+                    num_configs=ensemble["measure_glueballs"].get("cfg_count")
+                    or ensemble["cfg_count"],
                     channel_name=channel_name,
                     glue_parameters=channel_parameters,
                     parameter_date=ensembles_date,

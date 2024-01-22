@@ -6,7 +6,14 @@ EXPONENTIAL = False
 
 
 def generate(data, **kwargs):
-    columns = ["", r"$a \sqrt{\sigma}$", None, r"$am_{0^{++}}$ (A1++)", r"$am_{2^{++}}$ (E++)", r"$am_{2^{++}}$ (T2++)"]
+    columns = [
+        "",
+        r"$a \sqrt{\sigma}$",
+        None,
+        r"$am_{0^{++}}$ (A1++)",
+        r"$am_{2^{++}}$ (E++)",
+        r"$am_{2^{++}}$ (T2++)",
+    ]
     observables = "sqrtsigma", "A1++_mass", "E++_mass", "T2++_mass"
     filename = "glue_Nf{Nf}.tex"
 

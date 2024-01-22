@@ -35,7 +35,21 @@ def import_data(data, observables):
 
 
 def describe_ensemble(measurement):
-    keys = "label", "group_family", "group_rank", "representation", "Nf", "L","T", "beta", "m", "first_cfg", "last_cfg", "cfg_count", "initial_configuration"
+    keys = (
+        "label",
+        "group_family",
+        "group_rank",
+        "representation",
+        "Nf",
+        "L",
+        "T",
+        "beta",
+        "m",
+        "first_cfg",
+        "last_cfg",
+        "cfg_count",
+        "initial_configuration",
+    )
     return {key: getattr(measurement, key) for key in keys}
 
 
@@ -57,14 +71,16 @@ def callback_string_tension(measurement):
         add_measurement(
             describe_ensemble(measurement),
             "string_tension",
-            measurement.value ** 2,
+            measurement.value**2,
             uncertainty=2 * measurement.value * measurement.uncertainty,
             valence_mass=measurement.valence_mass,
             free_parameter=measurement.free_parameter,
         )
 
 
-def import_data_sql(filename, ensembles, observables, observable_names={}, callback=None):
+def import_data_sql(
+    filename, ensembles, observables, observable_names={}, callback=None
+):
     if not Path(filename).exists():
         raise ValueError(f"No database at {filename} to import from.")
 
@@ -82,7 +98,12 @@ def import_data_sql(filename, ensembles, observables, observable_names={}, callb
         ):
             check_ensemble_matches(measurement)
             descriptor = describe_ensemble(measurement)
-            if measurement_exists(descriptor, measurement.observable, valence_mass=measurement.valence_mass, free_parameter=measurement.free_parameter):
+            if measurement_exists(
+                descriptor,
+                measurement.observable,
+                valence_mass=measurement.valence_mass,
+                free_parameter=measurement.free_parameter,
+            ):
                 logging.warn(
                     f"Measurement of {measurement.observable} already present "
                     f"for {measurement.label}; not overwriting"
@@ -91,7 +112,9 @@ def import_data_sql(filename, ensembles, observables, observable_names={}, callb
 
             add_measurement(
                 descriptor,
-                observable_names.get(measurement.observable, SelfMap()[measurement.observable]),
+                observable_names.get(
+                    measurement.observable, SelfMap()[measurement.observable]
+                ),
                 measurement.value,
                 uncertainty=measurement.uncertainty,
                 valence_mass=measurement.valence_mass,
