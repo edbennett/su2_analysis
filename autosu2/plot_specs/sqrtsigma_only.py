@@ -8,8 +8,6 @@ from ..derived_observables import merge_and_hat_quantities
 from .common import (
     beta_colour_marker,
     critical_ms,
-    channel_labels,
-    add_figure_key,
     preliminary,
 )
 

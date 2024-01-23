@@ -3,7 +3,11 @@
 import logging
 
 from flow_analysis.readers import readers
-from flow_analysis.measurements.scales import bootstrap_finalize, compute_wt_samples, threshold_interpolate
+from flow_analysis.measurements.scales import (
+    bootstrap_finalize,
+    compute_wt_samples,
+    threshold_interpolate,
+)
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -43,16 +47,18 @@ def amap(function, iterable):
 
 
 def fit_fshs(ensembles, mpcacs, w0s, ax=None, label=None):
-    data = pd.DataFrame([
-        {
-            "L": ensemble["L"],
-            "value_mpcac_mass": mpcac,
-            "one_over_w0": 1 / w0
-        }
-        for label, ensemble, mpcac, w0 in zip_dicts(ensembles, mpcacs, w0s)
-    ])
+    data = pd.DataFrame(
+        [
+            {"L": ensemble["L"], "value_mpcac_mass": mpcac, "one_over_w0": 1 / w0}
+            for label, ensemble, mpcac, w0 in zip_dicts(ensembles, mpcacs, w0s)
+        ]
+    )
     try:
-        result = minimize(lambda gamma : sm_residual(gamma, data, observable="one_over_w0"), 1.0, method="L-BFGS-B")
+        result = minimize(
+            lambda gamma: sm_residual(gamma, data, observable="one_over_w0"),
+            1.0,
+            method="L-BFGS-B",
+        )
     except IndexError:
         return None
 
@@ -109,35 +115,41 @@ def metafit(results_df):
         gamma_zero_value = exp_fit_form(0, *popt)
         gamma_zero_err = (pcov[0, 0] + pcov[2, 2]) ** 0.5
         gamma_zero = ufloat(gamma_zero_value, gamma_zero_err)
-        chi2 = sum((exp_fit_form(results_df.recip_scale, *popt) - results_df.gamma) ** 2 / results_df.gamma_err**2) / (
-            len(results_df) - 2
-        )
+        chi2 = sum(
+            (exp_fit_form(results_df.recip_scale, *popt) - results_df.gamma) ** 2
+            / results_df.gamma_err**2
+        ) / (len(results_df) - 2)
         return gamma_zero, popt, chi2
 
 
 def results_to_df(fit_results):
-    return pd.DataFrame([
-        {
-            "scale": scale,
-            "recip_scale": 1 / scale,
-            "gamma": result.x[0],
-            "gamma_err": lbgfsb_uncertainty(result),
-            "residual": result.fun,
-            "gamma_weighted_err": lbgfsb_uncertainty(result) * result.fun,
-        }
-        for scale, result in fit_results.items() if result
-    ])
+    return pd.DataFrame(
+        [
+            {
+                "scale": scale,
+                "recip_scale": 1 / scale,
+                "gamma": result.x[0],
+                "gamma_err": lbgfsb_uncertainty(result),
+                "residual": result.fun,
+                "gamma_weighted_err": lbgfsb_uncertainty(result) * result.fun,
+            }
+            for scale, result in fit_results.items()
+            if result
+        ]
+    )
 
 
 def w0s_at_scale(flow_ensembles, bs_samples, scale):
     result = {}
     for label, sample, flow_ensemble in zip_dicts(bs_samples, flow_ensembles):
         try:
-            result[label] = bootstrap_finalize(threshold_interpolate(
-                flow_ensemble,
-                sample,
-                scale,
-            )).nominal_value
+            result[label] = bootstrap_finalize(
+                threshold_interpolate(
+                    flow_ensemble,
+                    sample,
+                    scale,
+                )
+            ).nominal_value
         except ValueError:
             message = f"No points reach threshold for {label}, {scale}"
             logging.warning(message)
@@ -150,7 +162,9 @@ def generate_single(ensembles, sampleplot_filename, scanplot_filename, scales):
     for label in ensembles:
         try:
             ensemble = ensembles[label]
-            mpcacs[label] = get_measurement(describe_ensemble(ensemble, label), "mpcac_mass").value
+            mpcacs[label] = get_measurement(
+                describe_ensemble(ensemble, label), "mpcac_mass"
+            ).value
         except KeyError:
             message = f"No PCAC mass found for {label}"
             logging.warn(message)
@@ -158,13 +172,18 @@ def generate_single(ensembles, sampleplot_filename, scanplot_filename, scales):
 
     logging.info("Loading flows")
     flow_ensembles = {
-        label: readers[ensemble["measure_gflow"]](f"raw_data/{get_subdirectory_name(ensemble)}/out_wflow")
+        label: readers[ensemble["measure_gflow"]](
+            f"raw_data/{get_subdirectory_name(ensemble)}/out_wflow"
+        )
         for label, ensemble in ensembles.items()
     }
 
     # Sets of bootstrap samples of w(t) for each ensemble
     logging.info("Computing bootstrap samples")
-    wt_bs_samples = {label: compute_wt_samples(flow_ensemble, operator="sym") for label, flow_ensemble in flow_ensembles.items()}
+    wt_bs_samples = {
+        label: compute_wt_samples(flow_ensemble, operator="sym")
+        for label, flow_ensemble in flow_ensembles.items()
+    }
 
     fig, ax = plt.subplots(layout="constrained")
     ax.set_xlabel(r"$Lm_{\mathrm{PCAC}}^{1/(1+\gamma_*)}$")
@@ -191,22 +210,30 @@ def generate_single(ensembles, sampleplot_filename, scanplot_filename, scales):
 
 
 def filter_ensembles(ensembles, **kwargs):
-    result = {label: ensemble for label, ensemble in ensembles.items() if ensemble.get("measure_gflow")}
+    result = {
+        label: ensemble
+        for label, ensemble in ensembles.items()
+        if ensemble.get("measure_gflow")
+    }
     for key, value in kwargs.items():
-        result = {label: ensemble for label, ensemble in result.items() if ensemble.get(key) == value}
+        result = {
+            label: ensemble
+            for label, ensemble in result.items()
+            if ensemble.get(key) == value
+        }
     return result
 
 
 def generate(data, ensembles):
     set_plot_defaults(markersize=3, capsize=0.5, linewidth=0.3, preliminary=preliminary)
 
-    for beta in []:#2.05, 2.1, 2.15, 2.2, 2.25, 2.3, 2.4:
+    for beta in []:  # 2.05, 2.1, 2.15, 2.2, 2.25, 2.3, 2.4:
         logging.info(f"Nf=1, beta={beta}...")
         generate_single(
             filter_ensembles(ensembles, Nf=1, beta=beta),
             sampleplot_filename=f"auxiliary_plots/w0_fshs_sample_Nf1_beta{beta}.pdf",
             scanplot_filename=f"auxiliary_plots/w0_fshs_Nf1_beta{beta}.pdf",
-            scales=np.arange(0.15, 0.5, 0.01)
+            scales=np.arange(0.15, 0.5, 0.01),
         )
 
     logging.info("Nf=2, beta=2.35...")
@@ -215,7 +242,7 @@ def generate(data, ensembles):
             filter_ensembles(ensembles, Nf=2, beta=2.35),
             sampleplot_filename="auxiliary_plots/w0_fshs_sample_Nf2_beta2.35.pdf",
             scanplot_filename="auxiliary_plots/w0_fshs_Nf2_beta2.35.pdf",
-            scales=np.arange(0.1, 0.2, 0.01)
+            scales=np.arange(0.1, 0.2, 0.01),
         )
     except NothingToSeeError:
         logging.warn("Nothing plottable found for Nf=2, beta=2.35")

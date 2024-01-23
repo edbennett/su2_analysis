@@ -77,12 +77,14 @@ def generate(data, ensembles):
     hatted_data = merge_and_hat_quantities(
         data, ("A1++_mass", "E++_mass", "T2++_mass", "spin12_mass", "sqrtsigma")
     )
-    hatted_data["value_R"] = hatted_data["value_E++_mass"] / hatted_data["value_A1++_mass"]
+    hatted_data["value_R"] = (
+        hatted_data["value_E++_mass"] / hatted_data["value_A1++_mass"]
+    )
     hatted_data["uncertainty_R"] = (
-        hatted_data["uncertainty_E++_mass"]**2 / hatted_data["value_A1++_mass"]**2
-        + hatted_data["value_E++_mass"]**2
-        * hatted_data["uncertainty_A1++_mass"]**2
-        / hatted_data["value_A1++_mass"]**2
+        hatted_data["uncertainty_E++_mass"] ** 2 / hatted_data["value_A1++_mass"] ** 2
+        + hatted_data["value_E++_mass"] ** 2
+        * hatted_data["uncertainty_A1++_mass"] ** 2
+        / hatted_data["value_A1++_mass"] ** 2
     ) ** 0.5
     axes[-1].set_xlabel(r"$L M_{0^{++}}$")
 

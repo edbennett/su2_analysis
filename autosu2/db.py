@@ -319,10 +319,12 @@ def measurement_is_up_to_date(
         compare_files.append(compare_file)
 
     if compare_files:
-        compare_dates.extend([
-            datetime.fromtimestamp(getmtime(compare_file))
-            for compare_file in compare_files
-        ])
+        compare_dates.extend(
+            [
+                datetime.fromtimestamp(getmtime(compare_file))
+                for compare_file in compare_files
+            ]
+        )
 
     try:
         measurement = get_measurement(
