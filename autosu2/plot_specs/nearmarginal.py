@@ -37,7 +37,7 @@ class Quadratic(lsqfit.MultiFitterModel):
         if isinstance(self.gammam, str):
             gammam = p[self.gammam]
         else:
-            gamma = self.gammam
+            gammam = self.gammam
 
         scaled_m = p[self.sm] * self.m
         x = self.L * scaled_m ** (1 / (1 + gammam))
@@ -279,9 +279,7 @@ def tabulate(fit_results, filename):
 
 def generate_single_Nf(Nf, betas_to_fit_set, merged_data, ensembles):
     filename = f"{{}}_plots/Nf{Nf}_nearmarginal_{{}}beta{{}}.pdf"
-    table_filename = f"Nf{Nf}_nearmarginal{{}}.tex"
     fit_results_free = []
-    fit_results_constrained = []
 
     for universal_fit in True, False:
         for betas_to_fit in betas_to_fit_set:

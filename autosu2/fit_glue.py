@@ -168,8 +168,9 @@ def plot_measure_and_save_glueballs(
             silent=True,
             method="migrad",
         )
-    except ValueError:  # Exception as ex:
-        logging.warning(ex)
+    except ValueError as ex:
+        message = f"Error in fit_glue: {ex}"
+        logging.warning(message)
         return
 
     result.gamma_method()

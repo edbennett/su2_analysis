@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import logging
 from pathlib import Path
 
 from meson_analysis.correlator import CorrelatorEnsemble
@@ -142,7 +143,7 @@ def plot_measure_and_save_spin12(
         spin12_parameters = {}
 
     if not output_filename_prefix:
-        output_filename_prefix = correlator_filename + "_"
+        output_filename_prefix = correlator_directory + "/"
 
     need_to_run = False
     if force:
