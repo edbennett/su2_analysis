@@ -13,7 +13,6 @@ def generate(data, ensembles):
     use_pcac = True
 
     filename = "auxiliary_plots/spectrum_sqrtsigma_Nf{Nf}.pdf"
-    fig, axes = plt.subplots(nrows=3, sharex=True, figsize=(4.5, 8))
     quantities = (
         "mpcac_mass",
         "g5_mass",
@@ -40,15 +39,6 @@ def generate(data, ensembles):
             / merged_data["value_sqrtsigma"] ** 4
         ) ** 0.5
 
-    if use_pcac:
-        axes[-1].set_xlabel(r"$m_{\mathrm{PCAC}} / \sqrt{\sigma}$")
-    else:
-        axes[-1].set_xlabel(r"$(m - m_c) / \sqrt{\sigma}$")
-
-    axes[0].set_ylabel(r"$M / \sqrt{\sigma}$")
-    axes[1].set_ylabel(r"$M / \sqrt{\sigma}$")
-    axes[2].set_ylabel(r"$f / \sqrt{\sigma}$")
-
     channels_to_plot = "g5", "g5gk", "id", "A1++", "E++", "T2++", "spin12"
     channel_labels = (
         r"\gamma_5",
@@ -62,6 +52,16 @@ def generate(data, ensembles):
     markers = ".", "x", "+", "^", "v", "1", "*"
 
     for Nf in 1, 2:
+        fig, axes = plt.subplots(nrows=3, sharex=True, figsize=(4.5, 8))
+        if use_pcac:
+            axes[-1].set_xlabel(r"$m_{\mathrm{PCAC}} / \sqrt{\sigma}$")
+        else:
+            axes[-1].set_xlabel(r"$(m - m_c) / \sqrt{\sigma}$")
+
+        axes[0].set_ylabel(r"$M / \sqrt{\sigma}$")
+        axes[1].set_ylabel(r"$M / \sqrt{\sigma}$")
+        axes[2].set_ylabel(r"$f / \sqrt{\sigma}$")
+
         for (beta, colour, _), m_c in zip(beta_colour_marker[Nf], critical_ms[Nf]):
             data_to_plot = merged_data[
                 (merged_data.beta == beta)

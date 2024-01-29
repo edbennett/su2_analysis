@@ -12,7 +12,6 @@ def generate(data, ensembles):
     set_plot_defaults(markersize=2, capsize=1, linewidth=0.5, preliminary=preliminary)
 
     filename = "final_plots/scalar_ratio_Nf{Nf}.pdf"
-    fig, ax = plt.subplots(figsize=(3.5, 2.5))
     hatted_data = merge_and_hat_quantities(data, ("A1++_mass", "g5_mass", "mpcac_mass"))
     hatted_data["value_ratio"] = (
         hatted_data["value_A1++_mass"] / hatted_data.value_g5_mass
@@ -23,10 +22,12 @@ def generate(data, ensembles):
         * hatted_data.uncertainty_g5_mass**2
         / hatted_data.value_g5_mass**2
     ) ** 0.5
-    ax.set_xlabel(r"$w_0 m_{\mathrm{PCAC}}$")
-    ax.set_ylabel(r"$\frac{M_{0^{++}}}{M_{2^+_{\mathrm{s}}}}$")
 
     for Nf in 1, 2:
+        fig, ax = plt.subplots(figsize=(3.5, 2.5))
+        ax.set_xlabel(r"$w_0 m_{\mathrm{PCAC}}$")
+        ax.set_ylabel(r"$\frac{M_{0^{++}}}{M_{2^+_{\mathrm{s}}}}$")
+
         for beta, colour, marker in beta_colour_marker[Nf]:
             data_to_plot = hatted_data[
                 (hatted_data.beta == beta)
