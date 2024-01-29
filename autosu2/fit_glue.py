@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from collections.abc import Sequence
 import logging
 
 import matplotlib.pyplot as plt
@@ -50,7 +51,7 @@ def get_ground_state_correlators(raw_correlator, channel, subtract=True):
 def plot_eff_masses(
     ground_state,
     output_filename,
-    glue_parameters,
+    plateaux,
     extra_states=[],
     title=None,
     result=None,
@@ -61,8 +62,17 @@ def plot_eff_masses(
     }
 
     fig, ax = plt.subplots()
-    for position, offset in ("plateau_start", -0.5), ("plateau_end", 0.5):
-        ax.axvline(glue_parameters.get(position, np.nan) + offset, lw=2, color="orange")
+
+    for idx, plateau in enumerate(plateaux):
+        for plateau_end, offset in zip(plateau, (-0.5, 0.5)):
+            if plateau_end is not None:
+                shift = 0.05
+                ax.axvline(
+                    plateau_end + offset + idx * shift,
+                    lw=2,
+                    color=f"C{idx + 1}",
+                    dashes=(2, 3)
+                )
 
     for idx, (label, state) in enumerate(states_to_plot.items()):
         m_eff = state.m_eff(variant="log")
@@ -101,6 +111,14 @@ def string_tension_from_torelon(torelon_mass, torelon_length):
     ) / (3 * torelon_length**2)
     string_tension.gamma_method()
     return string_tension
+
+
+def weighted_mean(observations):
+    numerator_elements = (obs / obs.dvalue ** 2 for obs in observations)
+    denominator_elements = (1 / obs.dvalue ** 2 for obs in observations)
+    result = sum(numerator_elements) / sum(denominator_elements)
+    result.gamma_method()
+    return result
 
 
 def plot_measure_and_save_glueballs(
@@ -143,50 +161,67 @@ def plot_measure_and_save_glueballs(
             "num_configs": num_configs,
         },
     )
+
+    if ("plateau_start" in glue_parameters and "plateau_end" in glue_parameters):
+        plateaux = [[glue_parameters["plateau_start"], glue_parameters["plateau_end"]]]
+    elif isinstance(glue_parameters, Sequence) and not isinstance(glue_parameters, str):
+        plateaux = [
+            [plateau["plateau_start"], plateau["plateau_end"]]
+            for plateau in glue_parameters
+        ]
+    else:
+        return
+
     ground_states = get_ground_state_correlators(raw_correlator, channel=channel_name)
+    for state in ground_states:
+        state.gamma_method()
     combined_ground_state = sum(ground_states) / len(ground_states)
     combined_ground_state.gamma_method()
 
     plot_eff_masses(
         combined_ground_state,
         f"{output_filename_prefix}effmass_{channel_name}.pdf",
-        glue_parameters,
+        plateaux,
         extra_states=ground_states if len(ground_states) > 1 else [],
         title=f"{simulation_descriptor['label']}, {channel_name}",
     )
 
-    if not (
-        (plateau_start := glue_parameters.get("plateau_start")) is not None
-        and (plateau_end := glue_parameters.get("plateau_end")) is not None
-    ):
+    if all([not all(plateau) for plateau in plateaux]):
         return
 
     try:
-        result = combined_ground_state.fit(
-            get_fit_form(simulation_descriptor["T"], "v"),
-            [plateau_start, plateau_end],
-            silent=True,
-            method="migrad",
-        )
+        results = [
+            state.fit(
+                get_fit_form(simulation_descriptor["T"], "v"),
+                plateau,
+                silent=True,
+                method="migrad",
+            )
+            for state, plateau in zip(ground_states, plateaux)
+        ]
+        for result in results:
+            result.gamma_method()
+
+        fit_mass = weighted_mean([result.fit_parameters[0] for result in results])
     except ValueError as ex:
         message = f"Error in fit_glue: {ex}"
         logging.warning(message)
         return
 
-    result.gamma_method()
+    plateaux_descriptor = "_".join(["-".join(map(str, plateau)) for plateau in plateaux])
     plot_eff_masses(
         combined_ground_state,
-        f"{output_filename_prefix}effmass_{channel_name}_withfit_{plateau_start}_{plateau_end}.pdf",
-        glue_parameters,
+        f"{output_filename_prefix}effmass_{channel_name}_withfit_{plateaux_descriptor}.pdf",
+        plateaux,
         extra_states=ground_states if len(ground_states) > 1 else [],
         title=f"{simulation_descriptor['label']}, {channel_name}",
-        result=result.fit_parameters[0],
+        result=fit_mass,
     )
 
     add_measurement(
         simulation_descriptor,
         f"{channel_name}_mass",
-        result.fit_parameters[0],
+        fit_mass,
     )
 
     if channel_name == "torelon":
@@ -199,4 +234,4 @@ def plot_measure_and_save_glueballs(
         sqrtsigma.gamma_method()
         add_measurement(simulation_descriptor, "sqrtsigma", sqrtsigma)
 
-    return result.fit_parameters[0]
+    return fit_mass
