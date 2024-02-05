@@ -71,7 +71,7 @@ def plot_eff_masses(
                     plateau_end + offset + idx * shift,
                     lw=2,
                     color=f"C{idx + 1}",
-                    dashes=(2, 3)
+                    dashes=(2, 3),
                 )
 
     for idx, (label, state) in enumerate(states_to_plot.items()):
@@ -114,8 +114,8 @@ def string_tension_from_torelon(torelon_mass, torelon_length):
 
 
 def weighted_mean(observations):
-    numerator_elements = (obs / obs.dvalue ** 2 for obs in observations)
-    denominator_elements = (1 / obs.dvalue ** 2 for obs in observations)
+    numerator_elements = (obs / obs.dvalue**2 for obs in observations)
+    denominator_elements = (1 / obs.dvalue**2 for obs in observations)
     result = sum(numerator_elements) / sum(denominator_elements)
     result.gamma_method()
     return result
@@ -162,7 +162,7 @@ def plot_measure_and_save_glueballs(
         },
     )
 
-    if ("plateau_start" in glue_parameters and "plateau_end" in glue_parameters):
+    if "plateau_start" in glue_parameters and "plateau_end" in glue_parameters:
         plateaux = [[glue_parameters["plateau_start"], glue_parameters["plateau_end"]]]
     elif isinstance(glue_parameters, Sequence) and not isinstance(glue_parameters, str):
         plateaux = [
@@ -208,7 +208,9 @@ def plot_measure_and_save_glueballs(
         logging.warning(message)
         return
 
-    plateaux_descriptor = "_".join(["-".join(map(str, plateau)) for plateau in plateaux])
+    plateaux_descriptor = "_".join(
+        ["-".join(map(str, plateau)) for plateau in plateaux]
+    )
     plot_eff_masses(
         combined_ground_state,
         f"{output_filename_prefix}effmass_{channel_name}_withfit_{plateaux_descriptor}.pdf",
