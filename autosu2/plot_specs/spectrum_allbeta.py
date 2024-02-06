@@ -34,12 +34,12 @@ plots = [
                     {"channel": "g5", "quantity": "mass"},
                     {"channel": "g5gk", "quantity": "mass"},
                     {"channel": "id", "quantity": "mass"},
-                    {"channel": "App", "quantity": "mass"},
+                    {"channel": "A1++", "quantity": "mass"},
                 ],
             },
             {
                 "series": [
-                    {"channel": "Epp", "quantity": "mass"},
+                    {"channel": "E++", "quantity": "mass"},
                     {"channel": "gk", "quantity": "mass"},
                     {"channel": "spin12", "quantity": "mass"},
                     {"channel": "sqrtsigma", "quantity": ""},
@@ -124,7 +124,7 @@ def do_plot(hatted_data, plot_spec, Nf=1):
     fig.tight_layout(
         pad=0, h_pad=0.5, rect=(0.02, 0.01, 1, 1 - 0.3 / plot_spec["figsize"][1])
     )
-    fig.savefig(plot_spec["filename"].format(Nf=Nf))
+    fig.savefig(plot_spec["filename"].format(Nf=Nf), transparent=True)
     plt.close(fig)
 
 

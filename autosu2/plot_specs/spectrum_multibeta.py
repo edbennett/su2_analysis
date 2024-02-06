@@ -6,9 +6,18 @@ from ..plots import set_plot_defaults, SYMBOL_LIST
 from ..derived_observables import merge_no_w0
 
 OBSERVABLES = "mass", "decay_const"
-CHANNELS = "g5", "gk", "g5gk", "id"
+CHANNELS = "g5", "gk", "g5gk", "id", "A1++", "T2++", "E++", "torelon"
 OBSERVABLE_LABELS = "m", "f"
-CHANNEL_LABELS = r"\gamma_5", r"\gamma_k", r"\gamma_5\gamma_k", r"1"
+CHANNEL_LABELS = (
+    r"\gamma_5",
+    r"\gamma_k",
+    r"\gamma_5\gamma_k",
+    r"1",
+    "A_1^{++}",
+    "T_2^{++}",
+    "E^{++}",
+    r"\mathrm{torelon}",
+)
 
 
 def do_plot(data, Nf=1):
@@ -56,7 +65,7 @@ def do_plot(data, Nf=1):
             axes[row][column].set_xlim((0, None))
             axes[row][column].set_ylim((0, None))
 
-    axes[-1][1].legend(loc="lower right", frameon=False)
+    axes[-1][1].legend(loc="best", frameon=False)
 
     fig.tight_layout()
     fig.savefig(filename)

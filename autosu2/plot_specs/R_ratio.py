@@ -17,9 +17,9 @@ R_value = namedtuple("R_value", ["centre", "lower", "upper"])
 def plot_points(data, beta, colour, marker, ax):
     ax.set_ylabel(r"$\frac{M_{2^{++}}}{M_{0^{++}}}$")
     ax.errorbar(
-        data.value_App_mass * data.L,
+        data["value_A1++_mass"] * data.L,
         data.value_R,
-        xerr=data.uncertainty_App_mass * data.L,
+        xerr=data["uncertainty_A1++_mass"] * data.L,
         yerr=data.uncertainty_R,
         color=colour,
         marker=marker,
@@ -73,16 +73,18 @@ def generate(data, ensembles):
         R_value(3.1640, 2.9379, 3.4791),
     )
     filename = "final_plots/R_ratio.pdf"
-    fig, axes = plt.subplots(nrows=4, figsize=(3.5, 8), sharex=True)
+    fig, axes = plt.subplots(nrows=7, figsize=(3.5, 13), sharex=True)
     hatted_data = merge_and_hat_quantities(
-        data, ("App_mass", "Epp_mass", "Tpp_mass", "spin12_mass", "sqrtsigma")
+        data, ("A1++_mass", "E++_mass", "T2++_mass", "spin12_mass", "sqrtsigma")
     )
-    hatted_data["value_R"] = hatted_data.value_Epp_mass / hatted_data.value_App_mass
+    hatted_data["value_R"] = (
+        hatted_data["value_E++_mass"] / hatted_data["value_A1++_mass"]
+    )
     hatted_data["uncertainty_R"] = (
-        hatted_data.uncertainty_Epp_mass**2 / hatted_data.value_App_mass**2
-        + hatted_data.value_Epp_mass**2
-        * hatted_data.uncertainty_App_mass**2
-        / hatted_data.value_App_mass**2
+        hatted_data["uncertainty_E++_mass"] ** 2 / hatted_data["value_A1++_mass"] ** 2
+        + hatted_data["value_E++_mass"] ** 2
+        * hatted_data["uncertainty_A1++_mass"] ** 2
+        / hatted_data["value_A1++_mass"] ** 2
     ) ** 0.5
     axes[-1].set_xlabel(r"$L M_{0^{++}}$")
 
@@ -120,5 +122,5 @@ def generate(data, ensembles):
         handletextpad=0.4,
     )
     fig.tight_layout(pad=0.28, rect=(0, 0.04, 1, 1))
-    fig.savefig(filename)
+    fig.savefig(filename, transparent=True)
     plt.close(fig)

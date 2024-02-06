@@ -9,6 +9,24 @@ from pandas import read_csv, DataFrame, concat
 from numpy import asarray, float64
 
 
+def get_subdirectory_name(descriptor):
+    return ("nf{Nf}{rep_suffix}/b{beta}{m_suffix}/{T}x{L}{directory_suffix}").format(
+        Nf=descriptor["Nf"],
+        L=descriptor["L"],
+        T=descriptor["T"],
+        beta=descriptor["beta"],
+        m_suffix=f'/m{descriptor["m"]}' if "m" in descriptor else "",
+        rep_suffix=(
+            f'_{descriptor["representation"]}' if "representation" in descriptor else ""
+        ),
+        directory_suffix=(
+            f'_{descriptor["directory_suffix"]}'
+            if "directory_suffix" in descriptor
+            else ""
+        ),
+    )
+
+
 def write_results(
     filename, headers, values_set, channel_name="", many=False, extras_set=None
 ):

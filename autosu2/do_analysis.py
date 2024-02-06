@@ -5,7 +5,9 @@ from os import listdir, makedirs
 from importlib import import_module
 from datetime import datetime
 from os.path import getmtime
+import logging
 
+from .data import get_subdirectory_name
 from .db import is_complete_descriptor, describe_ensemble, get_dataframe
 
 from .w0 import plot_measure_and_save_w0, DEFAULT_W0
@@ -13,12 +15,14 @@ from .t0 import plot_measure_and_save_sqrt_8t0, DEFAULT_E0
 from .Q import plot_measure_and_save_Q
 from .avr_plaquette import measure_and_save_avr_plaquette
 from .fit_correlation_function import plot_measure_and_save_mesons, Incomplete
+from .fit_spin12 import plot_measure_and_save_spin12
 from .fit_effective_mass import plot_measure_and_save_mpcac
-from .one_loop_matching import do_one_loop_matching
+from .fit_glue import plot_measure_and_save_glueballs
 from .polyakov import fit_plot_and_save_polyakov_loops
 from .provenance import stamp_provenance
 from .modenumber import do_modenumber_fit
 from .modenumber_julia import wrap_modenumber_fit_julia
+from .sideload import callback_string_tension, import_data_sql
 from .modenumber_aic import do_modenumber_fit_aic
 
 
@@ -36,24 +40,6 @@ def filter_complete(ensembles):
 def get_file_contents(filename):
     with open(filename, "r") as f:
         return f.read()
-
-
-def get_subdirectory_name(descriptor):
-    return ("nf{Nf}{rep_suffix}/b{beta}{m_suffix}/{T}x{L}{directory_suffix}").format(
-        Nf=descriptor["Nf"],
-        L=descriptor["L"],
-        T=descriptor["T"],
-        beta=descriptor["beta"],
-        m_suffix=f'/m{descriptor["m"]}' if "m" in descriptor else "",
-        rep_suffix=(
-            f'_{descriptor["representation"]}' if "representation" in descriptor else ""
-        ),
-        directory_suffix=(
-            f'_{descriptor["directory_suffix"]}'
-            if "directory_suffix" in descriptor
-            else ""
-        ),
-    )
 
 
 def do_single_analysis(
@@ -184,24 +170,56 @@ def do_single_analysis(
                 else:
                     print("    Already up to date")
 
-            if ensemble.get("measure_plaq", False):
+    if isinstance(spin12_params := ensemble.get("measure_spin12"), dict):
+        # Spin-1/2 state
+        if DEBUG:
+            print("  - Spin-1/2")
+        try:
+            result = plot_measure_and_save_spin12(
+                simulation_descriptor=ensemble["descriptor"],
+                correlator_directory=f"raw_data/{subdirectory}",
+                spin12_parameters=spin12_params,
+                parameter_date=ensembles_date,
+                output_filename_prefix=f"processed_data/{subdirectory}/",
+            )
+        except Incomplete as ex:
+            print(f"    INCOMPLETE: {ex.message}")
+        else:
+            if result and DEBUG:
+                print("   ", result)
+            else:
+                print("    Already up to date")
+
+    if isinstance(ensemble.get("measure_glueballs"), dict):
+        # Glueballs
+        glue_channels = ["torelon", "A1++", "E++", "T2++"]
+        for channel_name, channel_parameters in ensemble["measure_glueballs"].items():
+            if channel_name not in glue_channels:
+                continue
+            if DEBUG:
+                print(f"  - Glueballs, {channel_name}")
+            try:
+                result = plot_measure_and_save_glueballs(
+                    simulation_descriptor=ensemble["descriptor"],
+                    correlator_filename=f"raw_data/{subdirectory}/out_corr_{channel_name}",
+                    vev_filename=f"raw_data/{subdirectory}/out_vev_{channel_name}",
+                    num_configs=ensemble["measure_glueballs"].get("cfg_count")
+                    or ensemble["cfg_count"],
+                    channel_name=channel_name,
+                    glue_parameters=channel_parameters,
+                    parameter_date=ensembles_date,
+                    output_filename_prefix=f"processed_data/{subdirectory}/",
+                )
+            except Incomplete as ex:
+                print(f"    INCOMPLETE: {ex.message}")
+            else:
                 if DEBUG:
-                    print("    * One-loop matching:")
-                try:
-                    result = do_one_loop_matching(
-                        ensemble["descriptor"], channel_name, channel_parameters
-                    )
-                except KeyError:
-                    print("      Missing data for this ensemble")
-                except ValueError:
-                    print("      No Z known for this channel")
+                    if result:
+                        print("   ", result)
+                    else:
+                        print("    Already up to date")
 
-                if result and DEBUG:
-                    print("     ", result)
-                else:
-                    print("      Already up to date")
-
-    if ensemble.get("measure_pcac", False):
+    if ensemble.get("measure_pcac", False) and not skip_mesons:
         # Mesonic observables
         if DEBUG:
             print("  - PCAC mass")
@@ -315,9 +333,13 @@ def main():
     parser.add_argument("--skip_calculation", action="store_true")
     parser.add_argument("--skip_output", action="store_true")
     parser.add_argument("--only", default=None)
+    parser.add_argument("--sideload", default=None)
     parser.add_argument("--quenched", action="store_true")
     parser.add_argument("--single_ensemble", default=None)
     args = parser.parse_args()
+
+    if DEBUG:
+        logging.getLogger().setLevel(logging.INFO)
 
     ensembles = filter_complete(yaml.safe_load(get_file_contents(args.ensembles)))
     ensembles_date = datetime.fromtimestamp(getmtime(args.ensembles))
@@ -334,6 +356,19 @@ def main():
             single_ensemble=args.single_ensemble,
         )
 
+    if args.sideload:
+        import_data_sql(
+            args.sideload,
+            list(ensembles.keys()),
+            ["App_mass", "Epp_mass", "Tpp_mass", "sqrtsigma", "spin12_mass"],
+            observable_names={
+                "App_mass": "A1++_mass",
+                "Epp_mass": "E++_mass",
+                "Tpp_mass": "T2++_mass",
+            },
+            callback=callback_string_tension,
+        )
+
     if not args.skip_output:
         print("Outputting results:")
         output_results(args.only, ensembles=ensembles)
@@ -342,7 +377,7 @@ def main():
         args.only
         or args.skip_mesons
         or args.skip_output
-        or args.skip_analysis
+        or args.skip_calculation
         or args.single_ensemble
     ):
         stamp_provenance(ensembles_filename=args.ensembles)

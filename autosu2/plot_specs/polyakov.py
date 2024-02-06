@@ -6,7 +6,7 @@ from ..plots import set_plot_defaults
 from ..polyakov import fit_and_plot_polyakov_loops
 
 
-ENSEMBLES = "DB4M13", "DB5M8", "DB6M9", "DB7M10"
+ENSEMBLES = "DB4M13", "DB5M8", "DB6M9", "DB7M9"
 OUTPUT_DIR = "final_plots"
 FILENAME_BASE = "polyakov"
 CAPTION = r"Polyakov loop histograms, for the ensembles {ensembles}."

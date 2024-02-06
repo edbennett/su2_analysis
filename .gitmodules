@@ -7,3 +7,6 @@
 [submodule "libs/meson_analysis"]
 	path = libs/meson_analysis
 	url = https://github.com/edbennett/meson_analysis
+[submodule "libs/glue_analysis"]
+	path = libs/glue_analysis
+	url = https://github.com/edbennett/glue_analysis

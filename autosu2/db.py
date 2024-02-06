@@ -1,5 +1,6 @@
 from contextlib import contextmanager
 from datetime import datetime
+from glob import glob
 from os.path import getmtime
 
 from sqlalchemy import Column, String, Integer, Float, DateTime
@@ -296,19 +297,34 @@ def measurement_is_up_to_date(
     valence_mass=None,
     free_parameter=None,
     compare_date=None,
+    compare_dates=None,
+    compare_glob=None,
     compare_file=None,
 ):
-    """Check if a particular measurement is newer than either `compare_date`,
-    or the modification date of the file at `compare_file`."""
+    """Check if a particular measurement is newer than `compare_date`,
+    and the modification dates of the files matching `compare_glob`."""
 
-    if compare_date and compare_file:
-        raise ValueError(
-            "Only one of `compare_date` and `compare_file` may be specified."
-        )
-    if not compare_date and not compare_file:
-        raise ValueError("One of `compare_date` and `compare_file` must be specified.")
+    if not compare_dates:
+        compare_dates = []
+    if compare_date:
+        compare_dates.append(compare_date)
+    if compare_glob:
+        compare_files = glob(compare_glob)
+        if not compare_files:
+            raise ValueError(f"Comparator files {compare_glob} missing.")
+    else:
+        compare_files = []
+
     if compare_file:
-        compare_date = datetime.fromtimestamp(getmtime(compare_file))
+        compare_files.append(compare_file)
+
+    if compare_files:
+        compare_dates.extend(
+            [
+                datetime.fromtimestamp(getmtime(compare_file))
+                for compare_file in compare_files
+            ]
+        )
 
     try:
         measurement = get_measurement(
@@ -317,10 +333,11 @@ def measurement_is_up_to_date(
     except KeyError:
         return False
     else:
-        if measurement.updated > compare_date:
-            return True
+        for single_date in compare_dates:
+            if measurement.updated < single_date:
+                return False
         else:
-            return False
+            return True
 
 
 def purge_measurement(

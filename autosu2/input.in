@@ -1,0 +1,11 @@
+## WHEN RAW OUTPUT FROM HiRep: > cat outputfile | grep nu | awk -F"nu" '{print $2}' > nu_DB1M8.dat
+
+DB1M8              # ensemble name
+2.05               # beta (not necessary)
+1.524              # mpcac mass (not necessary)
+663552             # volume (not necessary)
+1000               # number of bootstrap sample
+80                 # number of configurations sorted
+0.03  0.03  0.09   # omega_min(in)  step  omega_min(fin)
+0.02  0.03  0.09   # delta_omega(in) stes delta_omega(fin)
+prova.dat          # output file
