@@ -19,6 +19,7 @@ from .polyakov import fit_plot_and_save_polyakov_loops
 from .provenance import stamp_provenance
 from .modenumber import do_modenumber_fit
 from .modenumber_julia import wrap_modenumber_fit_julia
+from .modenumber_aic import do_modenumber_fit_aic
 
 
 DEBUG = True
@@ -248,6 +249,21 @@ def do_single_analysis(
         if (modenumber_result is None) and DEBUG:
             print("    Already up to date")
 
+    elif measure_modenumber and measure_modenumber["method"] == "aic":
+        result = do_modenumber_fit_aic(
+            ensemble=ensemble,
+            filename=f"raw_data/{subdirectory}/out_modenumber",
+            # boot_gamma=read_modenumber_result(f'processed_data/{subdirectory}/modenumber_fit_julia.csv')['gamma'],
+            boot_gamma=0.5,
+            plot_directory=f"processed_data/{subdirectory}",
+        )
+        if DEBUG:
+            print("  - gamma*")
+        if result and DEBUG:
+            print("   ", result)
+        else:
+            print("    Already up to date")
+
     elif measure_modenumber:
         if DEBUG:
             print("  - Mode number")
@@ -257,6 +273,8 @@ def do_single_analysis(
         )
         if (modenumber_result is None) and DEBUG:
             print("    Already up to date")
+
+    return
 
 
 def do_analysis(ensembles, single_ensemble=None, **kwargs):

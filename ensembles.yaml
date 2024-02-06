@@ -366,14 +366,18 @@ DB1M8:
   measure_plaq: True
   measure_polyakov: True
   measure_modenumber:
-    method: julia
+    method: aic
     format: hirep
-    plot_omega_min: 0.03
-    plot_omega_max: 0.13
     fit_omega_min: 0.03
-    fit_omega_max: 0.07
+    fit_omega_max: 0.1
     fit_window_length_min: 0.05
-    fit_window_length_max: 0.10
+    fit_window_length_max: 0.1
+    delta_fit: 0.004
+    plot_omega_min: 5
+    plot_omega_max: -4
+    norm: 3.0
+    cutoff: 0.9
+    filter: 0.9
   measure_glueballs:
     num_bins: 25
     num_blocking_levels: 5
@@ -438,14 +442,18 @@ DB1M9:
   measure_gflow: hirep
   measure_polyakov: True
   measure_modenumber:
-    method: julia
+    method: aic
     format: hirep
-    plot_omega_min: 0.03
-    plot_omega_max: 0.18
     fit_omega_min: 0.03
-    fit_omega_max: 0.3
+    fit_omega_max: 0.1
     fit_window_length_min: 0.05
-    fit_window_length_max: 0.15
+    fit_window_length_max: 0.1
+    delta_fit: 0.004
+    plot_omega_min: 5
+    plot_omega_max: -4
+    norm: 7.0
+    cutoff: 0.9
+    filter: 0.9
   measure_glueballs:
     num_bins: 25
     num_blocking_levels: 5
@@ -727,14 +735,18 @@ DB2M7:
   measure_gflow: hirep
   measure_polyakov: True
   measure_modenumber:
-    method: julia
+    method: aic
     format: hirep
-    plot_omega_min: 0.03
-    plot_omega_max: 0.11
     fit_omega_min: 0.03
-    fit_omega_max: 0.05
-    fit_window_length_min: 0.02
-    fit_window_length_max: 0.08
+    fit_omega_max: 0.1
+    fit_window_length_min: 0.05
+    fit_window_length_max: 0.1
+    delta_fit: 0.004
+    plot_omega_min: 7
+    plot_omega_max: -1
+    norm: 6.0
+    cutoff: 0.4
+    filter: 0.73
   measure_glueballs:
     num_bins: 25
     num_blocking_levels: 6
@@ -1009,14 +1021,18 @@ DB3M8:
   measure_gflow: hirep
   measure_polyakov: True
   measure_modenumber:
-    method: julia
+    method: aic
     format: hirep
-    plot_omega_min: 0.04
-    plot_omega_max: 0.13
-    fit_omega_min: 0.04
-    fit_omega_max: 0.08
-    fit_window_length_min: 0.05
-    fit_window_length_max: 0.08
+    fit_omega_min: 0.03 # 0.04
+    fit_omega_max: 0.1  # 0.08
+    fit_window_length_min: 0.05 # 0.05
+    fit_window_length_max: 0.1 # 0.05
+    delta_fit: 0.004
+    plot_omega_min: 5 #0.04
+    plot_omega_max: -4 #0.13
+    norm: 3.0
+    cutoff: 0.9
+    filter: 10
   measure_glueballs:
     num_bins: 25
     num_blocking_levels: 5
@@ -1586,14 +1602,18 @@ DB4M11:
   measure_gflow: hirep
   measure_polyakov: True
   measure_modenumber:
-    method: julia
+    method: aic
     format: hirep
-    plot_omega_min: 0.05
-    plot_omega_max: 0.2
-    fit_omega_min: 0.05
-    fit_omega_max: 0.3
+    fit_omega_min: 0.03
+    fit_omega_max: 0.1
     fit_window_length_min: 0.05
-    fit_window_length_max: 0.15
+    fit_window_length_max: 0.1
+    delta_fit: 0.006
+    plot_omega_min: 3
+    plot_omega_max: -6
+    norm: 3.0
+    cutoff: 0.9
+    filter: 10
   measure_glueballs:
     num_bins: 25
     num_blocking_levels: 5
@@ -1703,6 +1723,19 @@ DB4M13:
   cfg_count: 4049
   measure_gflow: hirep
   measure_polyakov: True
+  measure_modenumber:
+    method: aic
+    format: colconf
+    fit_omega_min: 0.03
+    fit_omega_max: 0.1
+    fit_window_length_min: 0.05
+    fit_window_length_max: 0.1
+    delta_fit: 0.006
+    plot_omega_min: -3
+    plot_omega_max: -2
+    norm: 1.2
+    cutoff: 0.3
+    filter: 0.54
   measure_mesons:
     g5:
       plateau_start: 24
@@ -2654,6 +2687,19 @@ DB6M9:
   cfg_count: 4141
   measure_gflow: hirep
   measure_polyakov: True
+  measure_modenumber:
+    method: aic
+    format: colconf
+    fit_omega_min: 0.03
+    fit_omega_max: 0.1
+    fit_window_length_min: 0.05
+    fit_window_length_max: 0.1
+    delta_fit: 0.004
+    plot_omega_min: -3
+    plot_omega_max: -2
+    norm: 1.5
+    cutoff: 0.3
+    filter: 10
   measure_mesons:
     g5:
       plateau_start: 30
@@ -3037,6 +3083,19 @@ DB7M7:
   last_cfg: 3095
   cfg_count: 4090
   measure_gflow: hirep
+  measure_modenumber:
+    method: aic
+    format: hirep
+    fit_omega_min: 0.03
+    fit_omega_max: 0.1
+    fit_window_length_min: 0.05
+    fit_window_length_max: 0.1
+    delta_fit: 0.002
+    plot_omega_min: 3
+    plot_omega_max: -1
+    norm: 1.5
+    cutoff: 0.7
+    filter: 10
   measure_mesons:
     g5:
       plateau_start: 20
@@ -3194,14 +3253,18 @@ DB7M10:
     plateau_start: 12
     plateau_end: 47
   measure_modenumber:
-    method: julia
-    format: colconf
-    plot_omega_min: 0.03
-    plot_omega_max: 0.17
+    method: aic
+    format: hirep
     fit_omega_min: 0.03
-    fit_omega_max: 0.2
+    fit_omega_max: 0.1
     fit_window_length_min: 0.05
-    fit_window_length_max: 0.10
+    fit_window_length_max: 0.1
+    delta_fit: 0.004
+    plot_omega_min: -2
+    plot_omega_max: -2
+    norm: 0.75
+    cutoff: 0.7
+    filter: 10
   measure_spin12:
     plateau_start: 12
     plateau_end: 17
