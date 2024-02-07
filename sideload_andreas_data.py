@@ -6,7 +6,7 @@ from autosu2.sideload import import_data
 def do_import(filename):
     data = pd.read_csv(
         filename,
-        delim_whitespace=True,
+        sep="\s+",
         skiprows=1,
         names=(
             "Ensemble",
