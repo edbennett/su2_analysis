@@ -11,7 +11,7 @@ def main():
     frames = []
 
     for filename in args.filename:
-        frames.append(read_csv(filename, delim_whitespace=True))
+        frames.append(read_csv(filename, sep="\s+"))
 
     full_data = concat(frames)
 

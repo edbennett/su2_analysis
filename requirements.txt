@@ -8,5 +8,6 @@ numba
 pyyaml
 pre-commit
 lsqfit
-./libs/flow_analysis
-./libs/meson_analysis
+-e ./libs/flow_analysis
+-e ./libs/meson_analysis
+-e ./libs/glue_analysis

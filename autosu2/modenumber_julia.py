@@ -47,7 +47,7 @@ def read_modenumber_result(filename_or_file):
             to_read.readline(),
         ).groups(),
     )
-    result["raw_gammas"] = pd.read_csv(to_read, comment="#", delim_whitespace=True)
+    result["raw_gammas"] = pd.read_csv(to_read, comment="#", sep="\s+")
 
     if to_close:
         to_read.close()

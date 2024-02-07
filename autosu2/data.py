@@ -50,7 +50,7 @@ def write_results(
 
 
 def read_db(filename):
-    return read_csv(filename, delim_whitespace=True, na_values="?")
+    return read_csv(filename, sep="\s+", na_values="?")
 
 
 def get_filename(simulation_descriptor, filename_formatter, filename, optional=False):
@@ -200,7 +200,7 @@ def get_correlators_from_filtered(filename, NT):
 
     column_names = ["trajectory", "valence_mass", "channel"] + list(range(NT))
 
-    all_correlators = read_csv(filename, names=column_names, delim_whitespace=True)
+    all_correlators = read_csv(filename, names=column_names, sep="\s+")
 
     return all_correlators
 
@@ -257,7 +257,7 @@ def get_target_correlator(
 
 
 def get_flows(filename):
-    data = read_csv(filename, delim_whitespace=True, names=["n", "t", "Ep", "Ec", "Q"])
+    data = read_csv(filename, sep="\s+", names=["n", "t", "Ep", "Ec", "Q"])
     times = asarray(sorted(set(data.t)))
     Eps = asarray([data[data.n == n].Ep.values for n in set(data.n)])
     Ecs = asarray([data[data.n == n].Ec.values for n in set(data.n)])
