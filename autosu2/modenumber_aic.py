@@ -162,7 +162,7 @@ def WINDOWS(filename, format, volume, OLOW, OHIGH, dOM, descriptor, boot_gamma):
                         RESULTS[(f"{M_min:.3f}", f"{M_max:.3f}")] = fit
                 mold = mok[:]
             except Exception:
-                pass
+                continue
 
     return RESULTS
 
