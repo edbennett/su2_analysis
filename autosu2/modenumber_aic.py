@@ -248,8 +248,8 @@ def grad_plot(RESULTS, NORM, CUTOFF, dOM, out=None, FILTER=None, weight="cut"):
         xmax[iyes], xmin[iyes], gamma[iyes], c=map.to_rgba(dgamma[iyes]), alpha=1
     )
     ax1.scatter(xmax[ino], xmin[ino], gamma[ino], c=map.to_rgba(dgamma[ino]), alpha=0.1)
-    p = ax1.scatter([], [], [], c=map.to_rgba([]))
-    fig.colorbar(p, ax=ax1, shrink=0.6, label="gradient")
+    bar = ax1.scatter([], [], [], c=map.to_rgba([]))
+    fig.colorbar(bar, ax=ax1, shrink=0.6, label="gradient")
 
     # Plot lines connecting points
     lcolor = "gray"
