@@ -114,13 +114,20 @@ def compute_grad(Xmins, Xmaxs, RESULTS, delta):
     Grad = np.gradient(gammas, delta)
     Grad2 = np.sqrt(Grad[0] ** 2 + Grad[1] ** 2)
 
-    dGRAD = {}
-    for i, xmin in enumerate(Xmins):
-        for j, xmax in enumerate(Xmaxs):
-            key = (f"{xmin:.3f}", f"{xmax:.3f}")
-            dGRAD[key] = Grad2[i, j]
+    # dGRAD = {}
+    # for i, xmin in enumerate(Xmins):
+    #     for j, xmax in enumerate(Xmaxs):
+    #         key = (f"{xmin:.3f}", f"{xmax:.3f}")
+    #         dGRAD[key] = Grad2[i, j]
 
-    return dGRAD
+    dgrad = {
+        (f"{xmin: .3f}", f"{xmax:.3f}"): Grad2[i, j]
+        for (i, xmin), (j, xmax) in itertools.product(
+            enumerate(Xmins), enumerate(Xmaxs)
+        )
+    }
+
+    return dgrad
 
 
 def WINDOWS(filename, format, volume, OLOW, OHIGH, dOM, descriptor, boot_gamma):
