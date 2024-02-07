@@ -72,12 +72,12 @@ def Model(x, p):
 
 
 def window_fit(data, M_min, M_max, priors, p0, Ndata):
-    (X, Y) = data
-    iiok = [i for i, m in enumerate(X) if m <= M_max and m >= M_min]
+    (Omega, Nu) = data
+    iiok = [i for i, m in enumerate(Omega) if m <= M_max and m >= M_min]
 
     if len(iiok) > 5:
-        xfit = np.array(X[iiok])
-        yfit = np.array(Y[iiok])
+        xfit = np.array(Omega[iiok])
+        yfit = np.array(Nu[iiok])
 
         fit = lsqfit.nonlinear_fit(
             data=(xfit, yfit), prior=priors, p0=p0, fcn=Model, debug=True
