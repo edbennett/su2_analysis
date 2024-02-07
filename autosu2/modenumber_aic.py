@@ -5,7 +5,6 @@ from .db import (
 )
 
 
-from collections import defaultdict
 from re import compile
 
 import lsqfit
@@ -18,34 +17,16 @@ import matplotlib
 from matplotlib import pyplot as plt
 from matplotlib import cm
 
+from .modenumber import read_modenumber as read_modenumber_hirep
+
 CONFIGURATION_GETTER = compile(
     r"\[IO\]\[0\]Configuration \[.*n(?P<configuration>[0-9]+)"
 )
 
 
 def read_modenumber(filename, vol, format="hirep"):
-    configuration = None
-    modenumbers = defaultdict(dict)
-    configuration_numbers = set()
-
     if format == "hirep":
-        with open(filename, "r") as f:
-            for line in f:
-                if line.startswith("[IO][0]Configuration"):
-                    configuration = int(
-                        CONFIGURATION_GETTER.match(line).group("configuration")
-                    )
-                    configuration_numbers.add(configuration)
-
-                elif line.startswith("[MODENUMBER][0]nu["):
-                    split_line = line.split()
-                    omega = float(split_line[1])
-                    nu = float(split_line[4])
-                    assert configuration is not None
-                    modenumbers[omega][configuration] = nu
-
-        for omega_modenumbers in modenumbers.values():
-            assert len(omega_modenumbers) == len(configuration_numbers)
+        modenumbers = read_modenumber_hirep(filename)
 
         OMEGA, y = [], []
         for m, nu in modenumbers.items():
@@ -575,6 +556,8 @@ def do_modenumber_fit_aic(ensemble, filename, boot_gamma, plot_directory):
         weight="cut",
         FILTER=f(pars["filter"]),
     )
+
+    print(gstat, gsyst)
 
     grad_plot(
         RESULTS,
