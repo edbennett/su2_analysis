@@ -130,7 +130,7 @@ def compute_grad(Xmins, Xmaxs, RESULTS, delta):
     return dgrad
 
 
-def WINDOWS(filename, format, volume, OLOW, OHIGH, dOM, descriptor, boot_gamma):
+def Windows(filename, format, volume, OLOW, OHIGH, dOM, descriptor, boot_gamma):
     (OLOW_MIN, OLOW_MAX) = OLOW
     (OHIGH_MIN, OHIGH_MAX) = OHIGH
 
@@ -541,7 +541,7 @@ def do_modenumber_fit_aic(ensemble, filename, boot_gamma, plot_directory):
     ohigh = (min(olow) + min(do), max(olow) + max(do))
     delta = pars["delta_fit"]
 
-    RESULTS = WINDOWS(
+    RESULTS = Windows(
         filename,
         pars["format"],
         V,
