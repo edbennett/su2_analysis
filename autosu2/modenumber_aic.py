@@ -102,21 +102,21 @@ def window_fit(data, M_min, M_max, priors, p0, Ndata):
         return False
 
 
-def compute_grad(XMINS, XMAXS, RESULTS, delta):
+def compute_grad(Xmins, Xmaxs, RESULTS, delta):
     gmean = np.mean([v["pars"]["gamma"].mean for k, v in RESULTS.items()])
     gammas = []
-    for i, xmin in enumerate(XMINS):
-        for j, xmax in enumerate(XMAXS):
+    for i, xmin in enumerate(Xmins):
+        for j, xmax in enumerate(Xmaxs):
             key = (f"{xmin:.3f}", f"{xmax:.3f}")
             val = RESULTS[key]["pars"]["gamma"].mean if key in RESULTS else gmean
             gammas.append(val)
-    gammas = np.array(gammas).reshape((len(XMINS), len(XMAXS)))
+    gammas = np.array(gammas).reshape((len(Xmins), len(Xmaxs)))
     GRAD = np.gradient(gammas, delta)
     GRAD2 = np.sqrt(GRAD[0] ** 2 + GRAD[1] ** 2)
 
     dGRAD = {}
-    for i, xmin in enumerate(XMINS):
-        for j, xmax in enumerate(XMAXS):
+    for i, xmin in enumerate(Xmins):
+        for j, xmax in enumerate(Xmaxs):
             key = (f"{xmin:.3f}", f"{xmax:.3f}")
             dGRAD[key] = GRAD2[i, j]
 
