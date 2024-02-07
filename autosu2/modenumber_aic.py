@@ -217,8 +217,8 @@ def grad_plot(RESULTS, NORM, CUTOFF, dOM, out=None, FILTER=None, weight="cut"):
 
     dGRAD = compute_grad(XMINS, XMAXS, RESULTS, dOM)
 
-    plt.rcParams["text.usetex"] = True
-    plt.rcParams["font.size"] = 12
+    # plt.rcParams["text.usetex"] = True
+    # plt.rcParams["font.size"] = 12
 
     fig = plt.figure(figsize=(10, 10))
 
@@ -381,8 +381,8 @@ def slice_plot(
         cmap=cmap, norm=matplotlib.colors.Normalize(vmin=0.0, vmax=max(aicw))
     )
 
-    plt.rcParams["text.usetex"] = True
-    plt.rcParams["font.size"] = 12
+    # plt.rcParams["text.usetex"] = True
+    # plt.rcParams["font.size"] = 12
 
     fig = plt.figure(figsize=(5, 8))
 
