@@ -12,6 +12,7 @@ import lsqfit
 import numpy as np
 import pandas as pd
 import gvar as gv
+import itertools
 
 import matplotlib
 from matplotlib import pyplot as plt
@@ -105,20 +106,19 @@ def window_fit(data, M_min, M_max, priors, p0, Ndata):
 def compute_grad(Xmins, Xmaxs, RESULTS, delta):
     gmean = np.mean([v["pars"]["gamma"].mean for k, v in RESULTS.items()])
     gammas = []
-    for i, xmin in enumerate(Xmins):
-        for j, xmax in enumerate(Xmaxs):
-            key = (f"{xmin:.3f}", f"{xmax:.3f}")
-            val = RESULTS[key]["pars"]["gamma"].mean if key in RESULTS else gmean
-            gammas.append(val)
+    for xmin, xmax in itertools.product(Xmins, Xmaxs):
+        key = (f"{xmin:.3f}", f"{xmax:.3f}")
+        val = RESULTS[key]["pars"]["gamma"].mean if key in RESULTS else gmean
+        gammas.append(val)
     gammas = np.array(gammas).reshape((len(Xmins), len(Xmaxs)))
-    GRAD = np.gradient(gammas, delta)
-    GRAD2 = np.sqrt(GRAD[0] ** 2 + GRAD[1] ** 2)
+    Grad = np.gradient(gammas, delta)
+    Grad2 = np.sqrt(Grad[0] ** 2 + Grad[1] ** 2)
 
     dGRAD = {}
     for i, xmin in enumerate(Xmins):
         for j, xmax in enumerate(Xmaxs):
             key = (f"{xmin:.3f}", f"{xmax:.3f}")
-            dGRAD[key] = GRAD2[i, j]
+            dGRAD[key] = Grad2[i, j]
 
     return dGRAD
 
