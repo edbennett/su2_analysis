@@ -90,7 +90,7 @@ def old_fit(filename):
 
     # SET UP BASIC AVERAGE ARRAYS
     for lamb in lambs:
-        nu_arrays[lamb] = array(list(nus[lamb].values()), dtype=np.float)
+        nu_arrays[lamb] = array(list(nus[lamb].values()), dtype=np.float64)
         nu_estimates[lamb] = []
         nubars[lamb] = mean(nu_arrays[lamb])
         nr = len(nu_arrays[lamb])
