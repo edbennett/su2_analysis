@@ -23,9 +23,9 @@ def get_basic_metadata(ensembles_filename):
     metadata = {}
     ensembles_file = pathlib.Path(ensembles_filename)
 
-    metadata[
-        "_comment"
-    ] = "This file and all the files in this directory were generated automatically. Do not modify them; re-run the analysis workflow!"
+    metadata["_comment"] = (
+        "This file and all the files in this directory were generated automatically. Do not modify them; re-run the analysis workflow!"
+    )
     metadata["workflow_run"] = {
         "completed": datetime.now(timezone.utc).isoformat(),
         "user_name": os.getlogin(),
