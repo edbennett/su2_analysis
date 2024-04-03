@@ -289,6 +289,8 @@ def do_single_analysis(
             f"raw_data/{subdirectory}/out_modenumber",
             f"processed_data/{subdirectory}/modenumber_fit.csv",
         )
+        if (modenumber_result is None) and DEBUG:
+            print("    Already up to date")
 
     return
 
