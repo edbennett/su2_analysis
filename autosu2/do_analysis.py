@@ -292,8 +292,6 @@ def do_single_analysis(
         if (modenumber_result is None) and DEBUG:
             print("    Already up to date")
 
-    return
-
 
 def do_analysis(ensembles, single_ensemble=None, **kwargs):
     for label, ensemble in ensembles.items():
