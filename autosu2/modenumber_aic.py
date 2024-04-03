@@ -29,20 +29,19 @@ def read_modenumber(filename, vol, format="hirep"):
     if format == "hirep":
         modenumbers = read_modenumber_hirep(filename)
 
-        OMEGA, y = [], []
-        for m, nu in modenumbers.items():
-            OMEGA.append(m)
-            y.append(list(nu.values()))
+        omegas = list(modenumbers.keys())
+        nus = [list(nu.values) for nu in modenumbers.values()]
+
         data = np.transpose(np.array(y) / vol)
 
     elif format == "colconf":
         dataraw = np.transpose(np.loadtxt(filename))
         Nmass, Nconf = dataraw.shape
 
-        OMEGA = dataraw[0, np.arange(0, Nconf, 100)]
+        omega = dataraw[0, np.arange(0, Nconf, 100)]
         data = dataraw[1:, np.arange(0, Nconf, 100)]
 
-    df = pd.DataFrame(data, np.arange(data.shape[0]), OMEGA)
+    df = pd.DataFrame(data, np.arange(data.shape[0]), omega)
 
     return df
 
@@ -66,7 +65,7 @@ def set_priors(ensemble_descriptor, boot_gamma):
     return priors, p0
 
 
-def Model(x, p):
+def model(x, p):
     exponent = 2 / (1 + p["gamma"])
     x2_minus_m2 = x**2 - p["m"] ** 2
     return p["nu0"] ** 4 + p["A"] * x2_minus_m2**exponent
@@ -74,14 +73,14 @@ def Model(x, p):
 
 def window_fit(data, M_min, M_max, priors, p0, Ndata):
     (Omega, Nu) = data
-    iiok = [i for i, m in enumerate(Omega) if m <= M_max and m >= M_min]
+    indices_in_window = [i for i, m in enumerate(Omega) if m <= M_max and m >= M_min]
 
-    if len(iiok) > 5:
-        xfit = np.array(Omega[iiok])
-        yfit = np.array(Nu[iiok])
+    if len(indices_in_window) > 5:
+        xfit = np.array(Omega[indices_in_window])
+        yfit = np.array(Nu[indices_in_window])
 
         fit = lsqfit.nonlinear_fit(
-            data=(xfit, yfit), prior=priors, p0=p0, fcn=Model, debug=True
+            data=(xfit, yfit), prior=priors, p0=p0, fcn=model, debug=True
         )
 
         chi_prior = sum(
@@ -95,7 +94,7 @@ def window_fit(data, M_min, M_max, priors, p0, Ndata):
             "chi2": fit.chi2 - chi_prior,
             "chipr": chi_prior,
             "pars": fit.p,
-            "Ncut": Ndata - len(iiok),
+            "Ncut": Ndata - len(indices_in_window),
             "Npts": len(xfit),
         }
         return ans
@@ -103,22 +102,16 @@ def window_fit(data, M_min, M_max, priors, p0, Ndata):
         return False
 
 
-def compute_grad(Xmins, Xmaxs, RESULTS, delta):
-    gmean = np.mean([v["pars"]["gamma"].mean for k, v in RESULTS.items()])
+def compute_grad(Xmins, Xmaxs, results, delta):
+    gmean = np.mean([v["pars"]["gamma"].mean for k, v in results.items()])
     gammas = []
     for xmin, xmax in itertools.product(Xmins, Xmaxs):
         key = (f"{xmin:.3f}", f"{xmax:.3f}")
-        val = RESULTS[key]["pars"]["gamma"].mean if key in RESULTS else gmean
+        val = results[key]["pars"]["gamma"].mean if key in results else gmean
         gammas.append(val)
     gammas = np.array(gammas).reshape((len(Xmins), len(Xmaxs)))
     Grad = np.gradient(gammas, delta)
     Grad2 = np.sqrt(Grad[0] ** 2 + Grad[1] ** 2)
-
-    # dGRAD = {}
-    # for i, xmin in enumerate(Xmins):
-    #     for j, xmax in enumerate(Xmaxs):
-    #         key = (f"{xmin:.3f}", f"{xmax:.3f}")
-    #         dGRAD[key] = Grad2[i, j]
 
     dgrad = {
         (f"{xmin: .3f}", f"{xmax:.3f}"): Grad2[i, j]
@@ -130,15 +123,15 @@ def compute_grad(Xmins, Xmaxs, RESULTS, delta):
     return dgrad
 
 
-def Windows(filename, format, volume, OLOW, OHIGH, dOM, descriptor, boot_gamma):
-    (OLOW_MIN, OLOW_MAX) = OLOW
-    (OHIGH_MIN, OHIGH_MAX) = OHIGH
+def windows(filename, format, volume, olow, ohigh, dOM, descriptor, boot_gamma):
+    (olow_min, olow_max) = olow
+    (ohigh_min, ohigh_max) = ohigh
 
     # Import data ---------------------------------------------------------------------
     data = read_modenumber(filename, volume, format=format)
 
     Masses = data.columns.to_numpy()
-    Ndata = len([m for m in Masses if m >= OLOW_MIN and m <= OHIGH_MAX])
+    Ndata = len([m for m in Masses if m >= olow_min and m <= ohigh_max])
     Nconf = data.shape[0]
     Nus = gv.gvar(data.values.mean(axis=0), np.cov(data.values, rowvar=False) / Nconf)
     Nus = np.array(sorted(Nus))
@@ -148,23 +141,23 @@ def Windows(filename, format, volume, OLOW, OHIGH, dOM, descriptor, boot_gamma):
     print(priors, p0)
 
     # Windowing -----------------------------------------------------------------------
-    RESULTS = {}
+    results = {}
     mold = 0
-    for M_min in np.arange(OLOW_MIN, OLOW_MAX, dOM):
-        for M_max in np.arange(OHIGH_MIN, OHIGH_MAX, dOM):
+    for M_min in np.arange(olow_min, olow_max, dOM):
+        for M_max in np.arange(ohigh_min, ohigh_max, dOM):
             try:
                 mok = [m for m in Masses if m <= M_max and m >= M_min]
                 if mok != mold:
                     fit = window_fit((Masses, Nus), M_min, M_max, priors, p0, Ndata)
-                    if not fit:
-                        continue
+                    if fit:
+                        results[(f"{M_min:.3f}", f"{M_max:.3f}")] = fit
                     else:
-                        RESULTS[(f"{M_min:.3f}", f"{M_max:.3f}")] = fit
+                        continue
                 mold = mok[:]
             except Exception:
                 continue
 
-    return RESULTS
+    return results
 
 
 def AICw(dict, weight="cut"):
@@ -178,102 +171,95 @@ def AICw(dict, weight="cut"):
     return np.exp(-IC / 2)
 
 
-def WEIGHT(RESULTS, NORM, CUTOFF, dOM, weight="cut", FILTER=None):
+def weight(results, norm, cutoff, dOM, weight="cut", plot_filter=None):
     # Compute gradient
-    XMINS = np.unique([float(k[0]) for k in RESULTS.keys()])
-    XMAXS = np.unique([float(k[1]) for k in RESULTS.keys()])
-    dGRAD = compute_grad(XMINS, XMAXS, RESULTS, dOM)
+    xmins = np.unique([float(k[0]) for k in results.keys()])
+    xmaxs = np.unique([float(k[1]) for k in results.keys()])
+    dGRAD = compute_grad(xmins, xmaxs, results, dOM)
 
-    KEYS = [
+    window_keys = [
         (f"{xmin:.3f}", f"{xmax:.3f}")
-        for i, xmin in enumerate(XMINS)
-        for j, xmax in enumerate(XMAXS)
+        for i, xmin in enumerate(xmins)
+        for j, xmax in enumerate(xmaxs)
     ]
-    keyok = [k for k in KEYS if k in RESULTS and dGRAD[k] / NORM <= CUTOFF]
+    keyok = [k for k in window_keys if k in results and dGRAD[k] / norm <= cutoff]
 
-    if FILTER is not None:
-        keyok = [k for k in keyok if FILTER(RESULTS[k]["pars"]["gamma"].mean)]
+    if plot_filter is not None:
+        keyok = [k for k in keyok if plot_filter(results[k]["pars"]["gamma"].mean)]
 
-    g = np.array([RESULTS[k]["pars"]["gamma"] for k in keyok])
-    AICW = np.array([AICw(RESULTS[k], weight=weight) for k in keyok])
-    # NORMaicw = sum(AICW)
+    gammastar_samples = np.array([results[k]["pars"]["gamma"] for k in keyok])
+    AICW = np.array([AICw(results[k], weight=weight) for k in keyok])
+    # normaicw = sum(AICW)
     AICW = AICW / sum(AICW)
 
-    gammast = sum(g * AICW)
-    err_syst = np.sqrt(sum(gv.mean(g) ** 2 * AICW) - sum(gv.mean(g) * AICW) ** 2)
+    gammast = sum(gammastar_samples * AICW)
+    err_syst = np.sqrt(sum(gv.mean(gammastar_samples) ** 2 * AICW) - sum(gv.mean(gammastar_samples) * AICW) ** 2)
 
     return gammast, gv.gvar(gammast.mean, err_syst)
 
 
-def grad_plot(RESULTS, NORM, CUTOFF, dOM, out=None, FILTER=None, weight="cut"):
+def grad_plot(results, norm, cutoff, dOM, out=None, plot_filter=None, weight="cut"):
     # Compute gradient
-    XMINS = np.unique([float(k[0]) for k in RESULTS.keys()])
-    XMAXS = np.unique([float(k[1]) for k in RESULTS.keys()])
-    KEYS = [
+    xmins = np.unique([float(k[0]) for k in results.keys()])
+    xmaxs = np.unique([float(k[1]) for k in results.keys()])
+    window_keys = [
         (f"{xmin:.3f}", f"{xmax:.3f}")
-        for i, xmin in enumerate(XMINS)
-        for j, xmax in enumerate(XMAXS)
+        for i, xmin in enumerate(xmins)
+        for j, xmax in enumerate(xmaxs)
     ]
 
-    dGRAD = compute_grad(XMINS, XMAXS, RESULTS, dOM)
+    dGRAD = compute_grad(xmins, xmaxs, results, dOM)
 
-    # plt.rcParams["text.usetex"] = True
-    # plt.rcParams["font.size"] = 12
+    fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(7, 7), layout="constrained")
 
-    fig = plt.figure(figsize=(10, 10))
-
-    ax1 = fig.add_subplot(2, 1, 1, projection="3d")
     ax1.set_proj_type("persp", focal_length=0.2)
 
     map = cm.ScalarMappable(
-        cmap=cm.viridis, norm=matplotlib.colors.Normalize(vmin=0.0, vmax=NORM)
+        cmap=cm.viridis, norm=matplotlib.colors.Normalize(vmin=0.0, vmax=norm)
     )
 
     # Plot all the point and color them on the base of the gradient
-    keys = [k for k in KEYS if k in RESULTS]
+    keys = [k for k in window_keys if k in results]
     xmin = np.array([float(k[0]) for k in keys])
     xmax = np.array([float(k[1]) for k in keys])
-    gamma = np.array([RESULTS[k]["pars"]["gamma"].mean for k in keys])
+    gamma = np.array([results[k]["pars"]["gamma"].mean for k in keys])
 
     dgamma = np.array([dGRAD[k] for k in keys])
-    # keyok = [k for k in keys if dGRAD[k] / NORM <= CUTOFF]
 
-    if FILTER is None:
-        iyes = [k / NORM <= CUTOFF for k in dgamma]
+    if plot_filter is None:
+        filter_mask = dgamma / norm <= cutoff
     else:
-        iyes = [d / NORM <= CUTOFF and FILTER(g) for (d, g) in zip(dgamma, gamma)]
-    ino = [not i for i in iyes]
+        filter_mask = dgamma / norm <= cutoff and plot_filter(gamma)
 
     ax1.scatter(
-        xmax[iyes], xmin[iyes], gamma[iyes], c=map.to_rgba(dgamma[iyes]), alpha=1
+        xmax[filter_mask], xmin[filter_mask], gamma[filter_mask], c=map.to_rgba(dgamma[filter_mask]), alpha=1
     )
-    ax1.scatter(xmax[ino], xmin[ino], gamma[ino], c=map.to_rgba(dgamma[ino]), alpha=0.1)
+    ax1.scatter(xmax[~filter_mask], xmin[~filter_mask], gamma[~filter_mask], c=map.to_rgba(dgamma[~filter_mask]), alpha=0.1)
     bar = ax1.scatter([], [], [], c=map.to_rgba([]))
     fig.colorbar(bar, ax=ax1, shrink=0.6, label="gradient")
 
     # Plot lines connecting points
     lcolor = "gray"
     lopacity = 0.5
-    for xmin in XMINS:
-        keys = [(f"{xmin:.3f}", f"{k:.3f}") for k in XMAXS]
-        keys = [k for k in keys if k in RESULTS]
+    for xmin in xmins:
+        keys = [(f"{xmin:.3f}", f"{k:.3f}") for k in xmaxs]
+        keys = [k for k in keys if k in results]
 
         xmaxs = [float(k[1]) for k in keys]
         xmins = np.full(len(xmaxs), xmin)
-        gamma = [RESULTS[k]["pars"]["gamma"].mean for k in keys]
+        gamma = [results[k]["pars"]["gamma"].mean for k in keys]
 
         ax1.plot(xmaxs, xmins, gamma, color=lcolor, alpha=lopacity)
-    for xmax in XMAXS:
-        keys = [(f"{k:.3f}", f"{xmax:.3f}") for k in XMINS]
-        keys = [k for k in keys if k in RESULTS]
+    for xmax in xmaxs:
+        keys = [(f"{k:.3f}", f"{xmax:.3f}") for k in xmins]
+        keys = [k for k in keys if k in results]
 
         xmins = [float(k[0]) for k in keys]
         xmaxs = np.full(len(xmins), xmax)
-        gamma = [RESULTS[k]["pars"]["gamma"].mean for k in keys]
+        gamma = [results[k]["pars"]["gamma"].mean for k in keys]
 
         ax1.plot(xmaxs, xmins, gamma, color=lcolor, alpha=lopacity)
 
-    # ax1.set_xticks(rotation=90)
     ax1.tick_params(axis="x", labelrotation=55)
     ax1.tick_params(axis="y", labelrotation=-20)
     ax1.tick_params(axis="z", labelrotation=0)
@@ -284,52 +270,51 @@ def grad_plot(RESULTS, NORM, CUTOFF, dOM, out=None, FILTER=None, weight="cut"):
 
     ax1.legend()
 
-    ax2 = fig.add_subplot(2, 1, 2, projection="3d")
     ax2.set_proj_type("persp", focal_length=0.2)
 
-    keys = [k for k in KEYS if k in RESULTS]
+    keys = [k for k in window_keys if k in results]
     xmin = np.array([float(k[0]) for k in keys])
     xmax = np.array([float(k[1]) for k in keys])
-    gamma = np.array([RESULTS[k]["pars"]["gamma"].mean for k in keys])
-    icwei = np.array([AICw(RESULTS[k], weight=weight) for k in keys])
+    gamma = np.array([results[k]["pars"]["gamma"].mean for k in keys])
+    icwei = np.array([AICw(results[k], weight=weight) for k in keys])
 
     # Filter points
-    kin = [k for k in keys if dGRAD[k] / NORM <= CUTOFF]
-    if FILTER is not None:
-        kin = [k for k in kin if FILTER(RESULTS[k]["pars"]["gamma"].mean)]
-    aicw = [AICw(RESULTS[k], weight=weight) for k in kin]
+    kin = [k for k in keys if dGRAD[k] / norm <= cutoff]
+    if plot_filter is not None:
+        kin = [k for k in kin if plot_filter(results[k]["pars"]["gamma"].mean)]
+    aicw = [AICw(results[k], weight=weight) for k in kin]
     cmap = matplotlib.cm.get_cmap("plasma_r")
     mapp = cm.ScalarMappable(
         cmap=cmap, norm=matplotlib.colors.Normalize(vmin=0.0, vmax=max(aicw))
     )
 
     ax2.scatter(
-        xmax[iyes], xmin[iyes], gamma[iyes], c=mapp.to_rgba(icwei[iyes]), alpha=1
+        xmax[filter_mask], xmin[filter_mask], gamma[filter_mask], c=mapp.to_rgba(icwei[filter_mask]), alpha=1
     )
 
-    ax2.scatter(xmax[ino], xmin[ino], gamma[ino], alpha=0.1)
+    ax2.scatter(xmax[~filter_mask], xmin[~filter_mask], gamma[~filter_mask], alpha=0.1)
     ax2.scatter([], [], [], c=mapp.to_rgba([]))
     fig.colorbar(mappable=mapp, ax=ax2, shrink=0.6, label=r"$e^{-\frac{AIC}{2}}$")
 
     # Plot lines connecting points
     lcolor = "gray"
     lopacity = 0.5
-    for xmin in XMINS:
-        keys = [(f"{xmin:.3f}", f"{k:.3f}") for k in XMAXS]
-        keys = [k for k in keys if k in RESULTS]
+    for xmin in xmins:
+        keys = [(f"{xmin:.3f}", f"{k:.3f}") for k in xmaxs]
+        keys = [k for k in keys if k in results]
 
         xmaxs = [float(k[1]) for k in keys]
         xmins = np.full(len(xmaxs), xmin)
-        gamma = [RESULTS[k]["pars"]["gamma"].mean for k in keys]
+        gamma = [results[k]["pars"]["gamma"].mean for k in keys]
 
         ax2.plot(xmaxs, xmins, gamma, color=lcolor, alpha=lopacity)
-    for xmax in XMAXS:
-        keys = [(f"{k:.3f}", f"{xmax:.3f}") for k in XMINS]
-        keys = [k for k in keys if k in RESULTS]
+    for xmax in xmaxs:
+        keys = [(f"{k:.3f}", f"{xmax:.3f}") for k in xmins]
+        keys = [k for k in keys if k in results]
 
         xmins = [float(k[0]) for k in keys]
         xmaxs = np.full(len(xmins), xmax)
-        gamma = [RESULTS[k]["pars"]["gamma"].mean for k in keys]
+        gamma = [results[k]["pars"]["gamma"].mean for k in keys]
 
         ax2.plot(xmaxs, xmins, gamma, color=lcolor, alpha=lopacity)
 
@@ -342,9 +327,6 @@ def grad_plot(RESULTS, NORM, CUTOFF, dOM, out=None, FILTER=None, weight="cut"):
     ax2.set_zlabel(r"$\gamma^*$", fontsize=15)
     ax2.legend()
 
-    # fig.tight_layout()
-    # plt.tight_layout()
-
     if out is not None:
         fig.savefig(out)
 
@@ -352,80 +334,75 @@ def grad_plot(RESULTS, NORM, CUTOFF, dOM, out=None, FILTER=None, weight="cut"):
 def slice_plot(
     MI,
     MA,
-    RESULTS,
+    results,
     gammast,
     err_syst,
     dOM,
-    NORM,
-    CUTOFF,
+    norm,
+    cutoff,
     out="./sliceplot.pdf",
     weight="cut",
-    FILTER=None,
+    plot_filter=None,
 ):
     # ----------------
-    XMINS = np.unique([float(k[0]) for k in RESULTS.keys()])
-    XMAXS = np.unique([float(k[1]) for k in RESULTS.keys()])
-    KEYS = [
+    xmins = np.unique([float(k[0]) for k in results.keys()])
+    xmaxs = np.unique([float(k[1]) for k in results.keys()])
+    window_keys = [
         (f"{xmin:.3f}", f"{xmax:.3f}")
-        for i, xmin in enumerate(XMINS)
-        for j, xmax in enumerate(XMAXS)
+        for i, xmin in enumerate(xmins)
+        for j, xmax in enumerate(xmaxs)
     ]
 
-    dGRAD = compute_grad(XMINS, XMAXS, RESULTS, dOM)
+    dGRAD = compute_grad(xmins, xmaxs, results, dOM)
 
     # Compute overall IC and define color map
-    kaux = [k for k in KEYS if k in RESULTS if dGRAD[k] / CUTOFF <= NORM]
-    aicw = [AICw(RESULTS[k], weight="cut") for k in kaux]
+    kaux = [k for k in window_keys if k in results if dGRAD[k] / cutoff <= norm]
+    aicw = [AICw(results[k], weight="cut") for k in kaux]
     cmap = matplotlib.cm.get_cmap("plasma_r")
     mapp = cm.ScalarMappable(
         cmap=cmap, norm=matplotlib.colors.Normalize(vmin=0.0, vmax=max(aicw))
     )
 
-    # plt.rcParams["text.usetex"] = True
-    # plt.rcParams["font.size"] = 12
-
-    fig = plt.figure(figsize=(5, 8))
+    fig, (ax, ax2) = plt.subplots(ncols=2, figsize=(5, 8), layout="constrained")
 
     # FIRST PLOT =====================================================
-    ax = fig.add_subplot(2, 1, 1)
-
-    OMIN = XMINS[MI]
+    omin = xmins[MI]
 
     # Scatter plot
     kin = [
         k
-        for k in KEYS
-        if float(k[0]) == OMIN
-        if k in RESULTS
-        if dGRAD[k] / CUTOFF <= NORM
+        for k in window_keys
+        if float(k[0]) == omin
+        if k in results
+        if dGRAD[k] / cutoff <= norm
     ]
-    if FILTER is not None:
-        kin = [k for k in kin if FILTER(RESULTS[k]["pars"]["gamma"].mean)]
+    if plot_filter is not None:
+        kin = [k for k in kin if plot_filter(results[k]["pars"]["gamma"].mean)]
     xmaxs = [float(k[1]) for k in kin]
-    gamma = np.array([RESULTS[k]["pars"]["gamma"].mean for k in kin])
-    weight = np.array([AICw(RESULTS[k], weight="cut") for k in kin])
+    gamma = np.array([results[k]["pars"]["gamma"].mean for k in kin])
+    weight = np.array([AICw(results[k], weight="cut") for k in kin])
     ax.scatter(xmaxs, gamma, c=mapp.to_rgba(weight))
 
     # Scatter out points
     kout = [
         k
-        for k in KEYS
-        if float(k[0]) == OMIN
-        if k in RESULTS
-        if not dGRAD[k] / CUTOFF <= NORM
+        for k in window_keys
+        if float(k[0]) == omin
+        if k in results
+        if not dGRAD[k] / cutoff <= norm
     ]
-    if FILTER is not None:
-        kout = [k for k in kout if not FILTER(RESULTS[k]["pars"]["gamma"].mean)]
+    if plot_filter is not None:
+        kout = [k for k in kout if not plot_filter(results[k]["pars"]["gamma"].mean)]
     xmaxs = [float(k[1]) for k in kout]
-    gamma = np.array([RESULTS[k]["pars"]["gamma"].mean for k in kout])
-    weight = np.array([AICw(RESULTS[k], weight="cut") for k in kout])
+    gamma = np.array([results[k]["pars"]["gamma"].mean for k in kout])
+    weight = np.array([AICw(results[k], weight="cut") for k in kout])
     ax.scatter(xmaxs, gamma, color="C0", alpha=0.1)
 
     # Error bands
-    kall = [k for k in KEYS if float(k[0]) == OMIN if k in RESULTS]
+    kall = [k for k in window_keys if float(k[0]) == omin if k in results]
     xmaxs = [float(k[1]) for k in kall]
-    gamma = np.array([RESULTS[k]["pars"]["gamma"].mean for k in kall])
-    errg = np.array([RESULTS[k]["pars"]["gamma"].sdev for k in kall])
+    gamma = np.array([results[k]["pars"]["gamma"].mean for k in kall])
+    errg = np.array([results[k]["pars"]["gamma"].sdev for k in kall])
     ax.fill_between(xmaxs, gamma - errg, gamma + errg, color="gray", alpha=0.1)
 
     # Result span
@@ -444,53 +421,51 @@ def slice_plot(
     ax.legend(loc="upper left")
 
     ax1 = plt.twinx(ax)
-    chi2 = np.array([RESULTS[k]["chi2"] / (RESULTS[k]["Npts"]) for k in kall])
+    chi2 = np.array([results[k]["chi2"] / (results[k]["Npts"]) for k in kall])
     ax1.plot(xmaxs, chi2, color="C1", label=r"$\frac{\chi^2}{dof}$", alpha=0.2)
-    # ax1.set_ylim(ymin=0,ymax=2)
+
     ax1.legend(loc="upper right")
     ax1.set_ylabel(r"$\frac{\chi^2}{dof}$")
-    ax1.set_title(r"$a\Omega_{{min}} = {{{0}}}$".format(f"{OMIN:.3f}"))
+    ax1.set_title(r"$a\Omega_{{min}} = {{{0}}}$".format(f"{omin:.3f}"))
 
     # SECOND PLOT =====================================================
-    ax2 = fig.add_subplot(2, 1, 2)
-
-    OMAX = XMAXS[MA]
+    OMAX = xmaxs[MA]
 
     # Scatter plot
     kin = [
         k
-        for k in KEYS
+        for k in window_keys
         if float(k[1]) == OMAX
-        if k in RESULTS
-        if dGRAD[k] / CUTOFF <= NORM
+        if k in results
+        if dGRAD[k] / cutoff <= norm
     ]
-    if FILTER is not None:
-        kin = [k for k in kin if FILTER(RESULTS[k]["pars"]["gamma"].mean)]
+    if plot_filter is not None:
+        kin = [k for k in kin if plot_filter(results[k]["pars"]["gamma"].mean)]
     xmaxs = [float(k[0]) for k in kin]
-    gamma = np.array([RESULTS[k]["pars"]["gamma"].mean for k in kin])
-    weight = np.array([AICw(RESULTS[k], weight="cut") for k in kin])
+    gamma = np.array([results[k]["pars"]["gamma"].mean for k in kin])
+    weight = np.array([AICw(results[k], weight="cut") for k in kin])
     ax2.scatter(xmaxs, gamma, c=mapp.to_rgba(weight))
 
     # Scatter out points
     kout = [
         k
-        for k in KEYS
+        for k in window_keys
         if float(k[1]) == OMAX
-        if k in RESULTS
-        if not dGRAD[k] / CUTOFF <= NORM
+        if k in results
+        if not dGRAD[k] / cutoff <= norm
     ]
-    if FILTER is not None:
-        kout = [k for k in kout if not FILTER(RESULTS[k]["pars"]["gamma"].mean)]
+    if plot_filter is not None:
+        kout = [k for k in kout if not plot_filter(results[k]["pars"]["gamma"].mean)]
     xmaxs = [float(k[0]) for k in kout]
-    gamma = np.array([RESULTS[k]["pars"]["gamma"].mean for k in kout])
-    weight = np.array([AICw(RESULTS[k], weight="cut") for k in kout])
+    gamma = np.array([results[k]["pars"]["gamma"].mean for k in kout])
+    weight = np.array([AICw(results[k], weight="cut") for k in kout])
     ax2.scatter(xmaxs, gamma, color="C0", alpha=0.1)
 
     # Error bands
-    kall = [k for k in KEYS if float(k[1]) == OMAX if k in RESULTS]
+    kall = [k for k in window_keys if float(k[1]) == OMAX if k in results]
     xmaxs = [float(k[0]) for k in kall]
-    gamma = np.array([RESULTS[k]["pars"]["gamma"].mean for k in kall])
-    errg = np.array([RESULTS[k]["pars"]["gamma"].sdev for k in kall])
+    gamma = np.array([results[k]["pars"]["gamma"].mean for k in kall])
+    errg = np.array([results[k]["pars"]["gamma"].sdev for k in kall])
     ax2.fill_between(xmaxs, gamma - errg, gamma + errg, color="gray", alpha=0.1)
 
     # Result span
@@ -509,7 +484,7 @@ def slice_plot(
     ax2.legend(loc="upper left")
 
     ax3 = plt.twinx(ax2)
-    chi2 = np.array([RESULTS[k]["chi2"] / (RESULTS[k]["Npts"]) for k in kall])
+    chi2 = np.array([results[k]["chi2"] / (results[k]["Npts"]) for k in kall])
     ax3.plot(xmaxs, chi2, color="C1", label=r"$\frac{\chi^2}{dof}$", alpha=0.2)
     ax3.set_ylim(ymin=0, ymax=2)
     ax3.legend(loc="upper right")
@@ -541,7 +516,7 @@ def do_modenumber_fit_aic(ensemble, filename, boot_gamma, plot_directory):
     ohigh = (min(olow) + min(do), max(olow) + max(do))
     delta = pars["delta_fit"]
 
-    RESULTS = Windows(
+    results = windows(
         filename,
         pars["format"],
         V,
@@ -555,36 +530,36 @@ def do_modenumber_fit_aic(ensemble, filename, boot_gamma, plot_directory):
     def f(m):
         return lambda g: g < m
 
-    gstat, gsyst = WEIGHT(
-        RESULTS,
+    gstat, gsyst = weight(
+        results,
         pars["norm"],
         pars["cutoff"],
         delta,
         weight="cut",
-        FILTER=f(pars["filter"]),
+        plot_filter=f(pars["filter"]),
     )
 
     print(gstat, gsyst)
 
     grad_plot(
-        RESULTS,
+        results,
         pars["norm"],
         pars["cutoff"],
         delta,
-        FILTER=f(pars["filter"]),
+        plot_filter=f(pars["filter"]),
         out=f"{plot_directory}/modenumber_grad_plot.pdf",
     )
     slice_plot(
         pars["plot_omega_min"],
         pars["plot_omega_max"],
-        RESULTS,
+        results,
         gsyst,
         gstat.sdev,
         delta,
         pars["norm"],
         pars["cutoff"],
         weight="cut",
-        FILTER=f(pars["filter"]),
+        plot_filter=f(pars["filter"]),
         out=f"{plot_directory}/modenumber_slice_plot.pdf",
     )
 
