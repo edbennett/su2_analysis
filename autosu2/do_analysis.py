@@ -23,6 +23,7 @@ from .provenance import stamp_provenance
 from .modenumber import do_modenumber_fit
 from .modenumber_julia import wrap_modenumber_fit_julia
 from .sideload import callback_string_tension, import_data_sql
+from .modenumber_aic import do_modenumber_fit_aic
 
 
 DEBUG = True
@@ -264,6 +265,21 @@ def do_single_analysis(
             results_filename=f"processed_data/{subdirectory}/modenumber_fit_julia.csv",
         )
         if (modenumber_result is None) and DEBUG:
+            print("    Already up to date")
+
+    elif measure_modenumber and measure_modenumber["method"] == "aic":
+        result = do_modenumber_fit_aic(
+            ensemble=ensemble,
+            filename=f"raw_data/{subdirectory}/out_modenumber",
+            # boot_gamma=read_modenumber_result(f'processed_data/{subdirectory}/modenumber_fit_julia.csv')['gamma'],
+            boot_gamma=0.5,
+            plot_directory=f"processed_data/{subdirectory}",
+        )
+        if DEBUG:
+            print("  - gamma*")
+        if result and DEBUG:
+            print("   ", result)
+        else:
             print("    Already up to date")
 
     elif measure_modenumber:
