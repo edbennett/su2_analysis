@@ -64,16 +64,10 @@ def shade_prediction(colour, R, ax):
     ax.set_ylim((ymin, ymax))
 
 
-def generate(data, ensembles):
-    set_plot_defaults(markersize=4, capsize=1.0, linewidth=0.5, preliminary=preliminary)
-    predicted_Rs = (
-        R_value(7.1511, 4.7955, None),
-        R_value(5.3377, 3.5782, None),
-        R_value(3.6911, 3.3323, 4.1790),
-        R_value(3.1640, 2.9379, 3.4791),
-    )
-    filename = "final_plots/R_ratio.pdf"
-    fig, axes = plt.subplots(nrows=7, figsize=(3.5, 13), sharex=True)
+def plot_single(data, Nf, predicted_Rs, filename):
+    num_subplots = len(beta_colour_marker[Nf])
+    fig, axes_2d = plt.subplots(nrows=num_subplots, figsize=(3.5, 2.5 + num_subplots * 1.5), sharex=True, squeeze=False)
+    axes = axes_2d.ravel()
     hatted_data = merge_and_hat_quantities(
         data, ("A1++_mass", "E++_mass", "T2++_mass", "spin12_mass", "sqrtsigma")
     )
@@ -88,9 +82,9 @@ def generate(data, ensembles):
     ) ** 0.5
     axes[-1].set_xlabel(r"$L M_{0^{++}}$")
 
-    for (beta, colour, marker), ax in zip(beta_colour_marker[1], axes):
+    for (beta, colour, marker), ax in zip(beta_colour_marker[Nf], axes):
         data_to_plot = hatted_data[
-            (hatted_data.beta == beta) & (hatted_data.Nf == 1)
+            (hatted_data.beta == beta) & (hatted_data.Nf == Nf)
             # R ratio is interesting at smaller volumes too
             # & ~(hatted_data.label.str.endswith('*'))
         ]
@@ -124,3 +118,19 @@ def generate(data, ensembles):
     fig.tight_layout(pad=0.28, rect=(0, 0.04, 1, 1))
     fig.savefig(filename, transparent=True)
     plt.close(fig)
+
+
+def generate(data, ensembles):
+    set_plot_defaults(markersize=4, capsize=1.0, linewidth=0.5, preliminary=preliminary)
+    filename = "final_plots/Nf{Nf}_R_ratio.pdf"
+
+    predicted_Rs_Nf1 = (
+        R_value(7.1511, 4.7955, None),
+        R_value(5.3377, 3.5782, None),
+        R_value(3.6911, 3.3323, 4.1790),
+        R_value(3.1640, 2.9379, 3.4791),
+    )
+    plot_single(data, 1, predicted_Rs_Nf1, filename.format(Nf=1))
+
+    predicted_Rs_Nf2 = []
+    plot_single(data, 2, predicted_Rs_Nf2, filename.format(Nf=2))
