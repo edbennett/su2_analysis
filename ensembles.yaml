@@ -1696,7 +1696,7 @@ DB4M12:
       plateau_end: 4
     T2++:
       plateau_start: 2
-      plateau_end: 3
+      plateau_end: 4
   measure_pcac:
     plateau_start: 25
     plateau_end: 30
@@ -1848,7 +1848,7 @@ DB5M3:
   measure_glueballs:
     cfg_count: 4000
     torelon:
-      plateau_start: 1
+      plateau_start: 2
       plateau_end: 8
     A1++:
       plateau_start: 1
@@ -1887,11 +1887,11 @@ DB5M4:
       plateau_start: 2
       plateau_end: 5
     A1++:
-      plateau_start: 2
-      plateau_end: 4
-    E++:
       plateau_start: 1
-      plateau_end: 2
+      plateau_end: 5
+    E++:
+      plateau_start: 2
+      plateau_end: 3
   measure_pcac:
     plateau_start: 13
     plateau_end: 15
@@ -1944,7 +1944,7 @@ DB5M5:
       plateau_start: 1
       plateau_end: 5
     E++:
-      plateau_start: 2
+      plateau_start: 1
       plateau_end: 3
   measure_pcac:
     plateau_start: 12
@@ -1995,17 +1995,21 @@ DB5M6:
   measure_glueballs:
     cfg_count: 4000
     torelon:
-      plateau_start: 5
-      plateau_end: 9
+      plateau_start: 1
+      plateau_end: 7
     A1++:
-      plateau_start: 5
-      plateau_end: 9
+      plateau_start: 2
+      plateau_end: 6
     E++:
-      plateau_start: 5
-      plateau_end: 9
+      plateau_start: 1
+      plateau_end: 3
     T2++:
-      plateau_start: 5
-      plateau_end: 9
+      - plateau_start: 3
+        plateau_end: 4
+      - plateau_start: 3
+        plateau_end: 4
+      - plateau_start: 3
+        plateau_end: 4
   measure_pcac:
     plateau_start: 10
     plateau_end: 14
@@ -2048,9 +2052,6 @@ DB5M7:
     E++:
       plateau_start: 2
       plateau_end: 3
-    T2++:
-      plateau_start: 1
-      plateau_end: 2
   measure_pcac:
     plateau_start: 11
     plateau_end: 15
@@ -2085,8 +2086,8 @@ DB5M8:
       plateau_start: 2
       plateau_end: 8
     A1++:
-      plateau_start: 3
-      plateau_end: 5
+      plateau_start: 1
+      plateau_end: 4
     T2++:
       plateau_start: 3
       plateau_end: 4
@@ -2263,7 +2264,7 @@ DB6M3:
   measure_glueballs:
     cfg_count: 4000
     torelon:
-      plateau_start: 3
+      plateau_start: 1
       plateau_end: 5
     A1++:
       plateau_start: 2
@@ -2299,11 +2300,11 @@ DB6M3*:
   measure_glueballs:
     cfg_count: 4000
     torelon:
+      plateau_start: 2
+      plateau_end: 5
+    A1++:
       plateau_start: 1
       plateau_end: 3
-    A1++:
-      plateau_start: 2
-      plateau_end: 4
   measure_pcac:
     plateau_start: 10
     plateau_end: 11
@@ -2336,13 +2337,15 @@ DB6M4:
     cfg_count: 4000
     torelon:
       plateau_start: 2
-      plateau_end: 5
+      plateau_end: 10
     A1++:
       plateau_start: 1
       plateau_end: 5
     E++:
-      plateau_start: 1
-      plateau_end: 2
+      - plateau_start: 2
+        plateau_end: 3
+      - plateau_start: 2
+        plateau_end: 3
     T2++:
       plateau_start: 1
       plateau_end: 2
@@ -2436,6 +2439,11 @@ DB6M6:
     A1++:
       plateau_start: 1
       plateau_end: 5
+    E++:
+      - plateau_start: 2
+        plateau_end: 4
+      - plateau_start: 2
+        plateau_end: 4
   measure_pcac:
     plateau_start: 12
     plateau_end: 15
@@ -2460,7 +2468,7 @@ DB6M6*:
       plateau_start: 2
       plateau_end: 3
     A1++:
-      plateau_start: 2
+      plateau_start: 1
       plateau_end: 3
     E++:
       plateau_start: 2
@@ -2500,7 +2508,7 @@ DB6M7:
       plateau_end: 6
     A1++:
       plateau_start: 2
-      plateau_end: 6
+      plateau_end: 8
     E++:
       plateau_start: 2
       plateau_end: 3
@@ -2538,17 +2546,22 @@ DB6M7*:
   measure_glueballs:
     cfg_count: 4000
     torelon:
-      plateau_start: 1
-      plateau_end: 11
+      plateau_start: 2
+      plateau_end: 8
     A1++:
       plateau_start: 1
       plateau_end: 5
     E++:
       plateau_start: 2
       plateau_end: 3
+      use: True
     T2++:
-      plateau_start: 2
-      plateau_end: 3
+      - plateau_start: 2
+        plateau_end: 3
+      - plateau_start: 2
+        plateau_end: 3
+      - plateau_start: 2
+        plateau_end: 3
 
 DB6M8:
   <<: *DB6
@@ -2586,9 +2599,11 @@ DB6M8:
     E++:
       plateau_start: 2
       plateau_end: 3
+      use: True
     T2++:
       plateau_start: 3
       plateau_end: 4
+      use: True
 
 DB6M9:
   <<: *DB6
@@ -2640,9 +2655,11 @@ DB6M9:
     E++:
       plateau_start: 2
       plateau_end: 5
+      use: True
     T2++:
       plateau_start: 3
       plateau_end: 8
+      use: True
   measure_spin12:
     plateau_start: 9
     plateau_end: 14
@@ -2670,25 +2687,22 @@ DB7M1:
       plateau_start: 9
       plateau_end: 15
     id:
-      plateau_start: 9
-      plateau_end: 15
+      plateau_start: 8
+      plateau_end: 10
   measure_glueballs:
     cfg_count: 4000
     torelon:
-      plateau_start: 2
-      plateau_end: 5
+      plateau_start: 1
+      plateau_end: 6
     A1++:
-      plateau_start: 2
-      plateau_end: 4
+      plateau_start: 1
+      plateau_end: 7
     E++:
       plateau_start: 2
       plateau_end: 4
-    T2++:
-      plateau_start: 1
-      plateau_end: 4
   measure_pcac:
     plateau_start: 14
-    plateau_end: 16
+    plateau_end: 15
 
 DB7M1*:
   <<: *DB7
@@ -2720,12 +2734,9 @@ DB7M1*:
       plateau_end: 5
     A1++:
       plateau_start: 2
-      plateau_end: 4
+      plateau_end: 3
     E++:
       plateau_start: 2
-      plateau_end: 4
-    T2++:
-      plateau_start: 1
       plateau_end: 4
   measure_pcac:
     plateau_start: 10
@@ -2750,10 +2761,10 @@ DB7M2:
       plateau_start: 14
       plateau_end: 15
     g5gk:
-      plateau_start: 10
-      plateau_end: 15
+      plateau_start: 8
+      plateau_end: 11
     id:
-      plateau_start: 11
+      plateau_start: 8
       plateau_end: 15
   measure_glueballs:
     cfg_count: 4000
@@ -2762,12 +2773,9 @@ DB7M2:
       plateau_end: 5
     A1++:
       plateau_start: 2
-      plateau_end: 4
+      plateau_end: 7
     E++:
       plateau_start: 2
-      plateau_end: 4
-    T2++:
-      plateau_start: 1
       plateau_end: 4
   measure_pcac:
     plateau_start: 14
@@ -2806,9 +2814,6 @@ DB7M2*:
       plateau_end: 6
     E++:
       plateau_start: 2
-      plateau_end: 5
-    T2++:
-      plateau_start: 2
       plateau_end: 4
   measure_pcac:
     plateau_start: 10
@@ -2833,25 +2838,22 @@ DB7M3:
       plateau_start: 14
       plateau_end: 15
     g5gk:
-      plateau_start: 14
-      plateau_end: 15
+      plateau_start: 12
+      plateau_end: 13
     id:
-      plateau_start: 10
+      plateau_start: 9
       plateau_end: 15
   measure_glueballs:
     cfg_count: 4000
     torelon:
       plateau_start: 2
-      plateau_end: 5
+      plateau_end: 4
     A1++:
       plateau_start: 2
-      plateau_end: 4
+      plateau_end: 8
     E++:
-      plateau_start: 2
-      plateau_end: 4
-    T2++:
-      plateau_start: 1
-      plateau_end: 4
+      plateau_start: 3
+      plateau_end: 5
   measure_pcac:
     plateau_start: 14
     plateau_end: 15
@@ -2886,13 +2888,16 @@ DB7M3*:
       plateau_end: 5
     A1++:
       plateau_start: 2
-      plateau_end: 5
+      plateau_end: 4
     E++:
       plateau_start: 3
       plateau_end: 5
+      use: True
     T2++:
-      plateau_start: 2
-      plateau_end: 4
+      - plateau_start: 2
+        plateau_end: 4
+      - plateau_start: 2
+        plateau_end: 4
   measure_pcac:
     plateau_start: 10
     plateau_end: 11
@@ -2913,33 +2918,27 @@ DB7M4:
   measure_gflow: hirep
   measure_mesons:
     g5:
-      plateau_start: 12
-      plateau_end: 15
-    gk:
-      plateau_start: 12
+      plateau_start: 14
       plateau_end: 15
     g5gk:
-      plateau_start: 12
-      plateau_end: 15
+      plateau_start: 13
+      plateau_end: 16
     id:
-      plateau_start: 12
-      plateau_end: 15
+      plateau_start: 11
+      plateau_end: 16
   measure_glueballs:
     cfg_count: 4000
     torelon:
-      plateau_start: 1
-      plateau_end: 7
+      plateau_start: 2
+      plateau_end: 4
     A1++:
       plateau_start: 2
       plateau_end: 6
     E++:
       plateau_start: 3
       plateau_end: 5
-    T2++:
-      plateau_start: 2
-      plateau_end: 4
   measure_pcac:
-    plateau_start: 11
+    plateau_start: 14
     plateau_end: 15
   measure_spin12:
     plateau_start: 5
@@ -2964,10 +2963,10 @@ DB7M5:
       plateau_start: 13
       plateau_end: 15
     g5gk:
-      plateau_start: 13
-      plateau_end: 15
+      plateau_start: 12
+      plateau_end: 16
     id:
-      plateau_start: 13
+      plateau_start: 11
       plateau_end: 15
   measure_glueballs:
     cfg_count: 4000
@@ -2979,10 +2978,10 @@ DB7M5:
       plateau_end: 8
     E++:
       plateau_start: 2
-      plateau_end: 4
+      plateau_end: 3
   measure_pcac:
-    plateau_start: 12
-    plateau_end: 15
+    plateau_start: 14
+    plateau_end: 16
   measure_spin12:
     plateau_start: 5
     plateau_end: 10
@@ -2999,29 +2998,24 @@ DB7M6:
   measure_polyakov: True
   measure_gflow: hirep
   measure_mesons:
-    g5:
-      plateau_start: 12
-      plateau_end: 15
-    gk:
-      plateau_start: 12
-      plateau_end: 15
     g5gk:
-      plateau_start: 12
-      plateau_end: 15
+      plateau_start: 8
+      plateau_end: 10
     id:
-      plateau_start: 12
-      plateau_end: 15
+      plateau_start: 9
+      plateau_end: 11
   measure_glueballs:
     cfg_count: 4000
     torelon:
-      plateau_start: 2
-      plateau_end: 7
+      plateau_start: 3
+      plateau_end: 5
     A1++:
       plateau_start: 3
       plateau_end: 8
     E++:
-      plateau_start: 5
-      plateau_end: 8
+      - null
+      - plateau_start: 2
+        plateau_end: 4
   measure_pcac:
     plateau_start: 11
     plateau_end: 15
@@ -3060,7 +3054,7 @@ DB7M7:
       plateau_start: 20
       plateau_end: 23
     g5gk:
-      plateau_start: 20
+      plateau_start: 13
       plateau_end: 23
     id:
       plateau_start: 20
@@ -3068,14 +3062,15 @@ DB7M7:
   measure_glueballs:
     cfg_count: 4000
     torelon:
-      plateau_start: 2
-      plateau_end: 14
+      plateau_start: 1
+      plateau_end: 10
     A1++:
       plateau_start: 2
       plateau_end: 6
     E++:
-      plateau_start: 2
-      plateau_end: 5
+      - null
+      - plateau_start: 2
+        plateau_end: 5
   measure_pcac:
     plateau_start: 20
     plateau_end: 23
@@ -3112,8 +3107,8 @@ DB7M8:
       plateau_start: 2
       plateau_end: 6
     E++:
-      plateau_start: 4
-      plateau_end: 9
+      plateau_start: 2
+      plateau_end: 4
   measure_pcac:
     plateau_start: 17
     plateau_end: 21
@@ -3139,25 +3134,22 @@ DB7M9:
       plateau_start: 26
       plateau_end: 31
     g5gk:
-      plateau_start: 27
-      plateau_end: 31
+      plateau_start: 15
+      plateau_end: 25
     id:
-      plateau_start: 26
-      plateau_end: 31
+      plateau_start: 17
+      plateau_end: 28
   measure_glueballs:
     cfg_count: 4000
     torelon:
       plateau_start: 3
       plateau_end: 10
     A1++:
-      plateau_start: 8
-      plateau_end: 14
+      plateau_start: 3
+      plateau_end: 6
     E++:
-      plateau_start: 4
-      plateau_end: 8
-    T2++:
-      plateau_start: 6
-      plateau_end: 10
+      plateau_start: 3
+      plateau_end: 6
   measure_pcac:
     plateau_start: 15
     plateau_end: 31
@@ -3176,33 +3168,30 @@ DB7M10:
   measure_gflow: hirep
   measure_mesons:
     g5:
-      plateau_start: 30
+      plateau_start: 38
       plateau_end: 47
     gk:
-      plateau_start: 32
+      plateau_start: 37
       plateau_end: 48
     g5gk:
-      plateau_start: 30
+      plateau_start: 20
       plateau_end: 47
     id:
-      plateau_start: 32
+      plateau_start: 20
       plateau_end: 48
   measure_glueballs:
     cfg_count: 4000
     torelon:
-      plateau_start: 20
-      plateau_end: 40
-    A1++:
-      plateau_start: 7
+      plateau_start: 6
       plateau_end: 15
+    A1++:
+      plateau_start: 3
+      plateau_end: 6
     E++:
       plateau_start: 3
       plateau_end: 9
-    T2++:
-      plateau_start: 4
-      plateau_end: 8
   measure_pcac:
-    plateau_start: 12
+    plateau_start: 25
     plateau_end: 47
   measure_modenumber:
     method: aic
@@ -3253,16 +3242,22 @@ Nf2DB2M1:
     cfg_count: 4000
     torelon:
       plateau_start: 1
-      plateau_end: 2
+      plateau_end: 10
     A1++:
-      plateau_start: 1
-      plateau_end: 2
+      plateau_start: 2
+      plateau_end: 4
     E++:
-      plateau_start: 1
-      plateau_end: 2
+      - plateau_start: 1
+        plateau_end: 3
+      - plateau_start: 1
+        plateau_end: 3
     T2++:
-      plateau_start: 1
-      plateau_end: 2
+      - plateau_start: 1
+        plateau_end: 3
+      - plateau_start: 1
+        plateau_end: 3
+      - plateau_start: 1
+        plateau_end: 3
   measure_pcac:
     plateau_start: 12
     plateau_end: 15
@@ -3294,16 +3289,22 @@ Nf2DB2M2:
     cfg_count: 4000
     torelon:
       plateau_start: 1
-      plateau_end: 2
+      plateau_end: 4
     A1++:
       plateau_start: 1
-      plateau_end: 2
+      plateau_end: 4
     E++:
-      plateau_start: 1
-      plateau_end: 2
+      - plateau_start: 1
+        plateau_end: 3
+      - plateau_start: 1
+        plateau_end: 3
     T2++:
-      plateau_start: 1
-      plateau_end: 2
+      - plateau_start: 1
+        plateau_end: 2
+      - plateau_start: 1
+        plateau_end: 4
+      - plateau_start: 1
+        plateau_end: 4
   measure_pcac:
     plateau_start: 12
     plateau_end: 15
@@ -3337,17 +3338,23 @@ Nf2DB2M3:
   measure_glueballs:
     cfg_count: 4000
     torelon:
-      plateau_start: 1
-      plateau_end: 2
+      plateau_start: 2
+      plateau_end: 8
     A1++:
       plateau_start: 1
-      plateau_end: 2
+      plateau_end: 5
     E++:
-      plateau_start: 1
-      plateau_end: 2
+      - plateau_start: 2
+        plateau_end: 5
+      - plateau_start: 2
+        plateau_end: 5
     T2++:
-      plateau_start: 1
-      plateau_end: 2
+      - plateau_start: 2
+        plateau_end: 3
+      - plateau_start: 2
+        plateau_end: 3
+      - plateau_start: 2
+        plateau_end: 3
   measure_pcac:
     plateau_start: 18
     plateau_end: 23
@@ -3382,16 +3389,22 @@ Nf2DB2M4:
     cfg_count: 4000
     torelon:
       plateau_start: 1
-      plateau_end: 2
+      plateau_end: 9
     A1++:
-      plateau_start: 1
-      plateau_end: 2
+      plateau_start: 2
+      plateau_end: 5
     E++:
-      plateau_start: 1
-      plateau_end: 2
+      - plateau_start: 2
+        plateau_end: 4
+      - plateau_start: 1
+        plateau_end: 5
     T2++:
-      plateau_start: 1
-      plateau_end: 2
+      - plateau_start: 2
+        plateau_end: 4
+      - plateau_start: 2
+        plateau_end: 4
+      - plateau_start: 2
+        plateau_end: 4
   measure_pcac:
     plateau_start: 18
     plateau_end: 23
@@ -3426,16 +3439,22 @@ Nf2DB2M5:
     cfg_count: 4000
     torelon:
       plateau_start: 1
-      plateau_end: 2
+      plateau_end: 8
     A1++:
       plateau_start: 1
-      plateau_end: 2
+      plateau_end: 9
     E++:
-      plateau_start: 1
-      plateau_end: 2
+      - plateau_start: 3
+        plateau_end: 5
+      - plateau_start: 3
+        plateau_end: 5
     T2++:
-      plateau_start: 1
-      plateau_end: 2
+      - plateau_start: 1
+        plateau_end: 4
+      - plateau_start: 1
+        plateau_end: 5
+      - plateau_start: 1
+        plateau_end: 5
   measure_pcac:
     plateau_start: 18
     plateau_end: 27
@@ -3469,17 +3488,23 @@ Nf2DB2M6:
   measure_glueballs:
     cfg_count: 4000
     torelon:
-      plateau_start: 1
-      plateau_end: 2
+      plateau_start: 5
+      plateau_end: 12
     A1++:
-      plateau_start: 1
-      plateau_end: 2
+      plateau_start: 2
+      plateau_end: 12
     E++:
-      plateau_start: 1
-      plateau_end: 2
+      - plateau_start: 3
+        plateau_end: 9
+      - plateau_start: 3
+        plateau_end: 9
     T2++:
-      plateau_start: 1
-      plateau_end: 2
+      - plateau_start: 3
+        plateau_end: 6
+      - plateau_start: 3
+        plateau_end: 9
+      - plateau_start: 3
+        plateau_end: 9
   measure_pcac:
     plateau_start: 30
     plateau_end: 40
@@ -3513,17 +3538,23 @@ Nf2DB2M6*:
   measure_glueballs:
     cfg_count: 4000
     torelon:
-      plateau_start: 1
-      plateau_end: 2
+      plateau_start: 5
+      plateau_end: 15
     A1++:
-      plateau_start: 1
-      plateau_end: 2
+      plateau_start: 5
+      plateau_end: 13
     E++:
-      plateau_start: 1
-      plateau_end: 2
+      - plateau_start: 3
+        plateau_end: 6
+      - plateau_start: 3
+        plateau_end: 6
     T2++:
-      plateau_start: 1
-      plateau_end: 2
+      - plateau_start: 4
+        plateau_end: 7
+      - plateau_start: 4
+        plateau_end: 7
+      - plateau_start: 4
+        plateau_end: 8
   measure_pcac:
     plateau_start: 20
     plateau_end: 32
@@ -3557,17 +3588,20 @@ Nf2DB2M7:
   measure_glueballs:
     cfg_count: 4000
     torelon:
-      plateau_start: 1
-      plateau_end: 2
-    A1++:
-      plateau_start: 1
-      plateau_end: 2
+      plateau_start: 4
+      plateau_end: 11
     E++:
-      plateau_start: 1
-      plateau_end: 2
+      - plateau_start: 3
+        plateau_end: 10
+      - plateau_start: 3
+        plateau_end: 10
     T2++:
-      plateau_start: 1
-      plateau_end: 2
+      - plateau_start: 3
+        plateau_end: 5
+      - plateau_start: 3
+        plateau_end: 8
+      - plateau_start: 3
+        plateau_end: 8
   measure_pcac:
     plateau_start: 30
     plateau_end: 45
