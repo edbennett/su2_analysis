@@ -68,6 +68,9 @@ def do_plot(data, filename, omega_min=None, omega_max=None):
 
 
 def generate(data, ensembles):
+    # Disable for now
+    return
+
     ensembles_to_plot = (
         ("DB1M8", 0.03, 0.12),
         ("DB1M9", 0.03, 0.12),
