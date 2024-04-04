@@ -22,7 +22,7 @@ def add_sideload_data(ax):
 
     data = read_csv("su2_topology.csv", comment="#")
 
-    for Nf, marker in (0, "s"), (2, "*"):
+    for Nf, label_suffix, marker in (0, "", "s"), (2, r", \beta=2.25", "*"):
         subset_data = data[data.Nf == Nf]
         ax.errorbar(
             subset_data.sqrtsigma**2,
@@ -34,7 +34,7 @@ def add_sideload_data(ax):
                 subset_data.sqrtsigma,
                 subset_data.sqrtsigma_err,
             ),
-            label=f"$N_{{\mathrm{{f}}}} = {Nf}$",
+            label=f"$N_{{\mathrm{{f}}}} = {Nf}{label_suffix}$ (1209.5579)",
             ls="none",
             marker=marker,
         )
@@ -44,8 +44,8 @@ def generate(data, ensembles):
     set_plot_defaults(markersize=2, capsize=0.2, linewidth=0.5, preliminary=preliminary)
 
     filename = "final_plots/susceptibility.pdf"
-    fig, ax = plt.subplots(figsize=(3.5, 2.5))
-    merged_data = merge_quantities(data, ("sqrtsigma", "chi_top"))
+    fig, ax = plt.subplots(figsize=(3.5, 5))
+    merged_data = merge_quantities(data, ("sqrtsigma", "chi_top", "fitted_Q0", "Q_width", "Q_tau_exp"))
     with_sqrtsigma = True
 
     merged_data["value_chi_top_14_hat"] = (
@@ -110,11 +110,17 @@ def generate(data, ensembles):
     if with_sqrtsigma:
         add_sideload_data(ax)
 
-    ax.legend(loc="best", frameon=False)
+    fig.legend(
+        loc="outside left upper",
+        ncols=2,
+        columnspacing=0.3,
+        frameon=False,
+        handletextpad=0.2,
+    )
 
     ax.set_xlim((0, None))
     ax.set_ylim((0, None))
 
-    fig.tight_layout(pad=0.08)
+    fig.tight_layout(rect=(0, 0, 1, 0.77), pad=0.08)
     fig.savefig(filename)
     plt.close(fig)
