@@ -8,9 +8,12 @@ from ..plots import set_plot_defaults
 from ..Q import plot_history_and_histogram
 
 
-ENSEMBLES = "DB4M13", "DB5M8", "DB6M9", "DB7M10"
+ENSEMBLES = {
+    1: ["DB4M13", "DB5M8", "DB6M9", "DB7M10"],
+    2: ["Nf2DB2M6", "Nf2DB2M7"],
+}
 OUTPUT_DIR = "final_plots"
-FILENAME_BASE = "q_topology"
+FILENAME_BASE = "q_topology_Nf{Nf}"
 CAPTION = r"""
 Topological charge histories (left), and histograms (right), for the ensembles
 {ensembles}."""
@@ -83,5 +86,6 @@ def do_caption(filename_base, ensembles, caption, figlabel):
 
 
 def generate(data, ensembles):
-    do_plot(ensembles, ENSEMBLES, FILENAME_BASE)
-    do_caption(FILENAME_BASE, ENSEMBLES, CAPTION, "topcharge")
+    for Nf in 1, 2:
+        do_plot(ensembles, ENSEMBLES[Nf], FILENAME_BASE.format(Nf=Nf))
+        do_caption(FILENAME_BASE.format(Nf=Nf), ENSEMBLES[Nf], CAPTION, "topcharge")
