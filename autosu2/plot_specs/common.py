@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from math import ceil
 from numpy import nan
 
 preliminary = True
@@ -46,7 +47,7 @@ channel_labels = {
 figlegend_defaults = {
     "loc": "upper center",
     "frameon": False,
-    "columnspacing": 1.0,
+    "columnspacing": 0.9,
     "handletextpad": 0,
     "borderpad": 0,
 }
@@ -58,7 +59,7 @@ critical_ms = {
 }
 
 
-def add_figure_key(fig, markers=True, Nf=1):
+def add_figure_key(fig, markers=True, Nf=1, nrow=1):
     legend_contents = [
         fig.axes[0].errorbar(
             [-1],
@@ -73,7 +74,7 @@ def add_figure_key(fig, markers=True, Nf=1):
         for beta, colour, marker in beta_colour_marker[Nf]
     ]
 
-    fig.legend(handles=legend_contents, ncol=7, **figlegend_defaults)
+    fig.legend(handles=legend_contents, ncol=ceil(7 / nrow), **figlegend_defaults)
 
 
 def format_ensembles_list(ensemble_names):
