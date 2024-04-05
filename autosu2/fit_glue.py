@@ -103,6 +103,7 @@ def plot_eff_masses(
         ax.legend(loc="best")
 
     fig.savefig(output_filename)
+    plt.close(fig)
 
 
 def string_tension_from_torelon(torelon_mass, torelon_length):
