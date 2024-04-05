@@ -46,7 +46,7 @@ plots = [
             },
             {
                 "series": [
-                    {"channel": "E++", "quantity": "mass"},
+                    {"channel": "2++", "quantity": "mass"},
                     {"channel": "gk", "quantity": "mass"},
                     {"channel": "spin12", "quantity": "mass"},
                     {"channel": "sqrtsigma", "quantity": ""},

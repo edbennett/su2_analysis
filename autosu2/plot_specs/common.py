@@ -29,6 +29,7 @@ bare_channel_labels = {
     "A1++": "A^{++}",
     "E++": "E^{++}",
     "T2++": "T^{++}",
+    "2++": "2^{++}",
     "spin12": r"\breve{g}",
     "sqrtsigma": r"\sqrt{\sigma}",
 }
@@ -39,8 +40,7 @@ channel_labels = {
     "g5gk": r"$2^-$ vector baryon",
     "id": r"$2^-$ pseudoscalar baryon",
     "A1++": "$0^{++}$ scalar glueball",
-    "E++": "$2^{++}$ tensor glueball",
-    "T2++": "$2^{++}$ tensor glueball",
+    "2++": "$2^{++}$ tensor glueball",
     "spin12": r"$\breve{g}$ hybrid fermion",
     "sqrtsigma": r"$\sqrt{\sigma}$ string tension",
 }

@@ -69,14 +69,14 @@ def plot_single(data, Nf, predicted_Rs, filename):
     fig, axes_2d = plt.subplots(nrows=num_subplots, figsize=(3.5, 2.5 + num_subplots * 1.5), sharex=True, squeeze=False)
     axes = axes_2d.ravel()
     hatted_data = merge_and_hat_quantities(
-        data, ("A1++_mass", "E++_mass", "T2++_mass", "spin12_mass", "sqrtsigma")
+        data, ("A1++_mass", "2++_mass", "spin12_mass", "sqrtsigma")
     )
     hatted_data["value_R"] = (
-        hatted_data["value_E++_mass"] / hatted_data["value_A1++_mass"]
+        hatted_data["value_2++_mass"] / hatted_data["value_A1++_mass"]
     )
     hatted_data["uncertainty_R"] = (
-        hatted_data["uncertainty_E++_mass"] ** 2 / hatted_data["value_A1++_mass"] ** 2
-        + hatted_data["value_E++_mass"] ** 2
+        hatted_data["uncertainty_2++_mass"] ** 2 / hatted_data["value_A1++_mass"] ** 2
+        + hatted_data["value_2++_mass"] ** 2
         * hatted_data["uncertainty_A1++_mass"] ** 2
         / hatted_data["value_A1++_mass"] ** 2
     ) ** 0.5

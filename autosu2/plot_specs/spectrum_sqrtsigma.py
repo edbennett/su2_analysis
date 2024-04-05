@@ -22,8 +22,7 @@ def generate(data, ensembles):
         "g5gk_mass",
         "id_mass",
         "A1++_mass",
-        "E++_mass",
-        "T2++_mass",
+        "2++_mass",
         "spin12_mass",
     )
 
@@ -40,14 +39,13 @@ def generate(data, ensembles):
             / merged_data["value_sqrtsigma"] ** 4
         ) ** 0.5
 
-    channels_to_plot = "g5", "g5gk", "id", "A1++", "E++", "T2++", "spin12"
+    channels_to_plot = "g5", "g5gk", "id", "A1++", "2++", "spin12"
     channel_labels = (
         r"\gamma_5",
         r"\gamma_5\gamma_k",
         "1",
         "A^{++}",
-        "E^{++}",
-        "T^{++}",
+        "2^{++}",
         r"\breve{g}",
     )
     markers = ".", "x", "+", "^", "v", "1", "*"
