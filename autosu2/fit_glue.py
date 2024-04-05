@@ -266,7 +266,8 @@ def select_2plusplus_state(simulation_descriptor, Epp_params, T2pp_params):
     except KeyError:
         T2pp = None
 
-    use = lambda mass: add_measurement(simulation_descriptor, "2++_mass", mass)
+    def use(mass):
+        add_measurement(simulation_descriptor, "2++_mass", mass)
 
     if Epp is None and T2pp is None:
         purge_measurement(simulation_descriptor, "2++_mass")
