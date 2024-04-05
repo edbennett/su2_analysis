@@ -2,6 +2,7 @@ import logging
 from pathlib import Path
 
 from numpy import isnan
+from pandas import read_csv
 from sqlalchemy import bindparam, create_engine, text
 
 from .db import add_measurement, measurement_exists, single_simulation_exists
@@ -32,6 +33,40 @@ def import_data(data, observables):
                     value=q_value,
                     uncertainty=q_uncertainty,
                 )
+
+
+def import_data_csv(filename):
+    data = read_csv(filename)
+    masses = sorted(set(data.m), reverse=True)
+    states = [col.lstrip("value_") for col in data.columns if col.startswith("value_")]
+
+    for _, row in data.iterrows():
+        mass_index = masses.index(row.m) + 1
+        mass_volumes = sorted(list(data[data.m == row.m][["T", "L"]].itertuples(index=False)), reverse=True)
+        volume_index = mass_volumes.index((row["T"], row["L"]))
+        run_name = f"Nf2DB1M{mass_index}{'*' * volume_index}"
+
+        descriptor = {
+            "label": run_name,
+            "first_cfg": 0,
+            "last_cfg": 0,
+            "cfg_count": 0,
+            **row[[
+                "group_family", "group_rank", "representation", "Nf", "L", "T", "beta", "m"
+            ]].to_dict()
+        }
+
+        for state in states:
+            if isnan(value := row[f"value_{state}"]):
+                continue
+
+            add_measurement(
+                descriptor,
+                state,
+                value,
+                uncertainty=row[f"uncertainty_{state}"],
+                valence_mass=row.m,
+            )
 
 
 def describe_ensemble(measurement):
