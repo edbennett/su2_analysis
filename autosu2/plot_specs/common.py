@@ -16,7 +16,8 @@ beta_colour_marker = {
         (2.4, "c", "v"),
     ],
     2: [
-        (2.35, "orange", "+"),
+        (2.25, "y", "*"),
+        (2.35, "darkorange", "+"),
     ],
 }
 
@@ -55,7 +56,7 @@ figlegend_defaults = {
 # TODO: get the numbers for the critical regions programmatically
 critical_ms = {
     1: [-1.5256, -1.4760, -1.4289, -1.3932, None, None, None],
-    2: [None],
+    2: [None, None],
 }
 
 
