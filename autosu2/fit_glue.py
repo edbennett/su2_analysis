@@ -9,7 +9,7 @@ import numpy as np
 from glue_analysis.readers import readers
 from meson_analysis.fit_forms import get_fit_form
 
-from .db import add_measurement, measurement_is_up_to_date
+from .db import add_measurement, get_measurement_as_ufloat, measurement_is_up_to_date
 from .plots import set_plot_defaults
 
 
@@ -116,12 +116,17 @@ def string_tension_from_torelon(torelon_mass, torelon_length):
     return string_tension
 
 
-def weighted_mean(observations):
-    numerator_elements = (obs / obs.dvalue**2 for obs in observations)
-    denominator_elements = (1 / obs.dvalue**2 for obs in observations)
+def weighted_mean(observations, error_attr, callback_method=None):
+    numerator_elements = (obs / getattr(obs, error_attr) ** 2 for obs in observations)
+    denominator_elements = (1 / getattr(obs, error_attr) ** 2 for obs in observations)
     result = sum(numerator_elements) / sum(denominator_elements)
-    result.gamma_method()
+    if callback_method:
+        getattr(result, callback_method)()
     return result
+
+
+def weighted_mean_pyerrors(observations):
+    return weighted_mean(observations, "dvalue", "gamma_method")
 
 
 def plot_measure_and_save_glueballs(
@@ -169,8 +174,7 @@ def plot_measure_and_save_glueballs(
         plateaux = [[glue_parameters["plateau_start"], glue_parameters["plateau_end"]]]
     elif isinstance(glue_parameters, Sequence) and not isinstance(glue_parameters, str):
         plateaux = [
-            [plateau["plateau_start"], plateau["plateau_end"]]
-            if plateau else None
+            [plateau["plateau_start"], plateau["plateau_end"]] if plateau else None
             for plateau in glue_parameters
         ]
     else:
@@ -207,7 +211,9 @@ def plot_measure_and_save_glueballs(
         for result in results:
             result.gamma_method()
 
-        fit_mass = weighted_mean([result.fit_parameters[0] for result in results])
+        fit_mass = weighted_mean_pyerrors(
+            [result.fit_parameters[0] for result in results]
+        )
     except ValueError as ex:
         message = f"Error in fit_glue: {ex}"
         logging.warning(message)
@@ -242,3 +248,43 @@ def plot_measure_and_save_glueballs(
         add_measurement(simulation_descriptor, "sqrtsigma", sqrtsigma)
 
     return fit_mass
+
+
+def select_2plusplus_state(simulation_descriptor, Epp_params, T2pp_params):
+    try:
+        Epp = get_measurement_as_ufloat(simulation_descriptor, "E++_mass")
+    except KeyError:
+        Epp = None
+
+    try:
+        T2pp = get_measurement_as_ufloat(simulation_descriptor, "T2++_mass")
+    except KeyError:
+        T2pp = None
+
+    use = lambda mass: add_measurement(simulation_descriptor, "2++_mass", mass)
+
+    if Epp is None and T2pp is None:
+        purge_measurement(simulation_descriptor, "2++_mass")
+
+    elif Epp is None:
+        use(T2pp)
+
+    elif T2pp is None:
+        use(Epp)
+
+    elif Epp_params.get("use") and T2pp_params.get("use"):
+        use(weighted_mean([T2pp, Epp], "std_dev"))
+
+    elif Epp_params.get("use"):
+        use(Epp)
+
+    elif T2pp_params.get("use"):
+        use(T2pp)
+
+    else:
+        purge_measurement(simulation_descriptor, "2++_mass")
+
+    try:
+        return get_measurement_as_ufloat(simulation_descriptor, "2++_mass")
+    except KeyError:
+        return

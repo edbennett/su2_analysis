@@ -17,7 +17,7 @@ from .avr_plaquette import measure_and_save_avr_plaquette
 from .fit_correlation_function import plot_measure_and_save_mesons, Incomplete
 from .fit_spin12 import plot_measure_and_save_spin12
 from .fit_effective_mass import plot_measure_and_save_mpcac
-from .fit_glue import plot_measure_and_save_glueballs
+from .fit_glue import plot_measure_and_save_glueballs, select_2plusplus_state
 from .polyakov import fit_plot_and_save_polyakov_loops
 from .provenance import stamp_provenance
 from .modenumber import do_modenumber_fit
@@ -218,6 +218,18 @@ def do_single_analysis(
                         print("   ", result)
                     else:
                         print("    Already up to date")
+
+        result = select_2plusplus_state(
+            simulation_descriptor=ensemble["descriptor"],
+            Epp_params=ensemble["measure_glueballs"].get("E++", {}),
+            T2pp_params=ensemble["measure_glueballs"].get("T2++", {}),
+        )
+        if DEBUG:
+            print(f"  - Glueballs, selecting 2++")
+            if result:
+                print(f"    {result:.02uS}")
+            else:
+                print("    no data")
 
     if ensemble.get("measure_pcac", False) and not skip_mesons:
         # Mesonic observables
