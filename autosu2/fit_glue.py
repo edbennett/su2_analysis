@@ -64,6 +64,8 @@ def plot_eff_masses(
     fig, ax = plt.subplots()
 
     for idx, plateau in enumerate(plateaux):
+        if not plateau:
+            continue
         for plateau_end, offset in zip(plateau, (-0.5, 0.5)):
             if plateau_end is not None:
                 shift = 0.05
@@ -168,6 +170,7 @@ def plot_measure_and_save_glueballs(
     elif isinstance(glue_parameters, Sequence) and not isinstance(glue_parameters, str):
         plateaux = [
             [plateau["plateau_start"], plateau["plateau_end"]]
+            if plateau else None
             for plateau in glue_parameters
         ]
     else:
@@ -187,7 +190,7 @@ def plot_measure_and_save_glueballs(
         title=f"{simulation_descriptor['label']}, {channel_name}",
     )
 
-    if all([not all(plateau) for plateau in plateaux]):
+    if all([not all(plateau) for plateau in plateaux if plateau is not None]):
         return
 
     try:
@@ -199,6 +202,7 @@ def plot_measure_and_save_glueballs(
                 method="migrad",
             )
             for state, plateau in zip(ground_states, plateaux)
+            if plateau
         ]
         for result in results:
             result.gamma_method()
@@ -210,7 +214,7 @@ def plot_measure_and_save_glueballs(
         return
 
     plateaux_descriptor = "_".join(
-        ["-".join(map(str, plateau)) for plateau in plateaux]
+        ["-".join(map(str, plateau)) if plateau else "--" for plateau in plateaux]
     )
     plot_eff_masses(
         combined_ground_state,
