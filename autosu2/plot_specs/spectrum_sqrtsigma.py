@@ -2,7 +2,7 @@ from numpy import nan
 import matplotlib.pyplot as plt
 
 from ..plots import set_plot_defaults
-from ..derived_observables import merge_quantities
+from ..derived_observables import merge_no_w0
 
 from .common import beta_colour_marker, critical_ms, preliminary
 
@@ -18,7 +18,8 @@ def generate(data, ensembles):
         "g5_mass",
         "g5_decay_const",
         "gk_mass",
-        "gk_decay_const" "g5gk_mass",
+        "gk_decay_const",
+        "g5gk_mass",
         "id_mass",
         "A1++_mass",
         "E++_mass",
@@ -26,7 +27,7 @@ def generate(data, ensembles):
         "spin12_mass",
     )
 
-    merged_data = merge_quantities(data, quantities + ("sqrtsigma",))
+    merged_data = merge_no_w0(data, quantities + ("sqrtsigma",))
     for quantity in quantities:
         merged_data[f"value_{quantity}_over_sqrtsigma"] = (
             merged_data[f"value_{quantity}"] / merged_data["value_sqrtsigma"]
