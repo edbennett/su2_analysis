@@ -269,6 +269,9 @@ def select_2plusplus_state(simulation_descriptor, Epp_params, T2pp_params):
     def use(mass):
         add_measurement(simulation_descriptor, "2++_mass", mass)
 
+    use_Epp = hasattr(Epp_params, "get") and Epp_params.get("use")
+    use_T2pp = hasattr(T2pp_params, "get") and T2pp_params.get("use")
+
     if Epp is None and T2pp is None:
         purge_measurement(simulation_descriptor, "2++_mass")
 
@@ -278,13 +281,13 @@ def select_2plusplus_state(simulation_descriptor, Epp_params, T2pp_params):
     elif T2pp is None:
         use(Epp)
 
-    elif Epp_params.get("use") and T2pp_params.get("use"):
+    elif use_Epp and use_T2pp:
         use(weighted_mean([T2pp, Epp], "std_dev"))
 
-    elif Epp_params.get("use"):
+    elif use_Epp:
         use(Epp)
 
-    elif T2pp_params.get("use"):
+    elif use_T2pp:
         use(T2pp)
 
     else:
