@@ -225,7 +225,7 @@ def do_single_analysis(
             T2pp_params=ensemble["measure_glueballs"].get("T2++", {}),
         )
         if DEBUG:
-            print(f"  - Glueballs, selecting 2++")
+            print("  - Glueballs, selecting 2++")
             if result:
                 print(f"    {result:.02uS}")
             else:
