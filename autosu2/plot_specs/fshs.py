@@ -2,6 +2,8 @@ import numpy as np
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 
+from format_multiple_errors import format_multiple_errors
+
 from ..plots import set_plot_defaults
 from ..tables import generate_table_from_content, format_value_and_error
 from ..derived_observables import merge_no_w0
@@ -105,18 +107,50 @@ def do_plot(betas, fit_results, merged_data, Nf):
 
 
 def do_table(results, merged_data, Nf):
-    filename = f"fshs_gamma_Nf{Nf}.tex"
-    columns = r"$\beta$", None, r"$\gamma_*$", r"$N_{\mathrm{points}}$"
+    filename = f"gamma_Nf{Nf}.tex"
+    columns = (
+        r"$\beta$",
+        None,
+        r"$\gamma_*$ (FSHS)",
+        r"$N_{\mathrm{points}}$",
+        None,
+        r"$\gamma_*$ (AIC)",
+        "Ensemble",
+    )
     table_content = []
 
     for beta, result in sorted(results.items()):
+        beta_data = merged_data[(merged_data.beta == beta) & (merged_data.Nf == Nf)]
         gamma_s = result["x"][0]
         gamma_s_err = result["hess_inv"][0, 0]
-        _, valid_point_count = sm_residual(
-            gamma_s, merged_data[merged_data.beta == beta], count_valid_points=True
-        )
+        _, valid_point_count = sm_residual(gamma_s, beta_data, count_valid_points=True)
         formatted_gamma_s = format_value_and_error(gamma_s, gamma_s_err)
-        table_content.append(f"    {beta} & {formatted_gamma_s} & {valid_point_count}")
+
+        gamma_s_aics = beta_data.dropna(
+            subset=["value_gamma_aic", "uncertainty_gamma_aic", "value_gamma_aic_syst"]
+        )
+        num_rows = len(gamma_s_aics)
+
+        if num_rows == 0:
+            table_content.append(
+                f"{beta} & {formatted_gamma_s} & {valid_point_count} & $\cdots$ & $\cdots$"
+            )
+            continue
+
+        row_starts = [
+            f"\\multirow{{{num_rows}}}{{*}}{{{beta}}} & "
+            f"\\multirow{{{num_rows}}}{{*}}{{{formatted_gamma_s}}} & "
+            f"\\multirow{{{num_rows}}}{{*}}{{{valid_point_count}}}"
+        ] + [" & &"] * (num_rows - 1)
+        for row_start, (_, row) in zip(row_starts, gamma_s_aics.iterrows()):
+            formatted_gamma_s_aic = format_multiple_errors(
+                row.value_gamma_aic,
+                row.uncertainty_gamma_aic,
+                row.value_gamma_aic_syst,
+                abbreviate=True,
+                latex=True,
+            )
+            table_content.append(f"{row_start} & {formatted_gamma_s_aic} & {row.label}")
     generate_table_from_content(filename, table_content, columns)
 
 
@@ -124,7 +158,7 @@ def generate_single_Nf(data, Nf, betas_to_plot):
     data = data[data.Nf == Nf]
 
     observables = "g5_mass", "gk_mass"
-    extra_observables = ("mpcac_mass", "g5_decay_const")
+    extra_observables = ("mpcac_mass", "g5_decay_const", "gamma_aic", "gamma_aic_syst")
 
     merged_data = merge_no_w0(data, observables + extra_observables).dropna(
         subset=("value_mpcac_mass", "value_g5_mass")

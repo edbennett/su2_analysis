@@ -10,3 +10,6 @@
 [submodule "libs/glue_analysis"]
 	path = libs/glue_analysis
 	url = https://github.com/edbennett/glue_analysis
+[submodule "libs/format_multiple_errors"]
+	path = libs/format_multiple_errors
+	url = https://github.com/edbennett/format_multiple_errors
