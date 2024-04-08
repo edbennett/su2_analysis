@@ -2003,6 +2003,7 @@ DB5M6:
     E++:
       plateau_start: 1
       plateau_end: 3
+      use: True
     T2++:
       - plateau_start: 3
         plateau_end: 4
