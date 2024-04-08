@@ -4,7 +4,7 @@ from .db import (
     add_measurement,
 )
 
-
+from itertools import product
 from re import compile
 
 import lsqfit
@@ -29,19 +29,19 @@ def read_modenumber(filename, vol, format="hirep"):
     if format == "hirep":
         modenumbers = read_modenumber_hirep(filename)
 
-        omegas = list(modenumbers.keys())
-        nus = [list(nu.values) for nu in modenumbers.values()]
+        omegas = np.asarray(list(modenumbers.keys()))
+        nus = [list(nu.values()) for nu in modenumbers.values()]
 
-        data = np.transpose(np.array(y) / vol)
+        nubars = np.transpose(np.array(nus) / vol)
 
     elif format == "colconf":
         dataraw = np.transpose(np.loadtxt(filename))
         Nmass, Nconf = dataraw.shape
 
-        omega = dataraw[0, np.arange(0, Nconf, 100)]
-        data = dataraw[1:, np.arange(0, Nconf, 100)]
+        omegas = dataraw[0, np.arange(0, Nconf, 100)]
+        nubars = dataraw[1:, np.arange(0, Nconf, 100)]
 
-    df = pd.DataFrame(data, np.arange(data.shape[0]), omega)
+    df = pd.DataFrame(nubars, np.arange(nubars.shape[0]), omegas)
 
     return df
 
@@ -114,7 +114,7 @@ def compute_grad(Xmins, Xmaxs, results, delta):
     Grad2 = np.sqrt(Grad[0] ** 2 + Grad[1] ** 2)
 
     dgrad = {
-        (f"{xmin: .3f}", f"{xmax:.3f}"): Grad2[i, j]
+        (f"{xmin:.3f}", f"{xmax:.3f}"): Grad2[i, j]
         for (i, xmin), (j, xmax) in itertools.product(
             enumerate(Xmins), enumerate(Xmaxs)
         )
@@ -178,14 +178,15 @@ def weight(results, norm, cutoff, dOM, weight="cut", plot_filter=None):
     dGRAD = compute_grad(xmins, xmaxs, results, dOM)
 
     window_keys = [
-        (f"{xmin:.3f}", f"{xmax:.3f}")
-        for i, xmin in enumerate(xmins)
-        for j, xmax in enumerate(xmaxs)
+        (f"{xmin:.3f}", f"{xmax:.3f}") for xmin, xmax in product(xmins, xmaxs)
     ]
     keyok = [k for k in window_keys if k in results and dGRAD[k] / norm <= cutoff]
 
     if plot_filter is not None:
         keyok = [k for k in keyok if plot_filter(results[k]["pars"]["gamma"].mean)]
+
+    if not keyok:
+        return gv.gvar(0, 0), gv.gvar(0, 0)
 
     gammastar_samples = np.array([results[k]["pars"]["gamma"] for k in keyok])
     AICW = np.array([AICw(results[k], weight=weight) for k in keyok])
@@ -193,7 +194,10 @@ def weight(results, norm, cutoff, dOM, weight="cut", plot_filter=None):
     AICW = AICW / sum(AICW)
 
     gammast = sum(gammastar_samples * AICW)
-    err_syst = np.sqrt(sum(gv.mean(gammastar_samples) ** 2 * AICW) - sum(gv.mean(gammastar_samples) * AICW) ** 2)
+    err_syst = np.sqrt(
+        sum(gv.mean(gammastar_samples) ** 2 * AICW)
+        - sum(gv.mean(gammastar_samples) * AICW) ** 2
+    )
 
     return gammast, gv.gvar(gammast.mean, err_syst)
 
@@ -210,7 +214,9 @@ def grad_plot(results, norm, cutoff, dOM, out=None, plot_filter=None, weight="cu
 
     dGRAD = compute_grad(xmins, xmaxs, results, dOM)
 
-    fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(7, 7), layout="constrained")
+    fig, (ax1, ax2) = plt.subplots(
+        ncols=2, figsize=(7, 7), layout="constrained", subplot_kw={"projection": "3d"}
+    )
 
     ax1.set_proj_type("persp", focal_length=0.2)
 
@@ -229,12 +235,22 @@ def grad_plot(results, norm, cutoff, dOM, out=None, plot_filter=None, weight="cu
     if plot_filter is None:
         filter_mask = dgamma / norm <= cutoff
     else:
-        filter_mask = dgamma / norm <= cutoff and plot_filter(gamma)
+        filter_mask = (dgamma / norm <= cutoff) & plot_filter(gamma)
 
     ax1.scatter(
-        xmax[filter_mask], xmin[filter_mask], gamma[filter_mask], c=map.to_rgba(dgamma[filter_mask]), alpha=1
+        xmax[filter_mask],
+        xmin[filter_mask],
+        gamma[filter_mask],
+        c=map.to_rgba(dgamma[filter_mask]),
+        alpha=1,
     )
-    ax1.scatter(xmax[~filter_mask], xmin[~filter_mask], gamma[~filter_mask], c=map.to_rgba(dgamma[~filter_mask]), alpha=0.1)
+    ax1.scatter(
+        xmax[~filter_mask],
+        xmin[~filter_mask],
+        gamma[~filter_mask],
+        c=map.to_rgba(dgamma[~filter_mask]),
+        alpha=0.1,
+    )
     bar = ax1.scatter([], [], [], c=map.to_rgba([]))
     fig.colorbar(bar, ax=ax1, shrink=0.6, label="gradient")
 
@@ -282,19 +298,27 @@ def grad_plot(results, norm, cutoff, dOM, out=None, plot_filter=None, weight="cu
     kin = [k for k in keys if dGRAD[k] / norm <= cutoff]
     if plot_filter is not None:
         kin = [k for k in kin if plot_filter(results[k]["pars"]["gamma"].mean)]
-    aicw = [AICw(results[k], weight=weight) for k in kin]
+
     cmap = matplotlib.cm.get_cmap("plasma_r")
-    mapp = cm.ScalarMappable(
-        cmap=cmap, norm=matplotlib.colors.Normalize(vmin=0.0, vmax=max(aicw))
-    )
+    if kin:
+        aicw = [AICw(results[k], weight=weight) for k in kin]
+        mapp = cm.ScalarMappable(
+            cmap=cmap, norm=matplotlib.colors.Normalize(vmin=0.0, vmax=max(aicw))
+        )
 
-    ax2.scatter(
-        xmax[filter_mask], xmin[filter_mask], gamma[filter_mask], c=mapp.to_rgba(icwei[filter_mask]), alpha=1
-    )
+        ax2.scatter(
+            xmax[filter_mask],
+            xmin[filter_mask],
+            gamma[filter_mask],
+            c=mapp.to_rgba(icwei[filter_mask]),
+            alpha=1,
+        )
 
-    ax2.scatter(xmax[~filter_mask], xmin[~filter_mask], gamma[~filter_mask], alpha=0.1)
-    ax2.scatter([], [], [], c=mapp.to_rgba([]))
-    fig.colorbar(mappable=mapp, ax=ax2, shrink=0.6, label=r"$e^{-\frac{AIC}{2}}$")
+        ax2.scatter(
+            xmax[~filter_mask], xmin[~filter_mask], gamma[~filter_mask], alpha=0.1
+        )
+        ax2.scatter([], [], [], c=mapp.to_rgba([]))
+        fig.colorbar(mappable=mapp, ax=ax2, shrink=0.6, label=r"$e^{-\frac{AIC}{2}}$")
 
     # Plot lines connecting points
     lcolor = "gray"

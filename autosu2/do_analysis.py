@@ -280,6 +280,9 @@ def do_single_analysis(
             print("    Already up to date")
 
     elif measure_modenumber and measure_modenumber["method"] == "aic":
+        if DEBUG:
+            print("  - Mode number (AIC)")
+
         result = do_modenumber_fit_aic(
             ensemble=ensemble,
             filename=f"raw_data/{subdirectory}/out_modenumber",
