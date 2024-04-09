@@ -283,10 +283,13 @@ def do_single_analysis(
         if DEBUG:
             print("  - Mode number (AIC)")
 
+        filename = {"colconf": "modenumber.dat", "hirep": "out_modenumber"}[
+            measure_modenumber["format"]
+        ]
+
         result = do_modenumber_fit_aic(
             ensemble=ensemble,
-            filename=f"raw_data/{subdirectory}/out_modenumber",
-            # boot_gamma=read_modenumber_result(f'processed_data/{subdirectory}/modenumber_fit_julia.csv')['gamma'],
+            filename=f"raw_data/{subdirectory}/{filename}",
             boot_gamma=0.5,
             plot_directory=f"processed_data/{subdirectory}",
         )
