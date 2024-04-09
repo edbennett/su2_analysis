@@ -3,6 +3,7 @@ from .db import (
     measurement_is_up_to_date,
     add_measurement,
 )
+from .plots import set_plot_defaults
 
 from itertools import product
 from re import compile
@@ -17,6 +18,7 @@ import itertools
 import matplotlib
 from matplotlib import pyplot as plt
 from matplotlib import cm
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 from .modenumber import read_modenumber as read_modenumber_hirep
 
@@ -138,7 +140,6 @@ def windows(filename, format, volume, olow, ohigh, dOM, descriptor, boot_gamma):
 
     # Set priors ----------------------------------------------------------------------
     (priors, p0) = set_priors(descriptor, boot_gamma)
-    print(priors, p0)
 
     # Windowing -----------------------------------------------------------------------
     results = {}
@@ -215,10 +216,13 @@ def grad_plot(results, norm, cutoff, dOM, out=None, plot_filter=None, weight="cu
     dGRAD = compute_grad(xmins, xmaxs, results, dOM)
 
     fig, (ax1, ax2) = plt.subplots(
-        ncols=2, figsize=(7, 7), layout="constrained", subplot_kw={"projection": "3d"}
+        ncols=2, figsize=(7, 4), layout="constrained", subplot_kw={"projection": "3d"}
     )
+    engine = fig.get_layout_engine()
+    engine.set(rect=(0, 0.0, 1.0, 1.0))
 
     ax1.set_proj_type("persp", focal_length=0.2)
+    ax1.set_box_aspect(None, zoom=0.8)
 
     map = cm.ScalarMappable(
         cmap=cm.viridis, norm=matplotlib.colors.Normalize(vmin=0.0, vmax=norm)
@@ -252,7 +256,16 @@ def grad_plot(results, norm, cutoff, dOM, out=None, plot_filter=None, weight="cu
         alpha=0.1,
     )
     bar = ax1.scatter([], [], [], c=map.to_rgba([]))
-    fig.colorbar(bar, ax=ax1, shrink=0.6, label="gradient")
+    ax1ins = inset_axes(
+        ax1,
+        width="100%",
+        height="10%",
+        loc="upper left",
+        bbox_to_anchor=(0.15, 0.5, 0.7, 0.4),
+        bbox_transform=ax1.transAxes,
+        borderpad=0,
+    )
+    fig.colorbar(bar, cax=ax1ins, location="top", shrink=0.6, label="gradient")
 
     # Plot lines connecting points
     lcolor = "gray"
@@ -280,13 +293,12 @@ def grad_plot(results, norm, cutoff, dOM, out=None, plot_filter=None, weight="cu
     ax1.tick_params(axis="y", labelrotation=-20)
     ax1.tick_params(axis="z", labelrotation=0)
 
-    ax1.set_xlabel(r"$a\Omega_{max}$", fontsize=15)
-    ax1.set_ylabel(r"$a\Omega_{min}$", fontsize=15)
-    ax1.set_zlabel(r"$\gamma^*$", fontsize=15)
-
-    ax1.legend()
+    ax1.set_xlabel(r"$a\Omega_{\mathrm{max}}$", fontsize=15, labelpad=10)
+    ax1.set_ylabel(r"$a\Omega_{\mathrm{min}}$", fontsize=15, labelpad=10)
+    ax1.set_zlabel(r"$\gamma^*$", fontsize=15, labelpad=10)
 
     ax2.set_proj_type("persp", focal_length=0.2)
+    ax2.set_box_aspect(None, zoom=0.8)
 
     keys = [k for k in window_keys if k in results]
     xmin = np.array([float(k[0]) for k in keys])
@@ -318,7 +330,21 @@ def grad_plot(results, norm, cutoff, dOM, out=None, plot_filter=None, weight="cu
             xmax[~filter_mask], xmin[~filter_mask], gamma[~filter_mask], alpha=0.1
         )
         ax2.scatter([], [], [], c=mapp.to_rgba([]))
-        fig.colorbar(mappable=mapp, ax=ax2, shrink=0.6, label=r"$e^{-\frac{AIC}{2}}$")
+        ax2ins = inset_axes(
+            ax2,
+            width="100%",
+            height="10%",
+            loc="upper left",
+            bbox_to_anchor=(0.15, 0.5, 0.7, 0.4),
+            bbox_transform=ax2.transAxes,
+            borderpad=0,
+        )
+        fig.colorbar(
+            mappable=mapp,
+            cax=ax2ins,
+            location="top",
+            label=r"$e^{-\frac{\mathrm{AIC}}{2}}$",
+        )
 
     # Plot lines connecting points
     lcolor = "gray"
@@ -346,10 +372,9 @@ def grad_plot(results, norm, cutoff, dOM, out=None, plot_filter=None, weight="cu
     ax2.tick_params(axis="y", labelrotation=-20)
     ax2.tick_params(axis="z", labelrotation=0)
 
-    ax2.set_xlabel(r"$a\Omega_{max}$", fontsize=15)
-    ax2.set_ylabel(r"$a\Omega_{min}$", fontsize=15)
-    ax2.set_zlabel(r"$\gamma^*$", fontsize=15)
-    ax2.legend()
+    ax2.set_xlabel(r"$a\Omega_{\mathrm{max}}$", fontsize=15, labelpad=10)
+    ax2.set_ylabel(r"$a\Omega_{\mathrm{min}}$", fontsize=15, labelpad=10)
+    ax2.set_zlabel(r"$\gamma^*$", fontsize=15, labelpad=10)
 
     if out is not None:
         fig.savefig(out)
@@ -387,7 +412,9 @@ def slice_plot(
         cmap=cmap, norm=matplotlib.colors.Normalize(vmin=0.0, vmax=max(aicw))
     )
 
-    fig, (ax, ax2) = plt.subplots(ncols=2, figsize=(5, 8), layout="constrained")
+    fig, (ax, ax2) = plt.subplots(
+        ncols=2, figsize=(7, 5), layout="constrained", sharey=True
+    )
 
     # FIRST PLOT =====================================================
     omin = xmins[MI]
@@ -438,28 +465,31 @@ def slice_plot(
     )
     ax.axhspan(gammast.mean + err_syst, gammast.mean - err_syst, alpha=0.2)
 
-    ax.set_xlabel(r"$a\Omega_{max}$")
+    ax.set_xlabel(r"$a\Omega_{\mathrm{max}}$")
     ax.set_ylabel(r"$\gamma^*$")
     ax.set_xlim(xmin=min(xmaxs), xmax=max(xmaxs))
-    ax.set_ylim(ymin=gammast.mean - 0.25, ymax=gammast.mean + 0.25)
-    ax.legend(loc="upper left")
+    if not np.isnan(gammast.mean):
+        ax.set_ylim(ymin=gammast.mean - 0.25, ymax=gammast.mean + 0.25)
 
     ax1 = plt.twinx(ax)
     chi2 = np.array([results[k]["chi2"] / (results[k]["Npts"]) for k in kall])
-    ax1.plot(xmaxs, chi2, color="C1", label=r"$\frac{\chi^2}{dof}$", alpha=0.2)
+    ax1.plot(xmaxs, chi2, color="C1", label=r"$\frac{\chi^2}{\mathrm{dof}}$", alpha=0.2)
 
-    ax1.legend(loc="upper right")
-    ax1.set_ylabel(r"$\frac{\chi^2}{dof}$")
-    ax1.set_title(r"$a\Omega_{{min}} = {{{0}}}$".format(f"{omin:.3f}"))
+    lines_left, labels_left = ax.get_legend_handles_labels()
+    lines_right, labels_right = ax1.get_legend_handles_labels()
+    ax.legend(lines_left + lines_right, labels_left + labels_right, loc="best")
+
+    ax1.set_ylabel(r"$\frac{\chi^2}{\mathrm{dof}}$")
+    ax1.set_title(r"$a\Omega_{{\mathrm{{min}}}} = {{{0}}}$".format(f"{omin:.3f}"))
 
     # SECOND PLOT =====================================================
-    OMAX = xmaxs[MA]
+    omax = xmaxs[MA]
 
     # Scatter plot
     kin = [
         k
         for k in window_keys
-        if float(k[1]) == OMAX
+        if float(k[1]) == omax
         if k in results
         if dGRAD[k] / cutoff <= norm
     ]
@@ -474,7 +504,7 @@ def slice_plot(
     kout = [
         k
         for k in window_keys
-        if float(k[1]) == OMAX
+        if float(k[1]) == omax
         if k in results
         if not dGRAD[k] / cutoff <= norm
     ]
@@ -486,7 +516,7 @@ def slice_plot(
     ax2.scatter(xmaxs, gamma, color="C0", alpha=0.1)
 
     # Error bands
-    kall = [k for k in window_keys if float(k[1]) == OMAX if k in results]
+    kall = [k for k in window_keys if float(k[1]) == omax if k in results]
     xmaxs = [float(k[0]) for k in kall]
     gamma = np.array([results[k]["pars"]["gamma"].mean for k in kall])
     errg = np.array([results[k]["pars"]["gamma"].sdev for k in kall])
@@ -501,25 +531,30 @@ def slice_plot(
     )
     ax2.axhspan(gammast.mean + err_syst, gammast.mean - err_syst, alpha=0.2)
 
-    ax2.set_xlabel(r"$a\Omega_{max}$")
+    ax2.set_xlabel(r"$a\Omega_{\mathrm{max}}$")
     ax2.set_ylabel(r"$\gamma^*$")
     ax2.set_xlim(xmin=min(xmaxs), xmax=max(xmaxs))
-    ax2.set_ylim(ymin=gammast.mean - 0.25, ymax=gammast.mean + 0.25)
-    ax2.legend(loc="upper left")
+    if not np.isnan(gammast.mean):
+        ax2.set_ylim(ymin=gammast.mean - 0.25, ymax=gammast.mean + 0.25)
 
     ax3 = plt.twinx(ax2)
+    ax3.sharey(ax1)
     chi2 = np.array([results[k]["chi2"] / (results[k]["Npts"]) for k in kall])
-    ax3.plot(xmaxs, chi2, color="C1", label=r"$\frac{\chi^2}{dof}$", alpha=0.2)
+    ax3.plot(xmaxs, chi2, color="C1", label=r"$\frac{\chi^2}{\mathrm{dof}}$", alpha=0.2)
     ax3.set_ylim(ymin=0, ymax=2)
-    ax3.legend(loc="upper right")
-    ax3.set_ylabel(r"$\frac{\chi^2}{dof}$")
-    ax3.set_title(r"$a\Omega_{{min}} = {{{0}}}$".format(f"{OMAX:.3f}"))
 
-    fig.tight_layout()
+    lines2_left, labels2_left = ax2.get_legend_handles_labels()
+    lines2_right, labels2_right = ax3.get_legend_handles_labels()
+    ax2.legend(lines2_left + lines2_right, labels2_left + labels2_right, loc="best")
+
+    ax3.set_ylabel(r"$\frac{\chi^2}{\mathrm{dof}}$")
+    ax3.set_title(r"$a\Omega_{{\mathrm{{min}}}} = {{{0}}}$".format(f"{omax:.3f}"))
+
     fig.savefig(out)
 
 
 def do_modenumber_fit_aic(ensemble, filename, boot_gamma, plot_directory):
+    set_plot_defaults()
     if (
         ensemble
         and measurement_is_up_to_date(
@@ -562,8 +597,6 @@ def do_modenumber_fit_aic(ensemble, filename, boot_gamma, plot_directory):
         weight="cut",
         plot_filter=f(pars["filter"]),
     )
-
-    print(gstat, gsyst)
 
     grad_plot(
         results,
