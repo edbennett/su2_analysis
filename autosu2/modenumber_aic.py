@@ -43,6 +43,9 @@ def read_modenumber(filename, vol, format="hirep"):
         omegas = dataraw[0, np.arange(0, Nconf, 100)]
         nubars = dataraw[1:, np.arange(0, Nconf, 100)]
 
+        # Normalise for volume of Dirac space
+        nubars *= 12
+
     df = pd.DataFrame(nubars, np.arange(nubars.shape[0]), omegas)
 
     return df
