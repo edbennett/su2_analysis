@@ -16,13 +16,20 @@ use_pcac = True
 plots = [
     {
         "filename": "final_plots/decayconst_Nf{Nf}.pdf",
-        "figsize": (3.5, 2.5),
+        "figsize": (3.5, 3.0),
         "subplots": [
             {
                 "ylabel": r"$w_0 f$",
-                "series": [{"channel": "g5", "quantity": "decay_const"}],
+                "series": [
+                    {"channel": "g5", "quantity": "decay_const"},
+                    {"channel": "g5gk", "quantity": "decay_const"},
+                    {"channel": "gk", "quantity": "decay_const"},
+                    {"channel": "id", "quantity": "decay_const"},
+                ],
             }
         ],
+        "legend_rows": 2,
+        "ylim": (0.0, 2.0),
     },
     {
         "filename": "final_plots/masses_Nf{Nf}.pdf",
@@ -39,7 +46,7 @@ plots = [
             },
             {
                 "series": [
-                    {"channel": "E++", "quantity": "mass"},
+                    {"channel": "2++", "quantity": "mass"},
                     {"channel": "gk", "quantity": "mass"},
                     {"channel": "spin12", "quantity": "mass"},
                     {"channel": "sqrtsigma", "quantity": ""},
@@ -113,16 +120,21 @@ def do_plot(hatted_data, plot_spec, Nf=1):
         )
         ax.set_xlim((0, None))
 
-    # Make room for legend
-    axes[0].set_ylim((0, None))
-    ylim = list(ax.get_ylim())
-    ylim[1] *= 1.2
+    if (ylim := plot_spec.get("ylim")) is None:
+        # Make room for legend
+        axes[0].set_ylim((0, None))
+        ylim = list(ax.get_ylim())
+        ylim[1] *= 1.2
+
     axes[0].set_ylim(ylim)
 
-    add_figure_key(fig, markers=False, Nf=Nf)
+    legend_rows = plot_spec.get("legend_rows", 1)
+    add_figure_key(fig, markers=False, Nf=Nf, nrow=legend_rows)
 
     fig.tight_layout(
-        pad=0, h_pad=0.5, rect=(0.02, 0.01, 1, 1 - 0.3 / plot_spec["figsize"][1])
+        pad=0,
+        h_pad=0.5,
+        rect=(0.02, 0.01, 1, 1 - 0.3 / plot_spec["figsize"][1] - 0.05 * (legend_rows - 1)),
     )
     fig.savefig(plot_spec["filename"].format(Nf=Nf), transparent=True)
     plt.close(fig)

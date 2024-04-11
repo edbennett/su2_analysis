@@ -61,6 +61,7 @@ def process_mpcac(
 
         fit_results_set.append((result[0], result.chisquare_by_dof))
 
+        fit_mass = result[0]
         do_eff_mass_plot(
             eff_mass,
             get_output_filename(
@@ -70,11 +71,11 @@ def process_mpcac(
                 tstart=plateau_start,
                 tend=plateau_end,
             ),
-            ymin=eff_mass_plot_ymin,
-            ymax=eff_mass_plot_ymax,
+            ymin=eff_mass_plot_ymin or fit_mass.value + 3 * fit_mass.dvalue,
+            ymax=eff_mass_plot_ymax or fit_mass.value - 3 * fit_mass.dvalue,
             m=result[0],
             tmin=plateau_start - 0.5,
-            tmax=plateau_end - 0.5,
+            tmax=plateau_end + 0.5,
         )
 
     if not (plateau_start and plateau_end):

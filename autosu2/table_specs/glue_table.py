@@ -10,11 +10,10 @@ def generate(data, **kwargs):
         "",
         r"$a \sqrt{\sigma}$",
         None,
-        r"$am_{0^{++}}$ (A1++)",
-        r"$am_{2^{++}}$ (E++)",
-        r"$am_{2^{++}}$ (T2++)",
+        r"$am_{0^{++}}$",
+        r"$am_{2^{++}}$",
     ]
-    observables = "sqrtsigma", "A1++_mass", "E++_mass", "T2++_mass"
+    observables = "sqrtsigma", "A1++_mass", "2++_mass"
     filename = "glue_Nf{Nf}.tex"
 
     for Nf, ensemble_set in ENSEMBLES.items():

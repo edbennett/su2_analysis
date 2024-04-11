@@ -2,7 +2,7 @@ from numpy import nan
 import matplotlib.pyplot as plt
 
 from ..plots import set_plot_defaults
-from ..derived_observables import merge_quantities
+from ..derived_observables import merge_no_w0
 
 from .common import beta_colour_marker, critical_ms, preliminary
 
@@ -12,21 +12,21 @@ def generate(data, ensembles):
 
     use_pcac = True
 
-    filename = "auxiliary_plots/spectrum_sqrtsigma_Nf{Nf}.pdf"
+    filename = "final_plots/spectrum_sqrtsigma_Nf{Nf}.pdf"
     quantities = (
         "mpcac_mass",
         "g5_mass",
         "g5_decay_const",
         "gk_mass",
-        "gk_decay_const" "g5gk_mass",
+        "gk_decay_const",
+        "g5gk_mass",
         "id_mass",
         "A1++_mass",
-        "E++_mass",
-        "T2++_mass",
+        "2++_mass",
         "spin12_mass",
     )
 
-    merged_data = merge_quantities(data, quantities + ("sqrtsigma",))
+    merged_data = merge_no_w0(data, quantities + ("sqrtsigma",))
     for quantity in quantities:
         merged_data[f"value_{quantity}_over_sqrtsigma"] = (
             merged_data[f"value_{quantity}"] / merged_data["value_sqrtsigma"]
@@ -39,14 +39,13 @@ def generate(data, ensembles):
             / merged_data["value_sqrtsigma"] ** 4
         ) ** 0.5
 
-    channels_to_plot = "g5", "g5gk", "id", "A1++", "E++", "T2++", "spin12"
+    channels_to_plot = "g5", "g5gk", "id", "A1++", "2++", "spin12"
     channel_labels = (
         r"\gamma_5",
         r"\gamma_5\gamma_k",
         "1",
         "A^{++}",
-        "E^{++}",
-        "T^{++}",
+        "2^{++}",
         r"\breve{g}",
     )
     markers = ".", "x", "+", "^", "v", "1", "*"

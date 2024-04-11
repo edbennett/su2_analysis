@@ -17,12 +17,12 @@ from .avr_plaquette import measure_and_save_avr_plaquette
 from .fit_correlation_function import plot_measure_and_save_mesons, Incomplete
 from .fit_spin12 import plot_measure_and_save_spin12
 from .fit_effective_mass import plot_measure_and_save_mpcac
-from .fit_glue import plot_measure_and_save_glueballs
+from .fit_glue import plot_measure_and_save_glueballs, select_2plusplus_state
 from .polyakov import fit_plot_and_save_polyakov_loops
 from .provenance import stamp_provenance
 from .modenumber import do_modenumber_fit
 from .modenumber_julia import wrap_modenumber_fit_julia
-from .sideload import callback_string_tension, import_data_sql
+from .sideload import callback_string_tension, import_data_sql, import_data_csv
 from .modenumber_aic import do_modenumber_fit_aic
 
 
@@ -219,6 +219,18 @@ def do_single_analysis(
                     else:
                         print("    Already up to date")
 
+        result = select_2plusplus_state(
+            simulation_descriptor=ensemble["descriptor"],
+            Epp_params=ensemble["measure_glueballs"].get("E++", {}),
+            T2pp_params=ensemble["measure_glueballs"].get("T2++", {}),
+        )
+        if DEBUG:
+            print("  - Glueballs, selecting 2++")
+            if result:
+                print(f"    {result:.02uS}")
+            else:
+                print("    no data")
+
     if ensemble.get("measure_pcac", False) and not skip_mesons:
         # Mesonic observables
         if DEBUG:
@@ -268,10 +280,16 @@ def do_single_analysis(
             print("    Already up to date")
 
     elif measure_modenumber and measure_modenumber["method"] == "aic":
+        if DEBUG:
+            print("  - Mode number (AIC)")
+
+        filename = {"colconf": "modenumber.dat", "hirep": "out_modenumber"}[
+            measure_modenumber["format"]
+        ]
+
         result = do_modenumber_fit_aic(
             ensemble=ensemble,
-            filename=f"raw_data/{subdirectory}/out_modenumber",
-            # boot_gamma=read_modenumber_result(f'processed_data/{subdirectory}/modenumber_fit_julia.csv')['gamma'],
+            filename=f"raw_data/{subdirectory}/{filename}",
             boot_gamma=0.5,
             plot_directory=f"processed_data/{subdirectory}",
         )
@@ -331,7 +349,8 @@ def main():
     parser.add_argument("--skip_calculation", action="store_true")
     parser.add_argument("--skip_output", action="store_true")
     parser.add_argument("--only", default=None)
-    parser.add_argument("--sideload", default=None)
+    parser.add_argument("--sideload_csv", default=None)
+    parser.add_argument("--sideload_sql", default=None)
     parser.add_argument("--quenched", action="store_true")
     parser.add_argument("--single_ensemble", default=None)
     args = parser.parse_args()
@@ -354,9 +373,12 @@ def main():
             single_ensemble=args.single_ensemble,
         )
 
-    if args.sideload:
+    if args.sideload_csv:
+        import_data_csv(args.sideload_csv)
+
+    if args.sideload_sql:
         import_data_sql(
-            args.sideload,
+            args.sideload_sql,
             list(ensembles.keys()),
             ["App_mass", "Epp_mass", "Tpp_mass", "sqrtsigma", "spin12_mass"],
             observable_names={

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from math import ceil
 from numpy import nan
 
 preliminary = True
@@ -15,7 +16,8 @@ beta_colour_marker = {
         (2.4, "c", "v"),
     ],
     2: [
-        (2.35, "orange", "+"),
+        (2.25, "y", "*"),
+        (2.35, "darkorange", "+"),
     ],
 }
 
@@ -27,6 +29,7 @@ bare_channel_labels = {
     "A1++": "A^{++}",
     "E++": "E^{++}",
     "T2++": "T^{++}",
+    "2++": "2^{++}",
     "spin12": r"\breve{g}",
     "sqrtsigma": r"\sqrt{\sigma}",
 }
@@ -37,8 +40,7 @@ channel_labels = {
     "g5gk": r"$2^-$ vector baryon",
     "id": r"$2^-$ pseudoscalar baryon",
     "A1++": "$0^{++}$ scalar glueball",
-    "E++": "$2^{++}$ tensor glueball",
-    "T2++": "$2^{++}$ tensor glueball",
+    "2++": "$2^{++}$ tensor glueball",
     "spin12": r"$\breve{g}$ hybrid fermion",
     "sqrtsigma": r"$\sqrt{\sigma}$ string tension",
 }
@@ -46,7 +48,7 @@ channel_labels = {
 figlegend_defaults = {
     "loc": "upper center",
     "frameon": False,
-    "columnspacing": 1.0,
+    "columnspacing": 0.9,
     "handletextpad": 0,
     "borderpad": 0,
 }
@@ -54,11 +56,11 @@ figlegend_defaults = {
 # TODO: get the numbers for the critical regions programmatically
 critical_ms = {
     1: [-1.5256, -1.4760, -1.4289, -1.3932, None, None, None],
-    2: [None],
+    2: [None, None],
 }
 
 
-def add_figure_key(fig, markers=True, Nf=1):
+def add_figure_key(fig, markers=True, Nf=1, nrow=1):
     legend_contents = [
         fig.axes[0].errorbar(
             [-1],
@@ -73,7 +75,7 @@ def add_figure_key(fig, markers=True, Nf=1):
         for beta, colour, marker in beta_colour_marker[Nf]
     ]
 
-    fig.legend(handles=legend_contents, ncol=7, **figlegend_defaults)
+    fig.legend(handles=legend_contents, ncol=ceil(7 / nrow), **figlegend_defaults)
 
 
 def format_ensembles_list(ensemble_names):

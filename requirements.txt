@@ -11,3 +11,4 @@ lsqfit
 -e ./libs/flow_analysis
 -e ./libs/meson_analysis
 -e ./libs/glue_analysis
+-e ./libs/format_multiple_errors

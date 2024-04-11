@@ -100,10 +100,15 @@ def do_eff_mass_plot(
         tmin = 0
     if tmax is None:
         tmax = masses.T
-    t_range_start = ceil(tmin)
-    t_range_end = min(masses.T, ceil(tmax))
 
     timeslice, mass, mass_error = masses.plottable()
+
+    if ymin is None and ymax is None:
+        t_range_start = ceil(tmin)
+        t_range_end = min(masses.T, ceil(tmax))
+    else:
+        t_range_start = 0
+        t_range_end = -1
 
     ax.errorbar(
         timeslice[t_range_start:t_range_end],
@@ -115,7 +120,6 @@ def do_eff_mass_plot(
     )
 
     if local_ax:
-        ax.set_xlim((tmin, tmax + 1))
         if ymin is None and ymax is None:
             if (mass_error / np.abs(mass) > 1).any():
                 ax.set_ylim(-0.2, 2.2)
@@ -136,7 +140,7 @@ def do_eff_mass_plot(
         ax.fill_between(
             # tmin + 1 due to mixing of adjacent points when calculating
             # effective mass
-            (tmin + 1, tmax),
+            (tmin, tmax),
             (m.value + m.dvalue, m.value + m.dvalue),
             (m.value - m.dvalue, m.value - m.dvalue),
             facecolor=colour,

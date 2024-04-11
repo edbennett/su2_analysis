@@ -216,6 +216,7 @@ def process_correlator(
             )
 
         fit_results_set.append((result.fit_parameters, result.chisquare / result.dof))
+        fit_mass = result.fit_parameters[0]
 
         do_eff_mass_plot(
             eff_mass,
@@ -226,8 +227,8 @@ def process_correlator(
                 tstart=plateau_start,
                 tend=plateau_end,
             ),
-            ymin=eff_mass_plot_ymin,
-            ymax=eff_mass_plot_ymax,
+            ymin=eff_mass_plot_ymin or fit_mass.value - 3 * fit_mass.dvalue,
+            ymax=eff_mass_plot_ymax or fit_mass.value + 3 * fit_mass.dvalue,
             m=result.fit_parameters[0],
             tmin=plateau_start - 0.5,
             tmax=plateau_end + 0.5,
@@ -319,12 +320,17 @@ def plot_measure_and_save_mesons(
                 values[1],
             ]
             for quantity_name, value in zip(quantity_options[channel_name], values):
+                if quantity_name == "decay_const":
+                    value *= simulation_descriptor["L"] ** 1.5
+                    if hasattr(value, "gamma_method"):
+                        value.gamma_method()
                 add_measurement(
                     simulation_descriptor,
                     f"{db_channel_name}_{quantity_name}",
                     value,
                     valence_mass=valence_mass,
                 )
+
             if "decay_const" not in quantity_options[channel_name]:
                 purge_measurement(
                     simulation_descriptor,

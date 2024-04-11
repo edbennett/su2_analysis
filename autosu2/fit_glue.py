@@ -9,7 +9,12 @@ import numpy as np
 from glue_analysis.readers import readers
 from meson_analysis.fit_forms import get_fit_form
 
-from .db import add_measurement, measurement_is_up_to_date
+from .db import (
+    add_measurement,
+    get_measurement_as_ufloat,
+    measurement_is_up_to_date,
+    purge_measurement,
+)
 from .plots import set_plot_defaults
 
 
@@ -64,6 +69,8 @@ def plot_eff_masses(
     fig, ax = plt.subplots()
 
     for idx, plateau in enumerate(plateaux):
+        if not plateau:
+            continue
         for plateau_end, offset in zip(plateau, (-0.5, 0.5)):
             if plateau_end is not None:
                 shift = 0.05
@@ -103,6 +110,7 @@ def plot_eff_masses(
         ax.legend(loc="best")
 
     fig.savefig(output_filename)
+    plt.close(fig)
 
 
 def string_tension_from_torelon(torelon_mass, torelon_length):
@@ -113,12 +121,17 @@ def string_tension_from_torelon(torelon_mass, torelon_length):
     return string_tension
 
 
-def weighted_mean(observations):
-    numerator_elements = (obs / obs.dvalue**2 for obs in observations)
-    denominator_elements = (1 / obs.dvalue**2 for obs in observations)
+def weighted_mean(observations, error_attr, callback_method=None):
+    numerator_elements = (obs / getattr(obs, error_attr) ** 2 for obs in observations)
+    denominator_elements = (1 / getattr(obs, error_attr) ** 2 for obs in observations)
     result = sum(numerator_elements) / sum(denominator_elements)
-    result.gamma_method()
+    if callback_method:
+        getattr(result, callback_method)()
     return result
+
+
+def weighted_mean_pyerrors(observations):
+    return weighted_mean(observations, "dvalue", "gamma_method")
 
 
 def plot_measure_and_save_glueballs(
@@ -166,7 +179,7 @@ def plot_measure_and_save_glueballs(
         plateaux = [[glue_parameters["plateau_start"], glue_parameters["plateau_end"]]]
     elif isinstance(glue_parameters, Sequence) and not isinstance(glue_parameters, str):
         plateaux = [
-            [plateau["plateau_start"], plateau["plateau_end"]]
+            [plateau["plateau_start"], plateau["plateau_end"]] if plateau else None
             for plateau in glue_parameters
         ]
     else:
@@ -186,7 +199,7 @@ def plot_measure_and_save_glueballs(
         title=f"{simulation_descriptor['label']}, {channel_name}",
     )
 
-    if all([not all(plateau) for plateau in plateaux]):
+    if all([not all(plateau) for plateau in plateaux if plateau is not None]):
         return
 
     try:
@@ -198,18 +211,21 @@ def plot_measure_and_save_glueballs(
                 method="migrad",
             )
             for state, plateau in zip(ground_states, plateaux)
+            if plateau
         ]
         for result in results:
             result.gamma_method()
 
-        fit_mass = weighted_mean([result.fit_parameters[0] for result in results])
+        fit_mass = weighted_mean_pyerrors(
+            [result.fit_parameters[0] for result in results]
+        )
     except ValueError as ex:
         message = f"Error in fit_glue: {ex}"
         logging.warning(message)
         return
 
     plateaux_descriptor = "_".join(
-        ["-".join(map(str, plateau)) for plateau in plateaux]
+        ["-".join(map(str, plateau)) if plateau else "--" for plateau in plateaux]
     )
     plot_eff_masses(
         combined_ground_state,
@@ -237,3 +253,47 @@ def plot_measure_and_save_glueballs(
         add_measurement(simulation_descriptor, "sqrtsigma", sqrtsigma)
 
     return fit_mass
+
+
+def select_2plusplus_state(simulation_descriptor, Epp_params, T2pp_params):
+    try:
+        Epp = get_measurement_as_ufloat(simulation_descriptor, "E++_mass")
+    except KeyError:
+        Epp = None
+
+    try:
+        T2pp = get_measurement_as_ufloat(simulation_descriptor, "T2++_mass")
+    except KeyError:
+        T2pp = None
+
+    def use(mass):
+        add_measurement(simulation_descriptor, "2++_mass", mass)
+
+    use_Epp = hasattr(Epp_params, "get") and Epp_params.get("use")
+    use_T2pp = hasattr(T2pp_params, "get") and T2pp_params.get("use")
+
+    if Epp is None and T2pp is None:
+        purge_measurement(simulation_descriptor, "2++_mass")
+
+    elif Epp is None:
+        use(T2pp)
+
+    elif T2pp is None:
+        use(Epp)
+
+    elif use_Epp and use_T2pp:
+        use(weighted_mean([T2pp, Epp], "std_dev"))
+
+    elif use_Epp:
+        use(Epp)
+
+    elif use_T2pp:
+        use(T2pp)
+
+    else:
+        purge_measurement(simulation_descriptor, "2++_mass")
+
+    try:
+        return get_measurement_as_ufloat(simulation_descriptor, "2++_mass")
+    except KeyError:
+        return

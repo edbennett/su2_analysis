@@ -6,7 +6,7 @@ from ..plots import set_plot_defaults, SYMBOL_LIST
 from ..derived_observables import merge_no_w0
 
 OBSERVABLES = "mass", "decay_const"
-CHANNELS = "g5", "gk", "g5gk", "id", "A1++", "T2++", "E++", "torelon"
+CHANNELS = "g5", "gk", "g5gk", "id", "A1++", "2++", "torelon"
 OBSERVABLE_LABELS = "m", "f"
 CHANNEL_LABELS = (
     r"\gamma_5",
@@ -14,8 +14,7 @@ CHANNEL_LABELS = (
     r"\gamma_5\gamma_k",
     r"1",
     "A_1^{++}",
-    "T_2^{++}",
-    "E^{++}",
+    "2^{++}",
     r"\mathrm{torelon}",
 )
 
