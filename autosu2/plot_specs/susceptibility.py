@@ -45,7 +45,9 @@ def generate(data, ensembles):
 
     filename = "final_plots/susceptibility.pdf"
     fig, ax = plt.subplots(figsize=(3.5, 5))
-    merged_data = merge_quantities(data, ("sqrtsigma", "chi_top", "fitted_Q0", "Q_width", "Q_tau_exp"))
+    merged_data = merge_quantities(
+        data, ("sqrtsigma", "chi_top", "fitted_Q0", "Q_width", "Q_tau_exp")
+    )
     with_sqrtsigma = True
 
     merged_data["value_chi_top_14_hat"] = (

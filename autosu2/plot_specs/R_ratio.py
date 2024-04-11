@@ -66,7 +66,12 @@ def shade_prediction(colour, R, ax):
 
 def plot_single(data, Nf, predicted_Rs, filename):
     num_subplots = len(beta_colour_marker[Nf])
-    fig, axes_2d = plt.subplots(nrows=num_subplots, figsize=(3.5, 2.5 + num_subplots * 1.5), sharex=True, squeeze=False)
+    fig, axes_2d = plt.subplots(
+        nrows=num_subplots,
+        figsize=(3.5, 2.5 + num_subplots * 1.5),
+        sharex=True,
+        squeeze=False,
+    )
     axes = axes_2d.ravel()
     hatted_data = merge_and_hat_quantities(
         data, ("A1++_mass", "2++_mass", "spin12_mass", "sqrtsigma")

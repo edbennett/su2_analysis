@@ -5,12 +5,15 @@ from ..w0 import DEFAULT_W0
 
 from .common import beta_colour_marker
 
+
 def generate(data, ensembles):
     set_plot_defaults()
 
     filename = "auxiliary_plots/bare_w0.pdf"
 
-    fig, axes = plt.subplots(ncols=2, layout="constrained", figsize=(7, 3.5), sharey=True)
+    fig, axes = plt.subplots(
+        ncols=2, layout="constrained", figsize=(7, 3.5), sharey=True
+    )
 
     for ax, (Nf, betas) in zip(axes, beta_colour_marker.items()):
         for beta, colour, marker in betas:
