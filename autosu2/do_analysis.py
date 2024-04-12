@@ -286,7 +286,6 @@ def do_single_analysis(
         filename = {"colconf": "modenumber.dat", "hirep": "out_modenumber"}[
             measure_modenumber["format"]
         ]
-
         result = do_modenumber_fit_aic(
             ensemble=ensemble,
             filename=f"raw_data/{subdirectory}/{filename}",
