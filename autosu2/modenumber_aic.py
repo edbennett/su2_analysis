@@ -31,22 +31,22 @@ def read_modenumber(filename, vol, format="hirep"):
     if format == "hirep":
         modenumbers = read_modenumber_hirep(filename)
 
-        omegas = np.asarray(list(modenumbers.keys()))
+        omegas = np.asarray(sorted(list(modenumbers.keys())))
         nus = [list(nu.values()) for nu in modenumbers.values()]
 
         nubars = np.transpose(np.array(nus) / vol)
 
+        df = pd.DataFrame(nubars, np.arange(nubars.shape[0]), omegas)
+
     elif format == "colconf":
-        dataraw = np.transpose(np.loadtxt(filename))
-        Nmass, Nconf = dataraw.shape
+        data = np.loadtxt(filename)
 
-        omegas = dataraw[0, np.arange(0, Nconf, 100)]
-        nubars = dataraw[1:, np.arange(0, Nconf, 100)]
+        Nmass = data.shape[-1] - 1
+        masses = data[:, 0]
+        df = pd.DataFrame(data[:, 1:].T * 12.0, np.arange(Nmass), masses)
 
-        # Normalise for volume of Dirac space
-        nubars *= 12
-
-    df = pd.DataFrame(nubars, np.arange(nubars.shape[0]), omegas)
+        prune_mask = df.columns[:: len(df.columns) // 99].to_numpy()
+        df = df[prune_mask]
 
     return df
 

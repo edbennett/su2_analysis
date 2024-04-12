@@ -3036,7 +3036,7 @@ DB7M7:
   measure_gflow: hirep
   measure_modenumber:
     method: aic
-    format: hirep
+    format: colconf
     fit_omega_min: 0.03
     fit_omega_max: 0.1
     fit_window_length_min: 0.05
@@ -3196,7 +3196,7 @@ DB7M10:
     plateau_end: 47
   measure_modenumber:
     method: aic
-    format: hirep
+    format: colconf
     fit_omega_min: 0.03
     fit_omega_max: 0.1
     fit_window_length_min: 0.05
