@@ -88,4 +88,6 @@ def do_caption(filename_base, ensembles, caption, figlabel):
 def generate(data, ensembles):
     for Nf in 1, 2:
         do_plot(ensembles, ENSEMBLES[Nf], FILENAME_BASE.format(Nf=Nf))
-        do_caption(FILENAME_BASE.format(Nf=Nf), ENSEMBLES[Nf], CAPTION, "topcharge")
+        do_caption(
+            FILENAME_BASE.format(Nf=Nf), ENSEMBLES[Nf], CAPTION, f"topcharge_Nf{Nf}"
+        )
