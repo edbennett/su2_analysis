@@ -89,12 +89,15 @@ def do_plot(hatted_data, plot_spec, Nf=1):
 
             for series, marker in zip(subplot["series"], markers):
                 infix = "{channel}_{quantity}".format(**series).strip("_")
+                y_values = data_to_plot[f"value_{infix}_hat"]
+                y_errors = data_to_plot[f"uncertainty_{infix}_hat"]
+                mask = (y_errors / y_values) < 1.0
                 if f"value_{infix}_hat" in data_to_plot:
                     ax.errorbar(
-                        mhat,
-                        data_to_plot[f"value_{infix}_hat"],
-                        xerr=mhat_err,
-                        yerr=data_to_plot[f"uncertainty_{infix}_hat"],
+                        mhat[mask],
+                        y_values[mask],
+                        xerr=mhat_err[mask],
+                        yerr=y_errors[mask],
                         color=colour,
                         marker=marker,
                         ls="none",
