@@ -34,7 +34,7 @@ def add_sideload_data(ax):
                 subset_data.sqrtsigma,
                 subset_data.sqrtsigma_err,
             ),
-            label=f"$N_{{\mathrm{{f}}}} = {Nf}{label_suffix}$ (1209.5579)",
+            label=f"$N_{{\\mathrm{{f}}}} = {Nf}{label_suffix}$ (1209.5579)",
             ls="none",
             marker=marker,
         )
@@ -106,7 +106,7 @@ def generate(data, ensembles):
                 color=colour,
                 marker=marker,
                 ls="none",
-                label=f"$N_{{\mathrm{{f}}}}={Nf}, \\beta={beta}$",
+                label=f"$N_{{\\mathrm{{f}}}}={Nf}, \\beta={beta}$",
             )
 
     if with_sqrtsigma:

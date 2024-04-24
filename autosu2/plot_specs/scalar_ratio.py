@@ -12,7 +12,7 @@ def plot_single_ratio(data, channel, label, filename):
     fig, ax = plt.subplots(figsize=(3.5, 3.5), layout="constrained")
 
     ax.set_xlabel(r"$w_0 m_{\mathrm{PCAC}}$")
-    ax.set_ylabel(f"$\\frac{{M_{{{label}}}}}{{M_{{2^+_{{\mathrm{{s}}}}}}}}$")
+    ax.set_ylabel(f"$\\frac{{M_{{{label}}}}}{{M_{{2^+_{{\\mathrm{{s}}}}}}}}$")
 
     for Nf in 1, 2:
         for beta, colour, marker in beta_colour_marker[Nf]:

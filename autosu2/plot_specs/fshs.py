@@ -97,7 +97,7 @@ def do_plot(betas, fit_results, merged_data, Nf):
         ax.set_xlabel(r"$L (am_{\mathrm{PCAC}})^{1/(1+\gamma_*)}$")
         ax.set_xlim((0, None))
 
-    axes[0].set_ylabel("$L aM_{2^+_{\mathrm{s}}}$")
+    axes[0].set_ylabel(r"$L aM_{2^+_{\mathrm{s}}}$")
     axes[0].set_ylim((0, None))
 
     fig.tight_layout(pad=0.08, h_pad=0.5, rect=(0, 0, 1, 0.92))
@@ -133,7 +133,7 @@ def do_table(results, merged_data, Nf):
 
         if num_rows == 0:
             table_content.append(
-                f"{beta} & {formatted_gamma_s} & {valid_point_count} & $\cdots$ & $\cdots$"
+                f"{beta} & {formatted_gamma_s} & {valid_point_count} & $\\cdots$ & $\\cdots$"
             )
             continue
 

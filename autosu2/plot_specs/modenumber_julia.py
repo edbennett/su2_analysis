@@ -128,7 +128,7 @@ def tabulate(fit_results, ensembles):
         r"$\Delta \Omega_{\mathrm{min}}$",
         r"$\Delta \Omega_{\mathrm{max}}$",
         None,
-        "$\gamma_*$",
+        "$\\gamma_*$",
     )
     table_content = []
     table_line = (
