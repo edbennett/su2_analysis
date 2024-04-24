@@ -143,7 +143,9 @@ def do_table(results, merged_data, Nf):
             f"\\multirow{{{num_rows}}}{{*}}{{{formatted_gamma_s}}} & "
             f"\\multirow{{{num_rows}}}{{*}}{{{valid_point_count}}}"
         ] + [" & &"] * (num_rows - 1)
-        for row_start, (_, row) in zip(row_starts, gamma_s_aics.iterrows()):
+        for row_start, (_, row) in zip(
+            row_starts, gamma_s_aics.sort_values(by="m", ascending=False).iterrows()
+        ):
             formatted_gamma_s_aic = format_multiple_errors(
                 row.value_gamma_aic,
                 row.uncertainty_gamma_aic,
