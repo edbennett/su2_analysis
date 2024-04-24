@@ -5,6 +5,7 @@ from os import listdir, makedirs
 from importlib import import_module
 from datetime import datetime
 from os.path import getmtime
+from pathlib import Path
 import logging
 
 from .data import get_subdirectory_name
@@ -359,6 +360,9 @@ def main():
 
     ensembles = filter_complete(yaml.safe_load(get_file_contents(args.ensembles)))
     ensembles_date = datetime.fromtimestamp(getmtime(args.ensembles))
+
+    for dirname in "final_plots", "final_tables":
+        (Path(dirname) / "info.json").unlink(missing_ok=True)
 
     if args.skip_calculation or args.only:
         print("Skipping calculation as requested")
