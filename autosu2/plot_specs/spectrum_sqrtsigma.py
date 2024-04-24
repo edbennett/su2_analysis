@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from ..plots import set_plot_defaults
 from ..derived_observables import merge_no_w0
 
-from .common import beta_colour_marker, critical_ms, preliminary
+from .common import beta_colour_marker, channel_labels, critical_ms, preliminary
 
 
 def generate(data, ensembles):
@@ -40,18 +40,12 @@ def generate(data, ensembles):
         ) ** 0.5
 
     channels_to_plot = "g5", "g5gk", "id", "A1++", "2++", "spin12"
-    channel_labels = (
-        r"\gamma_5",
-        r"\gamma_5\gamma_k",
-        "1",
-        "A^{++}",
-        "2^{++}",
-        r"\breve{g}",
-    )
-    markers = ".", "x", "+", "^", "v", "1", "*"
+    markers = ".", "x", "*", "^", "v", "1", "+"
 
     for Nf in 1, 2:
-        fig, axes = plt.subplots(nrows=3, sharex=True, figsize=(4.5, 8))
+        fig, axes = plt.subplots(
+            nrows=3, sharex=True, figsize=(3.5, 6), layout="constrained"
+        )
         if use_pcac:
             axes[-1].set_xlabel(r"$m_{\mathrm{PCAC}} / \sqrt{\sigma}$")
         else:
@@ -110,23 +104,21 @@ def generate(data, ensembles):
                 label=f"$\\beta={beta}$",
             )
 
-        for channel_label, marker in zip(channel_labels, markers):
+        for channel, marker in zip(channels_to_plot, markers):
             axes[0].scatter(
-                [-1], [-1], marker=marker, color="black", label=f"${channel_label}$"
+                [-1], [-1], marker=marker, color="black", label=channel_labels[channel]
             )
 
-        axes[0].legend(
-            loc="lower right",
+        fig.legend(
+            loc="outside upper center",
             frameon=False,
-            ncol=4,
+            ncol=2,
             columnspacing=1.0,
-            bbox_to_anchor=(0, 1.02, 1, 0.25),
         )
 
         axes[0].set_xlim((0, None))
         for ax in axes:
             ax.set_ylim((0, None))
 
-        fig.tight_layout()
         fig.savefig(filename.format(Nf=Nf))
         plt.close(fig)
