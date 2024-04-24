@@ -3,6 +3,7 @@ from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 
 from format_multiple_errors import format_multiple_errors
+from uncertainties import ufloat
 
 from ..plots import set_plot_defaults
 from ..tables import generate_table_from_content, format_value_and_error
@@ -154,6 +155,21 @@ def do_table(results, merged_data, Nf):
     generate_table_from_content(filename, table_content, columns)
 
 
+def single_fit(merged_data, Nf, beta):
+    return minimize(
+        sm_residual,
+        1.0,
+        args=merged_data[(merged_data.beta == beta) & (merged_data.Nf == Nf)],
+    )
+
+
+def gammastar_fshs(merged_data, Nf, beta):
+    result = single_fit(
+        merged_data.dropna(subset=["value_mpcac_mass", "value_g5_mass"]), Nf, beta
+    )
+    return ufloat(result["x"][0], result["hess_inv"][0, 0])
+
+
 def generate_single_Nf(data, Nf, betas_to_plot):
     data = data[data.Nf == Nf]
 
@@ -166,9 +182,7 @@ def generate_single_Nf(data, Nf, betas_to_plot):
 
     fit_results = {}
     for beta, _, _ in beta_colour_marker[Nf]:
-        fit_results[beta] = minimize(
-            sm_residual, 1.0, args=merged_data[merged_data.beta == beta]
-        )
+        fit_results[beta] = single_fit(merged_data, Nf, beta)
 
     do_plot(
         betas_to_plot,

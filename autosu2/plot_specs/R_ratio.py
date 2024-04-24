@@ -1,17 +1,53 @@
 from collections import namedtuple
+from functools import cache
+import logging
 
-from numpy import nan
+from numpy import isnan, nan
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
+import pandas as pd
+from scipy.interpolate import interp1d
 
 from ..plots import set_plot_defaults
-from ..derived_observables import merge_and_hat_quantities
+from ..derived_observables import merge_no_w0
 
 from .common import beta_colour_marker, preliminary
+from .fshs import gammastar_fshs
 
 ALPHA = 0.3
 R_value = namedtuple("R_value", ["centre", "lower", "upper"])
+
+
+@cache
+def get_interpolator():
+    data = pd.read_csv("external_data/sigmamodel.csv")
+    raw_interpolator = interp1d(
+        data.gammastar - 1, data.R_ratio, bounds_error=False, kind="cubic"
+    )
+
+    def interpolator(gammastar):
+        if hasattr(gammastar, "__len__"):
+            return [R if not isnan(R) else None for R in raw_interpolator(gammastar)]
+        else:
+            R = raw_interpolator(gammastar)
+            return R if not isnan(R) else None
+
+    return interpolator
+
+
+def get_band(merged_data, Nf, beta):
+    gammastar = gammastar_fshs(merged_data, Nf, beta)
+    interpolator = get_interpolator()
+    return R_value(
+        *interpolator(
+            [
+                gammastar.nominal_value,
+                gammastar.nominal_value - gammastar.std_dev,
+                gammastar.nominal_value + gammastar.std_dev,
+            ]
+        )
+    )
 
 
 def plot_points(data, beta, colour, marker, ax):
@@ -64,39 +100,67 @@ def shade_prediction(colour, R, ax):
     ax.set_ylim((ymin, ymax))
 
 
-def plot_single(data, Nf, predicted_Rs, filename):
-    num_subplots = len(beta_colour_marker[Nf])
+def plot_single(data, Nf, filename):
+    merged_data = merge_no_w0(
+        data,
+        (
+            "mpcac_mass",
+            "g5_mass",
+            "E++_mass",
+            "T2++_mass",
+            "A1++_mass",
+            "2++_mass",
+            "spin12_mass",
+            "sqrtsigma",
+        ),
+    )
+    merged_data["value_R"] = (
+        merged_data["value_2++_mass"] / merged_data["value_A1++_mass"]
+    )
+    merged_data["uncertainty_R"] = (
+        merged_data["uncertainty_2++_mass"] ** 2 / merged_data["value_A1++_mass"] ** 2
+        + merged_data["value_2++_mass"] ** 2
+        * merged_data["uncertainty_A1++_mass"] ** 2
+        / merged_data["value_A1++_mass"] ** 2
+    ) ** 0.5
+
+    betas = sorted(
+        set(merged_data[merged_data.Nf == Nf].dropna(subset=["value_R"]).beta)
+    )
+    num_subplots = len(betas)
+
+    if num_subplots == 0:
+        logging.warning(f"No data to plot for R ratio for {Nf=}")
+        return
+
     fig, axes_2d = plt.subplots(
         nrows=num_subplots,
         figsize=(3.5, 2.5 + num_subplots * 1.5),
         sharex=True,
         squeeze=False,
+        layout="constrained",
     )
     axes = axes_2d.ravel()
-    hatted_data = merge_and_hat_quantities(
-        data, ("A1++_mass", "2++_mass", "spin12_mass", "sqrtsigma")
-    )
-    hatted_data["value_R"] = (
-        hatted_data["value_2++_mass"] / hatted_data["value_A1++_mass"]
-    )
-    hatted_data["uncertainty_R"] = (
-        hatted_data["uncertainty_2++_mass"] ** 2 / hatted_data["value_A1++_mass"] ** 2
-        + hatted_data["value_2++_mass"] ** 2
-        * hatted_data["uncertainty_A1++_mass"] ** 2
-        / hatted_data["value_A1++_mass"] ** 2
-    ) ** 0.5
-    axes[-1].set_xlabel(r"$L M_{0^{++}}$")
 
-    for (beta, colour, marker), ax in zip(beta_colour_marker[Nf], axes):
-        data_to_plot = hatted_data[
-            (hatted_data.beta == beta) & (hatted_data.Nf == Nf)
+    axes[-1].set_xlabel(r"$L M_{0^{++}}$")
+    axes[0].set_xlim(2, 11)
+
+    for target_beta, ax in zip(betas, axes):
+        for beta, colour, marker in beta_colour_marker[Nf]:
+            if target_beta == beta:
+                break
+        else:
+            raise ValueError(f"Don't have colours or markers for {beta=}")
+
+        data_to_plot = merged_data[
+            (merged_data.beta == beta) & (merged_data.Nf == Nf)
             # R ratio is interesting at smaller volumes too
-            # & ~(hatted_data.label.str.endswith('*'))
+            # & ~(merged_data.label.str.endswith('*'))
         ]
         plot_points(data_to_plot, beta, colour, marker, ax)
 
-    for (_, colour, _), R, ax in zip(beta_colour_marker[1], predicted_Rs, axes):
-        shade_prediction(colour, R, ax)
+        predicted_R = get_band(merged_data, Nf, beta)
+        shade_prediction(colour, predicted_R, ax)
 
     legend_elements = [
         axes[-1].errorbar(
@@ -114,28 +178,19 @@ def plot_single(data, Nf, predicted_Rs, filename):
     ]
     fig.legend(
         handles=legend_elements,
-        loc="lower center",
+        loc="outside lower center",
         frameon=False,
         ncol=3,
         columnspacing=0.8,
         handletextpad=0.4,
     )
-    fig.tight_layout(pad=0.28, rect=(0, 0.04, 1, 1))
     fig.savefig(filename, transparent=True)
     plt.close(fig)
 
 
 def generate(data, ensembles):
     set_plot_defaults(markersize=4, capsize=1.0, linewidth=0.5, preliminary=preliminary)
-    filename = "final_plots/Nf{Nf}_R_ratio.pdf"
 
-    predicted_Rs_Nf1 = (
-        R_value(7.1511, 4.7955, None),
-        R_value(5.3377, 3.5782, None),
-        R_value(3.6911, 3.3323, 4.1790),
-        R_value(3.1640, 2.9379, 3.4791),
-    )
-    plot_single(data, 1, predicted_Rs_Nf1, filename.format(Nf=1))
-
-    predicted_Rs_Nf2 = []
-    plot_single(data, 2, predicted_Rs_Nf2, filename.format(Nf=2))
+    for Nf in 1, 2:
+        filename = f"final_plots/R_ratio_Nf{Nf}.pdf"
+        plot_single(data, Nf, filename)
