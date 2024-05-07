@@ -82,6 +82,10 @@ def generate(data, ensembles):
 
     for Nf in 1, 2:
         for beta, colour, marker in beta_colour_marker[Nf]:
+            if Nf == 2 and beta == 2.25:
+                # Data will be sideloaded separately
+                continue
+
             data_to_plot = merged_data[
                 (merged_data.beta == beta)
                 & ~(merged_data.label.str.endswith("*"))
