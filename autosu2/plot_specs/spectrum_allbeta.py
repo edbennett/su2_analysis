@@ -60,7 +60,10 @@ plots = [
 
 def do_plot(hatted_data, plot_spec, Nf=1):
     fig, axes = plt.subplots(
-        ncols=len(plot_spec["subplots"]), sharey=True, figsize=plot_spec["figsize"]
+        ncols=len(plot_spec["subplots"]),
+        sharey=True,
+        figsize=plot_spec["figsize"],
+        layout="constrained",
     )
     if len(plot_spec["subplots"]) == 1:
         axes = [axes]
@@ -135,16 +138,6 @@ def do_plot(hatted_data, plot_spec, Nf=1):
     legend_rows = plot_spec.get("legend_rows", 1)
     add_figure_key(fig, markers=False, Nf=Nf, nrow=legend_rows)
 
-    fig.tight_layout(
-        pad=0,
-        h_pad=0.5,
-        rect=(
-            0.02,
-            0.01,
-            1,
-            1 - 0.3 / plot_spec["figsize"][1] - 0.05 * (legend_rows - 1),
-        ),
-    )
     fig.savefig(plot_spec["filename"].format(Nf=Nf), transparent=True)
     plt.close(fig)
 

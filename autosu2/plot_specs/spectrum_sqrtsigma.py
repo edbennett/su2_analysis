@@ -110,7 +110,7 @@ def generate(data, ensembles):
             )
 
         fig.legend(
-            loc="outside upper center",
+            loc="outside lower center",
             frameon=False,
             ncol=2,
             columnspacing=1.0,

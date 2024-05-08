@@ -67,6 +67,7 @@ def do_plot(betas, fit_results, merged_data, Nf):
         figsize=(2.5 + 1.5 * len(betas), 3.5),
         sharey=True,
         squeeze=False,
+        layout="constrained",
     )
     axes = axes.ravel()
 
@@ -100,8 +101,6 @@ def do_plot(betas, fit_results, merged_data, Nf):
 
     axes[0].set_ylabel(r"$L aM_{2^+_{\mathrm{s}}}$")
     axes[0].set_ylim((0, None))
-
-    fig.tight_layout(pad=0.08, h_pad=0.5, rect=(0, 0, 1, 0.92))
 
     fig.savefig(filename)
     plt.close(fig)

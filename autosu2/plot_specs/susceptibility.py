@@ -117,7 +117,7 @@ def generate(data, ensembles):
         add_sideload_data(ax)
 
     fig.legend(
-        loc="outside left upper",
+        loc="outside left lower",
         ncols=2,
         columnspacing=0.3,
         frameon=False,
@@ -127,6 +127,6 @@ def generate(data, ensembles):
     ax.set_xlim((0, None))
     ax.set_ylim((0, None))
 
-    fig.tight_layout(rect=(0, 0, 1, 0.77), pad=0.08)
+    fig.tight_layout(rect=(0, 0.23, 1, 1), pad=0.08)
     fig.savefig(filename)
     plt.close(fig)

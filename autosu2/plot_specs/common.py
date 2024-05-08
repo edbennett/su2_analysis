@@ -46,7 +46,7 @@ channel_labels = {
 }
 
 figlegend_defaults = {
-    "loc": "upper center",
+    "loc": "outside lower center",
     "frameon": False,
     "columnspacing": 0.9,
     "handletextpad": 0,

@@ -38,7 +38,7 @@ def plot_single_ratio(data, channel, label, filename):
         columnspacing=1,
         handletextpad=0,
         borderpad=0,
-        loc="outside upper center",
+        loc="outside lower center",
         frameon=False,
     )
 
