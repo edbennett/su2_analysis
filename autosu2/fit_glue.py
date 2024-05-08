@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from collections.abc import Sequence
 import logging
 
 import matplotlib.pyplot as plt
@@ -175,12 +174,10 @@ def plot_measure_and_save_glueballs(
         },
     )
 
-    if "plateau_start" in glue_parameters and "plateau_end" in glue_parameters:
-        plateaux = [[glue_parameters["plateau_start"], glue_parameters["plateau_end"]]]
-    elif isinstance(glue_parameters, Sequence) and not isinstance(glue_parameters, str):
+    if "plateaux" in glue_parameters:
         plateaux = [
-            [plateau["plateau_start"], plateau["plateau_end"]] if plateau else None
-            for plateau in glue_parameters
+            [plateau["start"], plateau["end"]] if plateau else None
+            for plateau in glue_parameters["plateaux"]
         ]
     else:
         return
