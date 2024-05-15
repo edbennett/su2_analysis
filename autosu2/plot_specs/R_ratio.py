@@ -3,6 +3,8 @@ from functools import cache
 import logging
 
 from numpy import isnan, nan
+import matplotlib
+import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
@@ -50,18 +52,18 @@ def get_band(merged_data, Nf, beta):
     )
 
 
-def plot_points(data, beta, colour, marker, ax):
+def plot_points(data, beta, marker, ax, mapper):
     ax.set_ylabel(r"$\frac{M_{2^{++}}}{M_{0^{++}}}$")
-    ax.errorbar(
-        data["value_A1++_mass"] * data.L,
-        data.value_R,
-        xerr=data["uncertainty_A1++_mass"] * data.L,
-        yerr=data.uncertainty_R,
-        color=colour,
-        marker=marker,
-        label=f"$\\beta={beta}$",
-        ls="none",
-    )
+    for _, datum in data.iterrows():
+        ax.errorbar(
+            datum["value_A1++_mass"] * datum.L,
+            datum.value_R,
+            xerr=datum["uncertainty_A1++_mass"] * datum.L,
+            yerr=datum.uncertainty_R,
+            color=mapper.to_rgba(datum["value_A1++_mass"]),
+            marker=marker,
+            ls="none",
+        )
     ax.text(0.03, 0.05, f"$\\beta={beta}$", transform=ax.transAxes)
 
 
@@ -133,6 +135,9 @@ def plot_single(data, Nf, filename):
         logging.warning(f"No data to plot for R ratio for {Nf=}")
         return
 
+    norm = matplotlib.colors.Normalize(vmin=0, vmax=1, clip=True)
+    mapper = cm.ScalarMappable(norm=norm, cmap="viridis")
+
     fig, axes_2d = plt.subplots(
         nrows=num_subplots,
         figsize=(3.5, 2.5 + num_subplots * 1.5),
@@ -143,24 +148,24 @@ def plot_single(data, Nf, filename):
     axes = axes_2d.ravel()
 
     axes[-1].set_xlabel(r"$L M_{0^{++}}$")
-    axes[0].set_xlim(2, 11)
+    axes[-1].set_xlim(2, 11)
 
     for target_beta, ax in zip(betas, axes):
-        for beta, colour, marker in beta_colour_marker[Nf]:
+        for beta, _, marker in beta_colour_marker[Nf]:
             if target_beta == beta:
                 break
         else:
-            raise ValueError(f"Don't have colours or markers for {beta=}")
+            raise ValueError(f"Don't have markers for {beta=}")
 
         data_to_plot = merged_data[
             (merged_data.beta == beta) & (merged_data.Nf == Nf)
             # R ratio is interesting at smaller volumes too
             # & ~(merged_data.label.str.endswith('*'))
         ]
-        plot_points(data_to_plot, beta, colour, marker, ax)
+        plot_points(data_to_plot, beta, marker, ax, mapper)
 
         predicted_R = get_band(merged_data, Nf, beta)
-        shade_prediction(colour, predicted_R, ax)
+        shade_prediction("grey", predicted_R, ax)
 
     legend_elements = [
         axes[-1].errorbar(
@@ -176,6 +181,9 @@ def plot_single(data, Nf, filename):
         Line2D([0], [0], dashes=(3, 3), label="Pure SU(2)"),
         Patch(facecolor="black", alpha=ALPHA, label="Gauge-gravity model"),
     ]
+
+    fig.colorbar(mapper, ax=axes[0], location="top", label="$aM_{0^{++}}$")
+
     fig.legend(
         handles=legend_elements,
         loc="outside lower center",
