@@ -80,6 +80,15 @@ def import_data_csv(filename):
                 valence_mass=row.m,
             )
 
+            if state == "E++_mass" and "2++_mass" not in states:
+                add_measurement(
+                    descriptor,
+                    observable="2++_mass",
+                    value=value,
+                    uncertainty=row[f"uncertainty_{state}"],
+                    valence_mass=row.m,
+                )
+
 
 def describe_ensemble(measurement):
     keys = (
