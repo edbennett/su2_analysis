@@ -6,23 +6,49 @@ ERROR_DIGITS = 2
 EXPONENTIAL = False
 
 
+def chunk_ensembles(ensembles, max_rows=45):
+    current_chunk = []
+    current_block = []
+
+    for ensemble in ensembles:
+        if ensemble is not None:
+            current_block.append(ensemble)
+            continue
+
+        if len(current_chunk) + len(current_block) > max_rows:
+            yield current_chunk
+            current_chunk = current_block
+        else:
+            if current_chunk:
+                current_chunk.append(None)
+            current_chunk.extend(current_block)
+
+        current_block = []
+    else:
+        if current_chunk:
+            current_chunk.append(None)
+        current_chunk.extend(current_block)
+        yield current_chunk
+
+
 def lattice_params(data, **kwargs):
     columns = ["", None, r"$\beta$", "$am$", r"$N_t \times N_s^3$", r"$N_{\rm conf.}$"]
     constants = ("beta", "m", "V", "cfg_count")
     observables = []
-    filename = "lattice_params_Nf{Nf}.tex"
+    filename = "lattice_params_Nf{Nf}_part{chunk}.tex"
 
     for Nf, ensemble_set in ENSEMBLES.items():
-        generate_table_from_db(
-            data=data,
-            ensembles=ensemble_set,
-            observables=observables,
-            filename=filename.format(Nf=Nf),
-            columns=columns,
-            constants=constants,
-            error_digits=ERROR_DIGITS,
-            exponential=EXPONENTIAL,
-        )
+        for chunk_index, ensemble_chunk in enumerate(chunk_ensembles(ensemble_set)):
+            generate_table_from_db(
+                data=data,
+                ensembles=ensemble_chunk,
+                observables=observables,
+                filename=filename.format(Nf=Nf, chunk=chunk_index),
+                columns=columns,
+                constants=constants,
+                error_digits=ERROR_DIGITS,
+                exponential=EXPONENTIAL,
+            )
 
 
 def generate(data, **kwargs):
