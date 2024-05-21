@@ -148,7 +148,7 @@ def plot_single(data, Nf, filename):
     axes = axes_2d.ravel()
 
     axes[-1].set_xlabel(r"$L M_{0^{++}}$")
-    axes[-1].set_xlim(2, 11)
+    axes[-1].set_xlim(2, 13)
 
     for target_beta, ax in zip(betas, axes):
         for beta, _, marker in beta_colour_marker[Nf]:
