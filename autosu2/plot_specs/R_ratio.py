@@ -200,5 +200,5 @@ def generate(data, ensembles):
     set_plot_defaults(markersize=4, capsize=1.0, linewidth=0.5, preliminary=preliminary)
 
     for Nf in 1, 2:
-        filename = f"final_plots/R_ratio_Nf{Nf}.pdf"
+        filename = f"assets/plots/R_ratio_Nf{Nf}.pdf"
         plot_single(data, Nf, filename)

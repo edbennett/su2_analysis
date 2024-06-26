@@ -56,8 +56,8 @@ def generate(data, ensembles):
         data, ("A1++_mass", "spin12_mass", "g5_mass", "mpcac_mass")
     )
     for channel, label, filename in [
-        ("A1++", r"0^{++}", "final_plots/scalar_ratio.pdf"),
-        ("spin12", r"\breve{g}", "final_plots/spin12_ratio.pdf"),
+        ("A1++", r"0^{++}", "assets/plots/scalar_ratio.pdf"),
+        ("spin12", r"\breve{g}", "assets/plots/spin12_ratio.pdf"),
     ]:
         hatted_data[f"value_{channel}_ratio"] = (
             hatted_data[f"value_{channel}_mass"] / hatted_data.value_g5_mass

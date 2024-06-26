@@ -55,7 +55,7 @@ def Xpt_fit(hatted_data):
 
 
 def generate_single_Nf(data, Nf):
-    filename = f"final_plots/Xpt_Nf{Nf}.pdf"
+    filename = f"assets/plots/Xpt_Nf{Nf}.pdf"
 
     set_plot_defaults(markersize=3, capsize=1, linewidth=0.5, preliminary=preliminary)
 

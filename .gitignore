@@ -8,8 +8,7 @@ auxiliary_plots/*
 processed_data/*
 raw_data/*
 processing_params/*
-final_tables/*
-final_plots/*
+assets/*
 !*/.git_keep
 *.sqlite
 *.h5

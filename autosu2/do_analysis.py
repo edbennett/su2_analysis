@@ -361,8 +361,7 @@ def main():
     ensembles = filter_complete(yaml.safe_load(get_file_contents(args.ensembles)))
     ensembles_date = datetime.fromtimestamp(getmtime(args.ensembles))
 
-    for dirname in "final_plots", "final_tables":
-        (Path(dirname) / "info.json").unlink(missing_ok=True)
+    Path("assets/info.json").unlink(missing_ok=True)
 
     if args.skip_calculation or args.only:
         print("Skipping calculation as requested")

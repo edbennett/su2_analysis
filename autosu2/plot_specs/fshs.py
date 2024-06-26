@@ -61,7 +61,7 @@ def sm_residual(gamma_s, data, count_valid_points=False, observable="value_g5_ma
 
 
 def do_plot(betas, fit_results, merged_data, Nf):
-    filename = f"final_plots/fshs_Nf{Nf}.pdf"
+    filename = f"assets/plots/fshs_Nf{Nf}.pdf"
     fig, axes = plt.subplots(
         ncols=len(betas),
         figsize=(2.5 + 1.5 * len(betas), 3.5),

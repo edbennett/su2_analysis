@@ -193,7 +193,7 @@ def generate(data, ensembles):
     # Disable for now
     return
 
-    plot_filename = "final_plots/modenumber_old.pdf"
+    plot_filename = "assets/plots/modenumber_old.pdf"
     ensembles_to_plot = "DB1M8", "DB2M7", "DB3M8", "DB4M11"
     fit_results = {}
 
@@ -214,7 +214,7 @@ def generate(data, ensembles):
         )
         do_plot(
             modenumber_data,
-            f"final_plots/modenumber_{ensemble_name}.pdf",
+            f"assets/plots/modenumber_{ensemble_name}.pdf",
             ensemble={"label": ensemble_name, **ensembles[ensemble_name]},
             fit_result=fit_results[ensemble_name],
             ax=ax,

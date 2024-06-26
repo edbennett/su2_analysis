@@ -40,7 +40,7 @@ def generate_table_from_content(
         if table_spec is None:
             raise ValueError("Either `columns` or `table_spec` must be specified.")
 
-    with open("final_tables/" + filename, "w") as f:
+    with open("assets/tables/" + filename, "w") as f:
         print(r"\begin{tabular}{" + table_spec + "}", file=f)
         if header:
             print(table_row(header) + r" \\", file=f)

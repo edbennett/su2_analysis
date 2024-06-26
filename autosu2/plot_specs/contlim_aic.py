@@ -30,7 +30,7 @@ def fit(data):
 
 
 def plot(data, fit_result, Nf):
-    filename = f"final_plots/continuum_gammastar_Nf{Nf}.pdf"
+    filename = f"assets/plots/continuum_gammastar_Nf{Nf}.pdf"
 
     fig, ax = plt.subplots(layout="constrained", figsize=(3.5, 3))
 

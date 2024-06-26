@@ -43,6 +43,5 @@ def get_basic_metadata(ensembles_filename):
 
 def stamp_provenance(ensembles_filename):
     metadata = get_basic_metadata(ensembles_filename)
-    for dirname in "final_plots", "final_tables":
-        with open(pathlib.Path(dirname) / "info.json", "w") as info_file:
-            info_file.write(json.dumps(metadata, sort_keys=True, indent=4))
+    with open("assets/info.json", "w") as info_file:
+        info_file.write(json.dumps(metadata, sort_keys=True, indent=4))

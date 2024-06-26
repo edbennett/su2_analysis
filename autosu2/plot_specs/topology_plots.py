@@ -12,7 +12,7 @@ ENSEMBLES = {
     1: ["DB4M13", "DB5M8", "DB6M9", "DB7M10"],
     2: ["Nf2DB2M6", "Nf2DB2M7"],
 }
-OUTPUT_DIR = "final_plots"
+OUTPUT_DIR = "assets/plots"
 FILENAME_BASE = "q_topology_Nf{Nf}"
 CAPTION = r"""
 Topological charge histories (left), and histograms (right), for the ensembles

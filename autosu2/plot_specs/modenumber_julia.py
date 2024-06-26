@@ -156,7 +156,7 @@ def generate(data, ensembles):
     # Disable for now
     return
 
-    plot_filename = "final_plots/modenumber.pdf"
+    plot_filename = "assets/plots/modenumber.pdf"
     ensembles_to_plot = "DB1M9", "DB4M11", "DB7M10"
     fit_results = {}
 

@@ -12,7 +12,7 @@ def generate(data, ensembles):
 
     use_pcac = True
 
-    filename = "final_plots/spectrum_sqrtsigma_Nf{Nf}.pdf"
+    filename = "assets/plots/spectrum_sqrtsigma_Nf{Nf}.pdf"
     quantities = (
         "mpcac_mass",
         "g5_mass",

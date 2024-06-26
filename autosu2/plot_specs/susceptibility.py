@@ -43,7 +43,7 @@ def add_sideload_data(ax):
 def generate(data, ensembles):
     set_plot_defaults(markersize=2, capsize=0.2, linewidth=0.5, preliminary=preliminary)
 
-    filename = "final_plots/susceptibility.pdf"
+    filename = "assets/plots/susceptibility.pdf"
     fig, ax = plt.subplots(figsize=(3.5, 5))
     merged_data = merge_quantities(
         data, ("sqrtsigma", "chi_top", "fitted_Q0", "Q_width", "Q_tau_exp")

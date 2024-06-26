@@ -15,7 +15,7 @@ use_pcac = True
 
 plots = [
     {
-        "filename": "final_plots/decayconst_Nf{Nf}.pdf",
+        "filename": "assets/plots/decayconst_Nf{Nf}.pdf",
         "figsize": (3.5, 3.0),
         "subplots": [
             {
@@ -32,7 +32,7 @@ plots = [
         "ylim": (0.0, 2.0),
     },
     {
-        "filename": "final_plots/masses_Nf{Nf}.pdf",
+        "filename": "assets/plots/masses_Nf{Nf}.pdf",
         "figsize": (7, 3.5),
         "subplots": [
             {
