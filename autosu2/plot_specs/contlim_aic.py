@@ -146,7 +146,6 @@ def generate_single_Nf(
     subset_data = hatted_data[hatted_data.Nf == Nf]
     filtered_data = subset_data[~subset_data.label.isin(exclude)]
     fit_result = fit(filtered_data, x_var=x_var)
-    print(fit_result)
 
     plot(
         subset_data,
