@@ -213,7 +213,7 @@ def filter_ensembles(ensembles, **kwargs):
     result = {
         label: ensemble
         for label, ensemble in ensembles.items()
-        if ensemble.get("measure_gflow")
+        if (not label.startswith("_")) and ensemble.get("measure_gflow")
     }
     for key, value in kwargs.items():
         result = {

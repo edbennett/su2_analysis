@@ -359,6 +359,7 @@ def main():
         logging.getLogger().setLevel(logging.INFO)
 
     ensembles = filter_complete(yaml.safe_load(get_file_contents(args.ensembles)))
+    ensembles["_filename"] = args.ensembles
     ensembles_date = datetime.fromtimestamp(getmtime(args.ensembles))
 
     Path("assets/info.json").unlink(missing_ok=True)

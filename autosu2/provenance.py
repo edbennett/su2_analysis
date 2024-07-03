@@ -41,6 +41,26 @@ def get_basic_metadata(ensembles_filename):
     return metadata
 
 
+def latex_metadata(metadata):
+    flat_metadata = {
+        "_comment": "This file was generated automatically. Do not modify it directly; re-run the analysis workflow!"
+    }
+
+    for outer_key, inner_metadata in metadata.items():
+        if outer_key == "_comment":
+            continue
+        flat_metadata.update(
+            {f"{outer_key}::{k}": v for k, v in inner_metadata.items()}
+        )
+
+    flat_metadata["generated"] = flat_metadata["workflow_run::completed"]
+    del flat_metadata["workflow_run::completed"]
+
+    return "\n".join(
+        [f"% {k}: {v.replace('\n', '\n% ')}" for k, v in flat_metadata.items()]
+    )
+
+
 def stamp_provenance(ensembles_filename):
     metadata = get_basic_metadata(ensembles_filename)
     with open("assets/info.json", "w") as info_file:
