@@ -5,7 +5,7 @@ from scipy.optimize import curve_fit
 from ..derived_observables import merge_quantities
 from ..plots import set_plot_defaults
 
-from .common import beta_colour_marker
+from .common import beta_colour_marker, preliminary
 
 
 def fit_form(x, a, b, c):
@@ -37,7 +37,7 @@ def fit_1_over_w0(data, Nf, beta):
 
 
 def generate(data, ensembles):
-    set_plot_defaults()
+    set_plot_defaults(preliminary=preliminary)
 
     filename = "assets/plots/w0_chiral.pdf"
 
