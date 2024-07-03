@@ -1,6 +1,8 @@
 from collections import namedtuple, defaultdict
 from uncertainties import ufloat
 
+from .provenance import latex_metadata, get_basic_metadata
+
 HLINE = r"    \hline"
 ObservableSpec = namedtuple(
     "ObservableSpec", ("name", "valence_mass", "free_parameter"), defaults=(None, None)
@@ -27,7 +29,12 @@ def format_value_and_error(value, error, error_digits=2, exponential=False):
 
 
 def generate_table_from_content(
-    filename, table_content, columns=None, header=None, table_spec=None
+    filename,
+    table_content,
+    columns=None,
+    header=None,
+    table_spec=None,
+    preamble="",
 ):
     if columns is not None and (header is not None or table_spec is not None):
         raise ValueError(
@@ -41,6 +48,7 @@ def generate_table_from_content(
             raise ValueError("Either `columns` or `table_spec` must be specified.")
 
     with open("assets/tables/" + filename, "w") as f:
+        print(preamble, file=f)
         print(r"\begin{tabular}{" + table_spec + "}", file=f)
         if header:
             print(table_row(header) + r" \\", file=f)
@@ -185,6 +193,13 @@ def generate_table_from_db(
                     line.replace(f"NUM_ROWS_{constant}", str(num_rows[constant]))
                     for line in table_content
                 ]
+
+    preamble = latex_metadata(get_basic_metadata(ensembles["_filename"]))
     generate_table_from_content(
-        filename, table_content, columns=columns, header=header, table_spec=table_spec
+        filename,
+        table_content,
+        columns=columns,
+        header=header,
+        table_spec=table_spec,
+        preamble=preamble,
     )

@@ -8,6 +8,7 @@ from uncertainties import ufloat
 from ..plots import set_plot_defaults
 from ..tables import generate_table_from_content, format_value_and_error
 from ..derived_observables import merge_no_w0
+from ..provenance import latex_metadata, get_basic_metadata
 
 from .common import beta_colour_marker, add_figure_key, preliminary
 
@@ -106,7 +107,7 @@ def do_plot(betas, fit_results, merged_data, Nf):
     plt.close(fig)
 
 
-def do_table(results, merged_data, Nf):
+def do_table(results, merged_data, Nf, ensembles):
     filename = f"gamma_Nf{Nf}.tex"
     columns = (
         r"$\beta$",
@@ -153,7 +154,9 @@ def do_table(results, merged_data, Nf):
                 latex=True,
             )
             table_content.append(f"{row_start} & {formatted_gamma_s_aic} & {row.label}")
-    generate_table_from_content(filename, table_content, columns)
+
+    preamble = latex_metadata(get_basic_metadata(ensembles["_filename"]))
+    generate_table_from_content(filename, table_content, columns, preamble=preamble)
 
 
 def single_fit(merged_data, Nf, beta):
@@ -171,7 +174,7 @@ def gammastar_fshs(merged_data, Nf, beta):
     return ufloat(result["x"][0], result["hess_inv"][0, 0])
 
 
-def generate_single_Nf(data, Nf, betas_to_plot):
+def generate_single_Nf(data, Nf, betas_to_plot, ensembles):
     data = data[data.Nf == Nf]
 
     observables = "g5_mass", "gk_mass"
@@ -191,10 +194,10 @@ def generate_single_Nf(data, Nf, betas_to_plot):
         merged_data,
         Nf,
     )
-    do_table(fit_results, merged_data, Nf)
+    do_table(fit_results, merged_data, Nf, ensembles)
 
 
 def generate(data, ensembles):
     set_plot_defaults(markersize=3, capsize=0.5, linewidth=0.3, preliminary=preliminary)
-    generate_single_Nf(data, 1, [2.05, 2.2, 2.4])
-    generate_single_Nf(data, 2, [2.35])
+    generate_single_Nf(data, 1, [2.05, 2.2, 2.4], ensembles)
+    generate_single_Nf(data, 2, [2.35], ensembles)
