@@ -45,11 +45,8 @@ def fit_form_quadratic(x, p):
     return p["q"] + p["c0"] * x + p["c1"] * x**2
 
 
-def fit_form_invexp(x, p, n=None):
-    if n is None:
-        n = p["n"]
-
-    return p["d1"] * gv.exp(p["d2"] * (1 / (1 / x - p["beta0"])) ** n) + p["d0"]
+def fit_form_invexp(x, p):
+    return p["d1"] * gv.exp(-p["d2"] * (1 / x)) + p["d0"]
 
 
 fit_forms = {
@@ -77,44 +74,15 @@ fit_forms = {
     ],
     "beta": [
         FitForm(
-            fit_function=partial(fit_form_invexp, n=1),
-            fit_formula=r"$\gamma_*(\beta) = d_0 + d_1 \exp\left( \frac{d_2}{\left(\beta - \beta_0\right)^2}\right)$",
-            mapping={"d0": "d_0", "d1": "d_1", "d2": "d_2", "beta0": r"\beta_0"},
+            fit_function=partial(fit_form_invexp),
+            fit_formula=r"$\gamma_*(\beta) = d_0 + d_1 \exp\left(-d_2 \beta\right)$",
+            mapping={"d0": "d_0", "d1": "d_1", "d2": "d_2"},
             prior={
                 "d0": gv.gvar(0.5, 0.5),
-                "d1": gv.gvar(0.5, 0.5),
+                "d1": gv.gvar(0.0, 200.0),
                 "d2": gv.gvar(0.0, 0.5),
-                "beta0": gv.gvar(2.0, 2.0),
             },
-            legend_label="$n=1$",
             latex_name="BetaLinearExponent",
-        ),
-        FitForm(
-            fit_function=partial(fit_form_invexp, n=2),
-            fit_formula=r"$\gamma_*(\beta) = d_0 + d_1 \exp\left( \frac{d_2}{\left(\beta - \beta_0\right)^2}\right)$",
-            mapping={"d0": "d_0", "d1": "d_1", "d2": "d_2", "beta0": r"\beta_0"},
-            prior={
-                "d0": gv.gvar(0.5, 0.5),
-                "d1": gv.gvar(0.5, 0.5),
-                "d2": gv.gvar(0.0, 0.5),
-                "beta0": gv.gvar(2.0, 2.0),
-            },
-            legend_label="$n=2$",
-            latex_name="BetaQuadraticExponent",
-        ),
-        FitForm(
-            fit_function=fit_form_invexp,
-            fit_formula=r"$\gamma_*(\beta) = d_0 + d_1 \exp\left( \frac{d_2}{\left(\beta - \beta_0\right)^2}\right)$",
-            mapping={"d0": "d_0", "d1": "d_1", "d2": "d_2", "beta0": r"\beta_0"},
-            prior={
-                "d0": gv.gvar(0.5, 0.5),
-                "d1": gv.gvar(0.5, 0.5),
-                "d2": gv.gvar(0.0, 0.5),
-                "n": gv.gvar(1.0, 1.0),
-                "beta0": gv.gvar(2.0, 2.0),
-            },
-            legend_label="$n={n}$",
-            latex_name="BetaGeneralExponent",
         ),
     ],
 }
@@ -266,6 +234,7 @@ def generate_single_Nf(
         x_var=x_var,
         xerr_var=xerr_var,
         xlabel_slug=xlabel_slug,
+        add_label=False,
     )
     print_definitions(fit_results, Nf, x_var=x_var)
 
