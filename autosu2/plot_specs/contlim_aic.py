@@ -1,15 +1,40 @@
 #!/usr/bin/env python
 
+from dataclasses import dataclass
+from functools import partial
+import typing
+
 import numpy as np
 import matplotlib.pyplot as plt
 import lsqfit
 import gvar as gv
+from uncertainties import ufloat
 
 from ..plots import set_plot_defaults
 from ..derived_observables import merge_and_hat_quantities
+from ..provenance import latex_metadata, get_basic_metadata
 
 from .common import add_figure_key, beta_colour_marker, preliminary
 from .w0_chiral import fit_1_over_w0
+
+
+definition_filename = "assets/definitions/gammastar.tex"
+
+
+@dataclass
+class FitForm:
+    fit_function: typing.Callable
+    fit_formula: str
+    mapping: dict[str, str]
+    prior: dict[str, gv.gvar]
+    latex_name: str
+    legend_label: str = ""
+
+    def __call__(self, *args, **kwargs):
+        return self.fit_function(*args, **kwargs)
+
+
+number_names = {1: "One", 2: "Two"}
 
 
 def fit_form_linear(x, p):
@@ -20,61 +45,103 @@ def fit_form_quadratic(x, p):
     return p["q"] + p["c0"] * x + p["c1"] * x**2
 
 
-def fit_form_invexp(x, p):
-    # return p["d1"] * gv.exp(p["d2"] * (1 / (x - p["b0"])**2)) + p["d0"]
-    return p["d1"] * gv.exp(p["d2"] * (1 / (1 / x - p["beta0"])) ** 2) + p["d0"]
+def fit_form_invexp(x, p, n=None):
+    if n is None:
+        n = p["n"]
+
+    return p["d1"] * gv.exp(p["d2"] * (1 / (1 / x - p["beta0"])) ** n) + p["d0"]
 
 
-def get_fit_form_priors(x_var):
-    if x_var == "value_w0":
-        fit_form = fit_form_linear
-        fit_formula = r"$\gamma_*(w_0) = q + \frac{m}{w_0}$"
-        mapping = {"q": "q", "m": "m"}
-        prior = {"m": gv.gvar(0.5, 0.5), "q": gv.gvar(0.5, 0.5)}
-    elif x_var == "value_chiral_w0":
-        fit_form = fit_form_quadratic
-        fit_formula = r"$\gamma_*(w_0^\chi) = \gamma_*^{\mathrm{cont.}} + c_0\frac{a}{w_0} + c_1\frac{a^2}{w_0^2}$"
-        mapping = {"q": "q", "c0": "c_0", "c1": "c_1"}
-        prior = {
-            "q": gv.gvar(0.5, 0.5),
-            "c0": gv.gvar(2.5, 2.5),
-            "c1": gv.gvar(0.0, 5.0),
-        }
-    elif x_var == "beta":
-        fit_form = fit_form_invexp
-        fit_formula = r"$\gamma_*(\beta) = d_0 + d_1 \exp\left( \frac{d_2}{\left(\beta - \beta_0\right)^2}\right)$"
-        mapping = {"d0": "d_0", "d1": "d_1", "d2": "d_2", "beta0": r"\beta_0"}
-        prior = {
-            "d0": gv.gvar(0.5, 0.5),
-            "d1": gv.gvar(0.5, 0.5),
-            "d2": gv.gvar(0.0, 0.5),
-            "beta0": gv.gvar(2.0, 2.0),
-        }
-    else:
-        raise ValueError(f"Can't fit {x_var}")
-
-    return fit_form, fit_formula, mapping, prior
+fit_forms = {
+    "value_w0": [
+        FitForm(
+            fit_function=fit_form_linear,
+            fit_formula=r"$\gamma_*(w_0) = q + \frac{m}{w_0}$",
+            mapping={"q": "q", "m": "m"},
+            prior={"m": gv.gvar(0.5, 0.5), "q": gv.gvar(0.5, 0.5)},
+            latex_name="WZero",
+        ),
+    ],
+    "value_chiral_w0": [
+        FitForm(
+            fit_function=fit_form_quadratic,
+            fit_formula=r"$\gamma_*(w_0^\chi) = \gamma_*^{\mathrm{cont.}} + c_0\frac{a}{w_0} + c_1\frac{a^2}{w_0^2}$",
+            mapping={"q": "q", "c0": "c_0", "c1": "c_1"},
+            prior={
+                "q": gv.gvar(0.5, 0.5),
+                "c0": gv.gvar(2.5, 2.5),
+                "c1": gv.gvar(0.0, 5.0),
+            },
+            latex_name="WZeroChiral",
+        ),
+    ],
+    "beta": [
+        FitForm(
+            fit_function=partial(fit_form_invexp, n=1),
+            fit_formula=r"$\gamma_*(\beta) = d_0 + d_1 \exp\left( \frac{d_2}{\left(\beta - \beta_0\right)^2}\right)$",
+            mapping={"d0": "d_0", "d1": "d_1", "d2": "d_2", "beta0": r"\beta_0"},
+            prior={
+                "d0": gv.gvar(0.5, 0.5),
+                "d1": gv.gvar(0.5, 0.5),
+                "d2": gv.gvar(0.0, 0.5),
+                "beta0": gv.gvar(2.0, 2.0),
+            },
+            legend_label="$n=1$",
+            latex_name="BetaLinearExponent",
+        ),
+        FitForm(
+            fit_function=partial(fit_form_invexp, n=2),
+            fit_formula=r"$\gamma_*(\beta) = d_0 + d_1 \exp\left( \frac{d_2}{\left(\beta - \beta_0\right)^2}\right)$",
+            mapping={"d0": "d_0", "d1": "d_1", "d2": "d_2", "beta0": r"\beta_0"},
+            prior={
+                "d0": gv.gvar(0.5, 0.5),
+                "d1": gv.gvar(0.5, 0.5),
+                "d2": gv.gvar(0.0, 0.5),
+                "beta0": gv.gvar(2.0, 2.0),
+            },
+            legend_label="$n=2$",
+            latex_name="BetaQuadraticExponent",
+        ),
+        FitForm(
+            fit_function=fit_form_invexp,
+            fit_formula=r"$\gamma_*(\beta) = d_0 + d_1 \exp\left( \frac{d_2}{\left(\beta - \beta_0\right)^2}\right)$",
+            mapping={"d0": "d_0", "d1": "d_1", "d2": "d_2", "beta0": r"\beta_0"},
+            prior={
+                "d0": gv.gvar(0.5, 0.5),
+                "d1": gv.gvar(0.5, 0.5),
+                "d2": gv.gvar(0.0, 0.5),
+                "n": gv.gvar(1.0, 1.0),
+                "beta0": gv.gvar(2.0, 2.0),
+            },
+            legend_label="$n={n}$",
+            latex_name="BetaGeneralExponent",
+        ),
+    ],
+}
 
 
 def fit(data, x_var="value_w0"):
     x_data = 1 / data[x_var].values
+    target_fit_forms = fit_forms[x_var]
 
     gamma_error_combined = (
         data.uncertainty_gamma_aic**2 + data.value_gamma_aic_syst**2
     ) ** 0.5
     y_data = gv.gvar(data.value_gamma_aic.values, gamma_error_combined.values)
 
-    fit_form, _, _, prior = get_fit_form_priors(x_var)
-    return lsqfit.nonlinear_fit(
-        data=(x_data, y_data),
-        fcn=fit_form,
-        prior=prior,
-    )
+    return [
+        lsqfit.nonlinear_fit(
+            data=(x_data, y_data),
+            fcn=fit_form,
+            prior=fit_form.prior,
+        )
+        for fit_form in target_fit_forms
+    ]
 
 
 def plot(
     data,
-    fit_result,
+    fit_results,
     Nf,
     xlabel_slug="a / w_0",
     x_var="value_w0",
@@ -97,18 +164,41 @@ def plot(
             color=colour,
         )
 
-    fit_form, fit_formula, mapping, _ = get_fit_form_priors(x_var)
+    target_fit_forms = fit_forms[x_var]
     _, xmax = ax.get_xlim()
     x_range = np.linspace(0, xmax, 1000)
-    y_values = fit_form(x_range, fit_result.p)
-    ax.plot(x_range, gv.mean(y_values))
-    ax.fill_between(
-        x_range,
-        gv.mean(y_values) - gv.sdev(y_values),
-        gv.mean(y_values) + gv.sdev(y_values),
-        color="gray",
-        alpha=0.1,
-    )
+
+    fit_colours = "C0", "C1", "C2"
+    fit_dashes = (1, 1), (3, 1), (None, None)
+    fit_handles = []
+    for fit_form, fit_result, colour, dash in zip(
+        target_fit_forms, fit_results, fit_colours, fit_dashes
+    ):
+        y_values = fit_form(x_range, fit_result.p)
+        fit_handles.append(
+            ax.plot(
+                x_range,
+                gv.mean(y_values),
+                label=fit_form.legend_label.format(**fit_result.p),
+                color=colour,
+                dashes=dash,
+            )[0]
+        )
+        band_lower_bound = gv.mean(y_values) - gv.sdev(y_values)
+        band_upper_bound = gv.mean(y_values) + gv.sdev(y_values)
+
+        ax.plot(x_range, band_lower_bound, color=colour, dashes=dash, alpha=0.3)
+        ax.plot(x_range, band_upper_bound, color=colour, dashes=dash, alpha=0.3)
+        ax.fill_between(
+            x_range,
+            band_lower_bound,
+            band_upper_bound,
+            color=colour,
+            alpha=0.1,
+        )
+
+    if len(fit_results) > 1:
+        ax.legend(handles=fit_handles, loc="best")
 
     ax.set_xlim(0, xmax)
     ax.set_ylim(0, None)
@@ -117,10 +207,11 @@ def plot(
     ax.set_ylabel(r"$\gamma_*$")
 
     if add_label:
-        fig.suptitle(fit_formula)
+        fig.suptitle(fit_form.fit_formula)
         ax.set_title(
             ", ".join(
-                f"${label} = {fit_result.p[name]}$" for name, label in mapping.items()
+                f"${label} = {fit_result.p[name]}$"
+                for name, label in fit_form.mapping.items()
             ),
             fontsize="x-small",
         )
@@ -128,6 +219,27 @@ def plot(
     add_figure_key(fig, Nf=Nf, nrow=2)
 
     fig.savefig(filename)
+
+
+def print_definitions(fit_results, Nf, x_var="w0"):
+    target_fit_forms = fit_forms[x_var]
+
+    # Some fit forms break at the zero point exactly,
+    # so use an infinitesimal value instead
+    almost_zero = 1e-31
+
+    for fit_form, fit_result in zip(target_fit_forms, fit_results):
+        latex_var_name = f"GammaStarContinuum{fit_form.latex_name}Nf{number_names[Nf]}"
+        latex_var_name_chisquare = f"{latex_var_name}ExtrapolationChisquare"
+        gammastar_gv = fit_form(np.asarray([almost_zero]), fit_result.p)[0]
+        gammastar = ufloat(gammastar_gv.mean, gammastar_gv.sdev)
+        chisquare = fit_result.chi2 / fit_result.dof
+        with open(definition_filename, "a") as f:
+            print(f"\\newcommand \\{latex_var_name} {{{gammastar:.02uSL}}}", file=f)
+            print(
+                f"\\newcommand \\{latex_var_name_chisquare} {{{chisquare:.02f}}}",
+                file=f,
+            )
 
 
 def generate_single_Nf(
@@ -145,16 +257,17 @@ def generate_single_Nf(
     ).dropna(subset=["value_gamma_aic"])
     subset_data = hatted_data[hatted_data.Nf == Nf]
     filtered_data = subset_data[~subset_data.label.isin(exclude)]
-    fit_result = fit(filtered_data, x_var=x_var)
+    fit_results = fit(filtered_data, x_var=x_var)
 
     plot(
         subset_data,
-        fit_result,
+        fit_results,
         Nf,
         x_var=x_var,
         xerr_var=xerr_var,
         xlabel_slug=xlabel_slug,
     )
+    print_definitions(fit_results, Nf, x_var=x_var)
 
 
 def add_w0_extrapolation(data):
@@ -177,6 +290,8 @@ def add_w0_extrapolation(data):
 
 def generate(data, ensembles):
     set_plot_defaults(markersize=3, capsize=1, linewidth=0.5, preliminary=preliminary)
+    with open(definition_filename, "w") as f:
+        print(latex_metadata(get_basic_metadata(ensembles["_filename"])), file=f)
 
     generate_single_Nf(
         data,
