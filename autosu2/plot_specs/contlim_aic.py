@@ -10,6 +10,7 @@ import lsqfit
 import gvar as gv
 from uncertainties import ufloat
 
+from ..fit_glue import weighted_mean
 from ..plots import set_plot_defaults
 from ..derived_observables import merge_and_hat_quantities
 from ..provenance import latex_metadata, get_basic_metadata
@@ -17,6 +18,10 @@ from ..provenance import latex_metadata, get_basic_metadata
 from .common import add_figure_key, beta_colour_marker, preliminary
 from .w0_chiral import fit_1_over_w0
 
+
+# Some fit forms break at the zero point exactly,
+# so use an infinitesimal value instead
+ALMOST_ZERO = 1e-31
 
 definition_filename = "assets/definitions/gammastar.tex"
 
@@ -192,14 +197,10 @@ def plot(
 def print_definitions(fit_results, Nf, x_var="w0"):
     target_fit_forms = fit_forms[x_var]
 
-    # Some fit forms break at the zero point exactly,
-    # so use an infinitesimal value instead
-    almost_zero = 1e-31
-
     for fit_form, fit_result in zip(target_fit_forms, fit_results):
         latex_var_name = f"GammaStarContinuum{fit_form.latex_name}Nf{number_names[Nf]}"
         latex_var_name_chisquare = f"{latex_var_name}ExtrapolationChisquare"
-        gammastar_gv = fit_form(np.asarray([almost_zero]), fit_result.p)[0]
+        gammastar_gv = fit_form(np.asarray([ALMOST_ZERO]), fit_result.p)[0]
         gammastar = ufloat(gammastar_gv.mean, gammastar_gv.sdev)
         chisquare = fit_result.chi2 / fit_result.dof
         with open(definition_filename, "a") as f:
@@ -208,6 +209,22 @@ def print_definitions(fit_results, Nf, x_var="w0"):
                 f"\\newcommand \\{latex_var_name_chisquare} {{{chisquare:.02f}}}",
                 file=f,
             )
+
+
+def write_mean_result(fit_results, Nf=1):
+    latex_var_name = f"GammaStarContinuumMeanNf{number_names[Nf]}"
+    target_fit_forms = fit_forms["beta"][0], fit_forms["value_chiral_w0"][0]
+    continuum_values = [
+        fit_form(np.asarray([ALMOST_ZERO]), fit_result[0].p)[0]
+        for fit_form, fit_result in zip(target_fit_forms, fit_results)
+    ]
+    mean_gammastar_gv = weighted_mean(continuum_values, error_attr="sdev")
+
+    # Be conservative: account for potential unknown systematics
+    # by increasing uncertainty estimate by a factor of 2
+    mean_gammastar = ufloat(mean_gammastar_gv.mean, mean_gammastar_gv.sdev * 2)
+    with open(definition_filename, "a") as f:
+        print(f"\\newcommand \\{latex_var_name} {{{mean_gammastar:.01uSL}}}", file=f)
 
 
 def generate_single_Nf(
@@ -237,6 +254,7 @@ def generate_single_Nf(
         add_label=False,
     )
     print_definitions(fit_results, Nf, x_var=x_var)
+    return fit_results
 
 
 def add_w0_extrapolation(data):
@@ -269,15 +287,17 @@ def generate(data, ensembles):
         xerr_var="uncertainty_w0",
         exclude=["DB4M13", "DB7M7"],
     )
-    generate_single_Nf(
+    beta_results = generate_single_Nf(
         data, Nf=1, x_var="beta", exclude=["DB4M13", "DB7M7"], xlabel_slug=r"1 / \beta"
     )
 
     data_with_w0_extrapolation = add_w0_extrapolation(data)
-    generate_single_Nf(
+    chiral_w0_results = generate_single_Nf(
         data_with_w0_extrapolation,
         Nf=1,
         x_var="value_chiral_w0",
         xerr_var="uncertainty_chiral_w0",
         xlabel_slug=r"a / w_0^\chi",
     )
+
+    write_mean_result([beta_results, chiral_w0_results], Nf=1)
