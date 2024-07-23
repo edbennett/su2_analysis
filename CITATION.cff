@@ -1,0 +1,56 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: >-
+  SU(2) gauge theory with one and two adjoint fermions
+  towards the continuum limit—Analysis workflow
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Ed
+    family-names: Bennett
+    email: e.j.bennett@swansea.ac.uk
+    affiliation: Swansea University
+    orcid: 'https://orcid.org/0000-0002-1678-6701'
+  - given-names: Andreas
+    family-names: Athenodorou
+    email: a.athenodorou@cyi.ac.cy
+    affiliation: The Cyprus Institute
+    orcid: 'https://orcid.org/0000-0003-4600-4245'
+  - given-names: Georg
+    family-names: Bergner
+    email: georg.bergner@uni-jena.de
+    affiliation: University of Jena
+    orcid: 'https://orcid.org/0000-0002-7325-2220'
+  - given-names: Pietro
+    family-names: Butti
+    email: pietro.butti.fl@gmail.com
+    orcid: 'https://orcid.org/0000-0003-1141-9205'
+    affiliation: University of Zaragoza
+  - given-names: Julian
+    family-names: Lenz
+    orcid: 'https://orcid.org/0000-0001-5250-0005'
+    email: j.lenz@hzdr.de
+    affiliation: Helmholtz Zentrum Dresden-Rossendorf
+  - given-names: Biagio
+    family-names: Lucini
+    email: b.lucini@swansea.ac.uk
+    affiliation: Swansea University
+    orcid: 'https://orcid.org/0000-0001-8974-8266'
+identifiers:
+  - type: url
+    value: 'https://github.com/edbennett/su2_analysis'
+    description: GitHub
+  - type: doi
+    value: 10.5281/zenodo.12802810
+    description: Zenodo
+repository-code: 'https://github.com/edbennett/su2_analysis'
+abstract: >
+  This repository contains the analysis code used to prepare
+  the plots, tables, and other numbers used in the
+  publication SU(2) gauge theory with one and two adjoint
+  fermions towards the continuum limit.
+license: GPL-3.0
