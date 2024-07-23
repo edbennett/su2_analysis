@@ -8,9 +8,12 @@ from uncertainties import ufloat
 from ..plots import set_plot_defaults
 from ..tables import generate_table_from_content, format_value_and_error
 from ..derived_observables import merge_no_w0
-from ..provenance import latex_metadata, get_basic_metadata
+from ..provenance import latex_metadata, get_basic_metadata, number_to_latex
 
 from .common import beta_colour_marker, add_figure_key, preliminary
+
+
+definition_filename = "assets/definitions/gammastar_fshs.tex"
 
 
 def sm_residual(gamma_s, data, count_valid_points=False, observable="value_g5_mass"):
@@ -61,6 +64,10 @@ def sm_residual(gamma_s, data, count_valid_points=False, observable="value_g5_ma
         return result
 
 
+def result_to_ufloat(result):
+    return ufloat(result["x"][0], result["hess_inv"][0, 0])
+
+
 def do_plot(betas, fit_results, merged_data, Nf):
     filename = f"assets/plots/fshs_Nf{Nf}.pdf"
     fig, axes = plt.subplots(
@@ -73,7 +80,8 @@ def do_plot(betas, fit_results, merged_data, Nf):
     axes = axes.ravel()
 
     for fit_beta, ax in zip(betas, axes):
-        gamma = fit_results[fit_beta]
+        gamma_with_error = result_to_ufloat(fit_results[fit_beta])
+        gamma = gamma_with_error.nominal_value
         for beta, colour, marker in beta_colour_marker[Nf]:
             subset_data = merged_data[merged_data.beta == beta]
             L = subset_data.L
@@ -92,7 +100,9 @@ def do_plot(betas, fit_results, merged_data, Nf):
                 ls="none",
             )
 
-        ax.set_title(f"$\\beta={fit_beta} \\Rightarrow \\gamma_*={gamma:.3}$")
+        ax.set_title(
+            f"$\\beta={fit_beta} \\Rightarrow \\gamma_*={gamma_with_error:.2uSL}$",
+        )
 
     add_figure_key(fig, Nf=Nf)
 
@@ -171,7 +181,17 @@ def gammastar_fshs(merged_data, Nf, beta):
     result = single_fit(
         merged_data.dropna(subset=["value_mpcac_mass", "value_g5_mass"]), Nf, beta
     )
-    return ufloat(result["x"][0], result["hess_inv"][0, 0])
+    return result_to_ufloat(result)
+
+
+def write_definitions(fit_results, Nf):
+    for beta, result in fit_results.items():
+        latex_var_name = (
+            f"GammaStarFSHSNf{number_to_latex(Nf)}Beta{number_to_latex(beta)}"
+        )
+        gammastar = result_to_ufloat(result)
+        with open(definition_filename, "a") as f:
+            print(f"\\newcommand \\{latex_var_name} {{{gammastar:.02uSL}}}", file=f)
 
 
 def generate_single_Nf(data, Nf, betas_to_plot, ensembles):
@@ -190,14 +210,18 @@ def generate_single_Nf(data, Nf, betas_to_plot, ensembles):
 
     do_plot(
         betas_to_plot,
-        {beta: fit_results[beta]["x"][0] for beta, _, _ in beta_colour_marker[Nf]},
+        {beta: fit_results[beta] for beta, _, _ in beta_colour_marker[Nf]},
         merged_data,
         Nf,
     )
     do_table(fit_results, merged_data, Nf, ensembles)
+    write_definitions(fit_results, Nf)
 
 
 def generate(data, ensembles):
     set_plot_defaults(markersize=3, capsize=0.5, linewidth=0.3, preliminary=preliminary)
+    with open(definition_filename, "w") as f:
+        print(latex_metadata(get_basic_metadata(ensembles["_filename"])), file=f)
+
     generate_single_Nf(data, 1, [2.05, 2.2, 2.4], ensembles)
     generate_single_Nf(data, 2, [2.35], ensembles)

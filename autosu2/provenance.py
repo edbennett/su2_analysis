@@ -61,6 +61,25 @@ def latex_metadata(metadata):
     )
 
 
+number_names = {
+    "1": "One",
+    "2": "Two",
+    "3": "Three",
+    "4": "Four",
+    "5": "Five",
+    "6": "Six",
+    "7": "Seven",
+    "8": "Eight",
+    "9": "Nine",
+    "0": "Zero",
+    ".": "Point",
+}
+
+
+def number_to_latex(number):
+    return "".join([number_names[char] for char in str(number)])
+
+
 def stamp_provenance(ensembles_filename):
     metadata = get_basic_metadata(ensembles_filename)
     with open("assets/info.json", "w") as info_file:

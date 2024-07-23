@@ -13,7 +13,7 @@ from uncertainties import ufloat
 from ..fit_glue import weighted_mean
 from ..plots import set_plot_defaults
 from ..derived_observables import merge_and_hat_quantities
-from ..provenance import latex_metadata, get_basic_metadata
+from ..provenance import latex_metadata, get_basic_metadata, number_to_latex
 
 from .common import add_figure_key, beta_colour_marker, preliminary
 from .w0_chiral import fit_1_over_w0
@@ -37,9 +37,6 @@ class FitForm:
 
     def __call__(self, *args, **kwargs):
         return self.fit_function(*args, **kwargs)
-
-
-number_names = {1: "One", 2: "Two"}
 
 
 def fit_form_linear(x, p):
@@ -198,7 +195,9 @@ def print_definitions(fit_results, Nf, x_var="w0"):
     target_fit_forms = fit_forms[x_var]
 
     for fit_form, fit_result in zip(target_fit_forms, fit_results):
-        latex_var_name = f"GammaStarContinuum{fit_form.latex_name}Nf{number_names[Nf]}"
+        latex_var_name = (
+            f"GammaStarContinuum{fit_form.latex_name}Nf{number_to_latex(Nf)}"
+        )
         latex_var_name_chisquare = f"{latex_var_name}ExtrapolationChisquare"
         gammastar_gv = fit_form(np.asarray([ALMOST_ZERO]), fit_result.p)[0]
         gammastar = ufloat(gammastar_gv.mean, gammastar_gv.sdev)
@@ -212,7 +211,7 @@ def print_definitions(fit_results, Nf, x_var="w0"):
 
 
 def write_mean_result(fit_results, Nf=1):
-    latex_var_name = f"GammaStarContinuumMeanNf{number_names[Nf]}"
+    latex_var_name = f"GammaStarContinuumMeanNf{number_to_latex(Nf)}"
     target_fit_forms = fit_forms["beta"][0], fit_forms["value_chiral_w0"][0]
     continuum_values = [
         fit_form(np.asarray([ALMOST_ZERO]), fit_result[0].p)[0]
@@ -220,9 +219,7 @@ def write_mean_result(fit_results, Nf=1):
     ]
     mean_gammastar_gv = weighted_mean(continuum_values, error_attr="sdev")
 
-    # Be conservative: account for potential unknown systematics
-    # by increasing uncertainty estimate by a factor of 2
-    mean_gammastar = ufloat(mean_gammastar_gv.mean, mean_gammastar_gv.sdev * 2)
+    mean_gammastar = ufloat(mean_gammastar_gv.mean, mean_gammastar_gv.sdev)
     with open(definition_filename, "a") as f:
         print(f"\\newcommand \\{latex_var_name} {{{mean_gammastar:.01uSL}}}", file=f)
 
