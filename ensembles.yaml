@@ -3644,6 +3644,19 @@ Nf2DB2M6:
         end: 9
       - start: 3
         end: 9
+  measure_modenumber:
+    method: aic
+    format: colconf
+    fit_omega_min: 0.03
+    fit_omega_max: 0.1
+    fit_window_length_min: 0.05
+    fit_window_length_max: 0.1
+    delta_fit: 0.04
+    plot_omega_min: 5
+    plot_omega_max: -4
+    norm: 3.0
+    cutoff: 0.9
+    filter: 0.9
   measure_pcac:
     plateau_start: 30
     plateau_end: 40
