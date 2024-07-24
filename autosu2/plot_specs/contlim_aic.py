@@ -23,7 +23,7 @@ from .w0_chiral import fit_1_over_w0
 # so use an infinitesimal value instead
 ALMOST_ZERO = 1e-31
 
-definition_filename = "assets/definitions/gammastar.tex"
+definition_filename = "assets/definitions/gammastar_continuumlimit.tex"
 
 
 @dataclass
