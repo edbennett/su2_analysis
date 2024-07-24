@@ -76,8 +76,17 @@ number_names = {
 }
 
 
-def number_to_latex(number):
-    return "".join([number_names[char] for char in str(number)])
+def number_to_latex(number, tolerate_non_numbers=False):
+    result = str(number)
+    if not tolerate_non_numbers:
+        if not set(result) < set(number_names):
+            raise ValueError(
+                "Non-numeric characters found but tolerate_non_numbers disabled"
+            )
+
+    for char, substitution in number_names.items():
+        result = result.replace(char, substitution)
+    return result
 
 
 def stamp_provenance(ensembles_filename):
