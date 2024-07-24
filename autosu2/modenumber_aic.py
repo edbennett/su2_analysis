@@ -51,7 +51,7 @@ def read_modenumber(filename, vol, format="hirep"):
     return df
 
 
-def set_priors(ensemble_descriptor, boot_gamma):
+def set_priors(ensemble_descriptor, boot_gamma, xmin):
     mg5 = get_measurement(ensemble_descriptor, "g5_mass")
     mpcac = get_measurement(ensemble_descriptor, "mpcac_mass")
 
@@ -59,13 +59,13 @@ def set_priors(ensemble_descriptor, boot_gamma):
         "log(nu0)": gv.log(gv.gvar("1(1)") * mg5.value),
         "A": gv.gvar(1, 10),
         "gamma": gv.gvar(boot_gamma, 10 * boot_gamma),
-        "log(m)": gv.log(gv.gvar("1(1)") * mpcac.value),
+        "log(m)": gv.log(gv.gvar("1(1)") * min(xmin, mpcac.value)),
     }
     p0 = {
         "nu0": np.exp(priors["log(nu0)"].mean),
         "A": priors["A"].mean,
         "gamma": priors["gamma"].mean,
-        "m": 0.0005,
+        "m": min(xmin, 0.0005),
     }
     return priors, p0
 
@@ -142,7 +142,7 @@ def windows(filename, format, volume, olow, ohigh, dOM, descriptor, boot_gamma):
     Nus = np.array(sorted(Nus))
 
     # Set priors ----------------------------------------------------------------------
-    (priors, p0) = set_priors(descriptor, boot_gamma)
+    (priors, p0) = set_priors(descriptor, boot_gamma, min(Masses))
 
     # Windowing -----------------------------------------------------------------------
     results = {}
