@@ -68,7 +68,7 @@ The workflow depends on a number of sources of data:
    Download the file `ensembles.yaml` from [the data release][datarelease]
    and place it in the `metadata` directory.
 2. Imported data.
-   1. Download the file `TODO`
+   1. Download the file `Fig4.csv`
       from [the data release for the publication "Large mass hierarchies from strongly coupled dynamics"][largemass-dr],
       and place it in the `external_data` directory.
    2. Lattice data for $\mathrm{SU}(2)$,
@@ -128,7 +128,8 @@ and making sure to cite this work as specified in `CITATION.cff`.
 
 [arxiv]: TODO
 [conda]: https://anaconda.org/anaconda/conda
-[datarelease]: TODO
+[datarelease]: https://doi.org/10.5281/zenodo.13128505
+[largemass-dr]: https://doi.org/10.5281/zenodo.13128485
 [miniconda]: https://docs.anaconda.com/miniconda/
 [previous-dr]: https://doi.org/10.5281/zenodo.5139618
 [texlive]: https://www.tug.org/texlive/
