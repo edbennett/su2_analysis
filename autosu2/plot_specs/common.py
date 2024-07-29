@@ -3,7 +3,7 @@
 from math import ceil
 from numpy import nan
 
-preliminary = True
+preliminary = False
 
 beta_colour_marker = {
     1: [
