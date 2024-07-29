@@ -68,7 +68,7 @@ dependencies:
       - vegas==6.1.1
       - virtualenv==20.26.0
       - wrapt==1.16.0
-      - ./libs/flow-analysis
-      - ./libs/glue-analysis==0.0.1
-      - ./libs/meson-analysis
-      - ./libs/format-multiple-errors
+      - ./libs/flow_analysis
+      - ./libs/glue_analysis
+      - ./libs/meson_analysis
+      - ./libs/format_multiple_errors
