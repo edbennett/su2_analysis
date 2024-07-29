@@ -23,9 +23,10 @@ R_value = namedtuple("R_value", ["centre", "lower", "upper"])
 
 @cache
 def get_interpolator():
-    data = pd.read_csv("external_data/sigmamodel.csv")
+    data = pd.read_csv("external_data/Fig4.csv")
+    subset_data = data[data.Spin == 2].groupby(["Delta"], as_index=False).min()
     raw_interpolator = interp1d(
-        data.gammastar - 1, data.R_ratio, bounds_error=False, kind="cubic"
+        subset_data.Delta - 1, subset_data["M/M0"], bounds_error=False, kind="cubic"
     )
 
     def interpolator(gammastar):
