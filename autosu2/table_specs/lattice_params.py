@@ -31,7 +31,7 @@ def chunk_ensembles(ensembles, max_rows=45):
         yield current_chunk
 
 
-def lattice_params(data, **kwargs):
+def lattice_params(data, ensembles):
     columns = ["", None, r"$\beta$", "$am$", r"$N_t \times N_s^3$", r"$N_{\rm conf.}$"]
     constants = ("beta", "m", "V", "cfg_count")
     observables = []
@@ -41,15 +41,16 @@ def lattice_params(data, **kwargs):
         for chunk_index, ensemble_chunk in enumerate(chunk_ensembles(ensemble_set)):
             generate_table_from_db(
                 data=data,
-                ensembles=ensemble_chunk,
+                ensemble_names=ensemble_chunk,
                 observables=observables,
                 filename=filename.format(Nf=Nf, chunk=chunk_index),
                 columns=columns,
                 constants=constants,
                 error_digits=ERROR_DIGITS,
                 exponential=EXPONENTIAL,
+                ensembles_filename=ensembles["_filename"],
             )
 
 
-def generate(data, **kwargs):
-    lattice_params(data, **kwargs)
+def generate(data, ensembles):
+    lattice_params(data, ensembles)

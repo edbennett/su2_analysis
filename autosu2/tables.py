@@ -77,9 +77,10 @@ def measurement_mask(data, observable):
 
 def generate_table_from_db(
     data,
-    ensembles,
+    ensemble_names,
     observables,
     filename,
+    ensembles_filename,
     columns=None,
     constants=tuple(),
     error_digits=2,
@@ -99,7 +100,7 @@ def generate_table_from_db(
     # Set up initial values of variables used for implementing multirow
     current_row_constants = {}
     num_rows = {}
-    for ensemble in ensembles:
+    for ensemble in ensemble_names:
         if not ensemble:
             line_content += HLINE + "\n"
             continue
@@ -194,7 +195,7 @@ def generate_table_from_db(
                     for line in table_content
                 ]
 
-    preamble = latex_metadata(get_basic_metadata(ensembles["_filename"]))
+    preamble = latex_metadata(get_basic_metadata(ensembles_filename))
     generate_table_from_content(
         filename,
         table_content,
