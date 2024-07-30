@@ -1,3 +1,6 @@
+raw_data.zip
+external_data/su2.sqlite
+
 scratch
 .DS_Store
 .#*
@@ -16,6 +19,7 @@ assets/*
 !.pre-commit-config.yaml
 *.csv
 !external_data/*.csv
+external_data/Fig4.csv
 *.dat
 *.txt
 *.out
