@@ -313,8 +313,11 @@ def do_single_analysis(
 
 def do_analysis(ensembles, single_ensemble=None, **kwargs):
     for label, ensemble in ensembles.items():
-        if (not single_ensemble) or label == single_ensemble:
-            do_single_analysis(label, ensemble, **kwargs)
+        if label.startswith("_"):
+            continue
+        if single_ensemble and label != single_ensemble:
+            continue
+        do_single_analysis(label, ensemble, **kwargs)
 
 
 def output_results(only=None, ensembles=None):
