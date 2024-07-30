@@ -6,6 +6,7 @@ from pandas import read_csv
 from sqlalchemy import bindparam, create_engine, text
 
 from .db import add_measurement, measurement_exists, single_simulation_exists
+from .fit_glue import select_2plusplus_state
 
 
 def import_data(data, observables):
@@ -122,7 +123,7 @@ class SelfMap:
         return key
 
 
-def callback_string_tension(measurement):
+def callback_glue(measurement):
     if measurement.observable == "sqrtsigma":
         add_measurement(
             describe_ensemble(measurement),
@@ -131,6 +132,10 @@ def callback_string_tension(measurement):
             uncertainty=2 * measurement.value * measurement.uncertainty,
             valence_mass=measurement.valence_mass,
             free_parameter=measurement.free_parameter,
+        )
+    elif measurement.observable in ("Epp_mass", "Tpp_mass"):
+        select_2plusplus_state(
+            describe_ensemble(measurement), {"use": True}, {"use": True}
         )
 
 

@@ -23,7 +23,7 @@ from .polyakov import fit_plot_and_save_polyakov_loops
 from .provenance import stamp_provenance
 from .modenumber import do_modenumber_fit
 from .modenumber_julia import wrap_modenumber_fit_julia
-from .sideload import callback_string_tension, import_data_sql, import_data_csv
+from .sideload import callback_glue, import_data_sql, import_data_csv
 from .modenumber_aic import do_modenumber_fit_aic
 
 
@@ -392,7 +392,7 @@ def main():
                 "Epp_mass": "E++_mass",
                 "Tpp_mass": "T2++_mass",
             },
-            callback=callback_string_tension,
+            callback=callback_glue,
         )
 
     if not args.skip_output:
