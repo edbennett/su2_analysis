@@ -74,8 +74,9 @@ The workflow depends on a number of sources of data:
    2. Lattice data for $\mathrm{SU}(2)$,
       $N_{\mathrm{f}}=2$,
       $\beta=2.25$
-      are included in this repository in the file
-      `external_data/su2_nf2_b2.25.csv`.
+      are included in this repository in the files
+      `external_data/su2_nf2_b2.25.csv`
+      and `external_data/su2_topology.csv`.
       No action is needed.
    3. Data output from the previous publication in this project.
       Download the file `su2.sqlite` from

@@ -20,7 +20,7 @@ def add_sideload_data(ax):
     doi:10.1140/epjc/s10052-013-2426-6 (arXiv:1209.5579)
     """
 
-    data = read_csv("su2_topology.csv", comment="#")
+    data = read_csv("external_data/su2_topology.csv", comment="#")
 
     for Nf, label_suffix, marker in (0, "", "s"), (2, r", \beta=2.25", "*"):
         subset_data = data[data.Nf == Nf]
