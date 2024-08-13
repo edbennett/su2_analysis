@@ -95,6 +95,7 @@ def generate_table_from_db(
     line_content = ""
 
     if "V" in constants and "V" not in data.columns:
+        data = data.copy()
         data["V"] = [f"{T} \\times {L}^3" for T, L in zip(data["T"], data["L"])]
 
     # Set up initial values of variables used for implementing multirow
