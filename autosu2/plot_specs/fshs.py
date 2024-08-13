@@ -1,3 +1,5 @@
+import csv
+
 import numpy as np
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
@@ -13,6 +15,7 @@ from ..provenance import text_metadata, get_basic_metadata, number_to_latex
 from .common import beta_colour_marker, add_figure_key, preliminary
 
 
+csv_filename = "processed_data/gammastar_fshs.csv"
 definition_filename = "assets/definitions/gammastar_fshs.tex"
 
 
@@ -196,6 +199,20 @@ def write_definitions(fit_results, Nf):
             print(f"\\newcommand \\{latex_var_name} {{{gammastar:.02uSL}}}", file=f)
 
 
+def write_csv(fit_results, Nf):
+    with open(csv_filename, "a") as f:
+        csv_writer = csv.writer(f, quoting=csv.QUOTE_MINIMAL, lineterminator="\n")
+        for beta, result in fit_results.items():
+            csv_writer.writerow(
+                (
+                    Nf,
+                    beta,
+                    result["x"][0],
+                    result["hess_inv"][0, 0],
+                )
+            )
+
+
 def generate_single_Nf(data, Nf, betas_to_plot, ensembles):
     data = data[data.Nf == Nf]
 
@@ -218,6 +235,7 @@ def generate_single_Nf(data, Nf, betas_to_plot, ensembles):
     )
     do_table(fit_results, merged_data, Nf, ensembles)
     write_definitions(fit_results, Nf)
+    write_csv(fit_results, Nf)
 
 
 def generate(data, ensembles):
@@ -225,6 +243,10 @@ def generate(data, ensembles):
     ensembles_metadata = get_basic_metadata(ensembles["_filename"])
     with open(definition_filename, "w") as f:
         print(text_metadata(ensembles_metadata, comment_char="%"), file=f)
+
+    with open(csv_filename, "w") as f:
+        print(text_metadata(ensembles_metadata, comment_char="#"), file=f)
+        print("Nf,beta,gamma_value,gamma_uncertainty", file=f)
 
     generate_single_Nf(data, 1, [2.05, 2.2, 2.4], ensembles)
     generate_single_Nf(data, 2, [2.35], ensembles)

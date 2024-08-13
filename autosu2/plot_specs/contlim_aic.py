@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import csv
 from dataclasses import dataclass
 from functools import partial
 import typing
@@ -23,6 +24,7 @@ from .w0_chiral import fit_1_over_w0
 # so use an infinitesimal value instead
 ALMOST_ZERO = 1e-31
 
+csv_filename = "processed_data/gammastar_contlim.csv"
 definition_filename = "assets/definitions/gammastar_continuumlimit.tex"
 
 
@@ -210,6 +212,22 @@ def print_definitions(fit_results, Nf, x_var="w0"):
             )
 
 
+def write_csv(fit_results, Nf, x_var="w0"):
+    target_fit_forms = fit_forms[x_var]
+    with open(csv_filename, "a") as f:
+        csv_writer = csv.writer(f, quoting=csv.QUOTE_MINIMAL, lineterminator="\n")
+        for fit_form, fit_result in zip(target_fit_forms, fit_results):
+            csv_writer.writerow(
+                (
+                    Nf,
+                    fit_form(np.asarray([ALMOST_ZERO]), fit_result.p)[0].mean,
+                    fit_form(np.asarray([ALMOST_ZERO]), fit_result.p)[0].sdev,
+                    fit_result.chi2 / fit_result.dof,
+                    fit_form.latex_name,
+                )
+            )
+
+
 def write_mean_result(fit_results, Nf=1):
     latex_var_name = f"GammaStarContinuumMeanNf{number_to_latex(Nf)}"
     target_fit_forms = fit_forms["beta"][0], fit_forms["value_chiral_w0"][0]
@@ -251,6 +269,7 @@ def generate_single_Nf(
         add_label=False,
     )
     print_definitions(fit_results, Nf, x_var=x_var)
+    write_csv(fit_results, Nf, x_var=x_var)
     return fit_results
 
 
@@ -277,6 +296,10 @@ def generate(data, ensembles):
     ensembles_metadata = get_basic_metadata(ensembles["_filename"])
     with open(definition_filename, "w") as f:
         print(text_metadata(ensembles_metadata, comment_char="%"), file=f)
+
+    with open(csv_filename, "w") as f:
+        print(text_metadata(ensembles_metadata), file=f)
+        print("Nf,gamma_value,gamma_uncertainty,chisquare,method", file=f)
 
     generate_single_Nf(
         data,
