@@ -7,6 +7,7 @@ from operator import or_
 
 import numpy as np
 
+from ..provenance import text_metadata, get_basic_metadata
 from ..tables import ObservableSpec
 
 observables = [
@@ -80,4 +81,7 @@ def generate(data, ensembles):
     )
     tabular_data.columns = tabular_data.columns.map(serialise_key)
     tabular_data.sort_index(axis=1, inplace=True)
-    tabular_data.to_csv(filename)
+
+    with open(filename, "w") as f:
+        print(text_metadata(get_basic_metadata(ensembles["_filename"])), file=f)
+        tabular_data.to_csv(f)
