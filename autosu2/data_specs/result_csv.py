@@ -57,7 +57,7 @@ def serialise_key(multi_key):
 
 
 def generate(data, ensembles):
-    filename = "flow_data.csv"
+    filename = "ensemble_results.csv"
     filtered_data = filter_ensembles(
         filter_observables(data, observables),
         ensembles,
