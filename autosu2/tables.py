@@ -145,7 +145,7 @@ def generate_table_from_db(
         for observable in observables:
             if isinstance(observable, str):
                 observable = ObservableSpec(observable)
-            assert type(observable) == ObservableSpec
+            assert type(observable) is ObservableSpec
 
             measurement = ensemble_data[measurement_mask(ensemble_data, observable)]
             if len(measurement) > 1:
