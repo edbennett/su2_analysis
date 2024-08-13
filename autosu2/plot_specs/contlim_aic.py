@@ -13,7 +13,7 @@ from uncertainties import ufloat
 from ..fit_glue import weighted_mean
 from ..plots import set_plot_defaults
 from ..derived_observables import merge_and_hat_quantities
-from ..provenance import latex_metadata, get_basic_metadata, number_to_latex
+from ..provenance import text_metadata, get_basic_metadata, number_to_latex
 
 from .common import add_figure_key, beta_colour_marker, preliminary
 from .w0_chiral import fit_1_over_w0
@@ -274,8 +274,9 @@ def add_w0_extrapolation(data):
 
 def generate(data, ensembles):
     set_plot_defaults(markersize=3, capsize=1, linewidth=0.5, preliminary=preliminary)
+    ensembles_metadata = get_basic_metadata(ensembles["_filename"])
     with open(definition_filename, "w") as f:
-        print(latex_metadata(get_basic_metadata(ensembles["_filename"])), file=f)
+        print(text_metadata(ensembles_metadata, comment_char="%"), file=f)
 
     generate_single_Nf(
         data,

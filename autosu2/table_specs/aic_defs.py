@@ -3,7 +3,7 @@
 from format_multiple_errors import format_multiple_errors
 
 from ..derived_observables import merge_no_w0
-from ..provenance import latex_metadata, get_basic_metadata, number_to_latex
+from ..provenance import text_metadata, get_basic_metadata, number_to_latex
 
 
 def generate(data, ensembles):
@@ -11,7 +11,10 @@ def generate(data, ensembles):
 
     merged_data = merge_no_w0(data, ["gamma_aic", "gamma_aic_syst"])
     with open(definition_filename, "w") as f:
-        print(latex_metadata(get_basic_metadata(ensembles["_filename"])), file=f)
+        print(
+            text_metadata(get_basic_metadata(ensembles["_filename"]), comment_char="%"),
+            file=f,
+        )
         for ensemble in merged_data.to_dict("records"):
             latex_var_name = f"GammaStarAIC{number_to_latex(ensemble['label'], tolerate_non_numbers=True)}"
             gammastar = format_multiple_errors(

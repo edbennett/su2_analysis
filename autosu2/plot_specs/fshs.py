@@ -8,7 +8,7 @@ from uncertainties import ufloat
 from ..plots import set_plot_defaults
 from ..tables import generate_table_from_content, format_value_and_error
 from ..derived_observables import merge_no_w0
-from ..provenance import latex_metadata, get_basic_metadata, number_to_latex
+from ..provenance import text_metadata, get_basic_metadata, number_to_latex
 
 from .common import beta_colour_marker, add_figure_key, preliminary
 
@@ -165,7 +165,9 @@ def do_table(results, merged_data, Nf, ensembles):
             )
             table_content.append(f"{row_start} & {formatted_gamma_s_aic} & {row.label}")
 
-    preamble = latex_metadata(get_basic_metadata(ensembles["_filename"]))
+    preamble = text_metadata(
+        get_basic_metadata(ensembles["_filename"]), comment_char="%"
+    )
     generate_table_from_content(filename, table_content, columns, preamble=preamble)
 
 
@@ -220,8 +222,9 @@ def generate_single_Nf(data, Nf, betas_to_plot, ensembles):
 
 def generate(data, ensembles):
     set_plot_defaults(markersize=3, capsize=0.5, linewidth=0.3, preliminary=preliminary)
+    ensembles_metadata = get_basic_metadata(ensembles["_filename"])
     with open(definition_filename, "w") as f:
-        print(latex_metadata(get_basic_metadata(ensembles["_filename"])), file=f)
+        print(text_metadata(ensembles_metadata, comment_char="%"), file=f)
 
     generate_single_Nf(data, 1, [2.05, 2.2, 2.4], ensembles)
     generate_single_Nf(data, 2, [2.35], ensembles)

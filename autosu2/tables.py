@@ -1,7 +1,7 @@
 from collections import namedtuple, defaultdict
 from uncertainties import ufloat
 
-from .provenance import latex_metadata, get_basic_metadata
+from .provenance import text_metadata, get_basic_metadata
 
 HLINE = r"    \hline"
 ObservableSpec = namedtuple(
@@ -195,7 +195,7 @@ def generate_table_from_db(
                     for line in table_content
                 ]
 
-    preamble = latex_metadata(get_basic_metadata(ensembles_filename))
+    preamble = text_metadata(get_basic_metadata(ensembles_filename), comment_char="%")
     generate_table_from_content(
         filename,
         table_content,
