@@ -386,7 +386,7 @@ def main():
         import_data_sql(
             args.sideload_sql,
             list(ensembles.keys()),
-            ["App_mass", "Epp_mass", "Tpp_mass", "sqrtsigma", "spin12_mass"],
+            ["App_mass", "Epp_mass", "Tpp_mass", "sqrtsigma"],
             observable_names={
                 "App_mass": "A1++_mass",
                 "Epp_mass": "E++_mass",
