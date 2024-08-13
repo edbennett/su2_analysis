@@ -19,13 +19,26 @@ observables = [
     ObservableSpec("fitted_Q0"),
     ObservableSpec("Q_width"),
     ObservableSpec("Q_tau_exp"),
+    ObservableSpec("chi_top"),
+    ObservableSpec("avr_plaquette"),
     ObservableSpec("mpcac_mass"),
     ObservableSpec("g5_mass"),
     ObservableSpec("g5_decay_const"),
     ObservableSpec("gk_mass"),
+    ObservableSpec("gk_decay_const"),
     ObservableSpec("id_mass"),
+    ObservableSpec("id_decay_const"),
     ObservableSpec("g5gk_mass"),
+    ObservableSpec("g5gk_decay_const"),
     ObservableSpec("spin12_mass"),
+    ObservableSpec("A1++_mass"),
+    ObservableSpec("E++_mass"),
+    ObservableSpec("T2++_mass"),
+    ObservableSpec("2++_mass"),
+    ObservableSpec("torelon_mass"),
+    ObservableSpec("string_tension"),
+    ObservableSpec("gamma_aic"),
+    ObservableSpec("gamma_aic_syst"),
 ]
 
 
@@ -62,7 +75,7 @@ def generate(data, ensembles):
         filter_observables(data, observables),
         ensembles,
     )
-    tabular_data = filtered_data.pivot(
+    tabular_data = filtered_data.drop(columns=["valence_mass"]).pivot(
         index=[
             "label",
             "group_family",
@@ -77,9 +90,14 @@ def generate(data, ensembles):
             "last_cfg",
             "cfg_count",
         ],
-        columns=["observable", "valence_mass", "free_parameter"],
+        columns=["observable", "free_parameter"],
     )
     tabular_data.columns = tabular_data.columns.map(serialise_key)
+    tabular_data.drop(columns=["gamma_aic_syst_uncertainty"], inplace=True)
+    tabular_data.rename(
+        columns={"gamma_aic_syst_value": "gamma_aic_syst_uncertainty"},
+        inplace=True,
+    )
     tabular_data.sort_index(axis=1, inplace=True)
 
     with open(filename, "w") as f:
