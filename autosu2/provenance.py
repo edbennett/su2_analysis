@@ -41,7 +41,7 @@ def get_basic_metadata(ensembles_filename):
     return metadata
 
 
-def text_metadata(metadata, comment_char="#"):
+def flatten_metadata(metadata):
     flat_metadata = {
         "_comment": "This file was generated automatically. Do not modify it directly; re-run the analysis workflow!"
     }
@@ -55,11 +55,14 @@ def text_metadata(metadata, comment_char="#"):
 
     flat_metadata["generated"] = flat_metadata["workflow_run::completed"]
     del flat_metadata["workflow_run::completed"]
+    return flat_metadata
 
+
+def text_metadata(metadata, comment_char="#"):
     return "\n".join(
         [
             f"{comment_char} {k}: {v.replace('\n', '\n{comment_char} ')}"
-            for k, v in flat_metadata.items()
+            for k, v in flatten_metadata(metadata).items()
         ]
     )
 
