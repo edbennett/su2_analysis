@@ -1,17 +1,20 @@
 #!/usr/bin/env python
 
 from argparse import ArgumentParser
+import logging
 
 import h5py
-from numpy import asarray
+from numpy import asarray, loadtxt, moveaxis, newaxis
 import yaml
 
+from glue_analysis.readers import read_correlators_fortran
 from .avr_plaquette import get_plaquettes
 from .data import get_correlators_from_raw, get_flows_from_raw
 from .do_analysis import filter_complete, get_file_contents, get_subdirectory_name
 from .glue import read_glue_correlation_matrices
-from .modenumber import read_modenumber
+from .modenumber import read_modenumber as read_modenumber_hirep
 from .polyakov import get_loops_from_raw
+from .provenance import get_basic_metadata, flatten_metadata
 from .spin12 import get_correlators_spin12format
 
 
@@ -41,12 +44,9 @@ def polyakov_getter(filename_base, group, **params):
     subgroup.create_dataset("loops", data=asarray(polyakov_loops))
 
 
-def modenumber_getter(filename_base, group, **params):
+def modenumber_getter_hirep(filename_base, group, **params):
     filename = filename_base + "out_modenumber"
-    modenumbers = read_modenumber(filename)
-    if len(modenumbers) == 0:
-        return
-    subgroup = group.create_group("modenumber")
+    modenumbers = read_modenumber_hirep(filename)
 
     # nested dict with structure modenumbers[nu][trajectory] = nu
     # each modenumbers[nu] will have the same set of keys for trajectory
@@ -62,9 +62,36 @@ def modenumber_getter(filename_base, group, **params):
         ]
     )
 
+    if len(modenumbers) == 0:
+        return
+    subgroup = group.create_group("modenumber")
+
     subgroup.create_dataset("upper_bounds", data=upper_bounds)
     subgroup.create_dataset("trajectories", data=trajectories)
     subgroup.create_dataset("modenumbers", data=modenumbers_array)
+
+
+def modenumber_getter_colconf(filename_base, group, **params):
+    filename = filename_base + "modenumber.dat"
+    data = loadtxt(filename)
+    upper_bounds = data[:, 0]
+    modenumbers = data[:, 1:]
+
+    subgroup = group.create_group("modenumber")
+
+    # Trajectories are not indexed in colconf files
+    subgroup.create_dataset("upper_bounds", data=upper_bounds)
+    subgroup.create_dataset("modenumbers", data=modenumbers)
+
+
+def modenumber_getter(filename_base, group, **params):
+    if params.get("format", "hirep") == "hirep":
+        modenumber_getter_hirep(filename_base, group, **params)
+    elif params.get("format") == "colconf":
+        modenumber_getter_colconf(filename_base, group, **params)
+    else:
+        logging.warning(f"Couldn't get mode numbers for {filename_base}")
+        return
 
 
 def mesons_getter(filename_base, group, **params):
@@ -91,6 +118,15 @@ def mesons_getter(filename_base, group, **params):
 
 
 def glueball_getter(filename_base, group, **params):
+    if "num_bins" in params:
+        fortran_glueball_getter(filename_base, group, **params)
+    elif "cfg_count" in params:
+        text_glueball_getter(filename_base, group, **params)
+    else:
+        logging.warning(f"Couldn't get glueballs for {filename_base}")
+
+
+def fortran_glueball_getter(filename_base, group, **params):
     filename = filename_base + "glue_correlation_matrix"
     names = [
         "action",
@@ -115,8 +151,57 @@ def glueball_getter(filename_base, group, **params):
     )
 
     subgroup = group.create_group("gluonic_correlation_matrices")
-    for name, matrix in zip(names, correlation_matrices):
-        subgroup.create_dataset(name, data=matrix)
+    for name, (matrix, num_operators) in zip(names, correlation_matrices):
+        dataset = subgroup.create_dataset(name, data=matrix)
+        dataset.attrs.update(
+            {
+                "cfg_count": params.get("cfg_count", group.attrs["cfg_count"]),
+                "num_momenta": default_num_momenta,
+                "num_bins": params["num_bins"],
+                "num_blocking_levels": params["num_blocking_levels"],
+                "num_operators": num_operators,
+            }
+        )
+
+
+def text_glueball_getter(filename_base, group, **params):
+    subgroup = group.create_group("gluonic_correlation_matrices")
+    for channel, cor_suffix, vac_suffix in [
+        ("A1++", "0R", "0"),
+        ("torelon", "L", "L"),
+        ("E++", "ER", "E"),
+        ("T2++", "TR", "T"),
+    ]:
+        corr_filename = filename_base + "out_corr_" + channel
+        vev_filename = filename_base + "out_vev_" + channel
+        corr_ensemble = read_correlators_fortran(
+            corr_filename,
+            channel=channel,
+            vev_filename=vev_filename,
+            metadata={
+                "NT": group.attrs["T"],
+                "num_configs": params["cfg_count"],
+            },
+        )
+        correlators = moveaxis(
+            corr_ensemble.get_numpy(),
+            [0, 1, 2, 3],
+            [3, 0, 2, 1],
+        )[newaxis, newaxis, ...]
+        vevs = corr_ensemble.get_numpy_vevs().swapaxes(0, 1)[newaxis, ...]
+        corr_dataset = subgroup.create_dataset(f"cor_{cor_suffix}", data=correlators)
+        vev_dataset = subgroup.create_dataset(f"vac_{vac_suffix}", data=vevs)
+
+        for dataset in corr_dataset, vev_dataset:
+            dataset.attrs.update(
+                {
+                    "cfg_count": params["cfg_count"],
+                    "num_momenta": 1,
+                    "num_blocking_levels": 1,
+                    "num_bins": corr_ensemble.num_samples,
+                    "num_operators": corr_ensemble.num_internal,
+                }
+            )
 
 
 def spin12_getter(filename_base, group, **params):
@@ -169,8 +254,9 @@ def label_group(group, ensemble):
             group.attrs[key] = ensemble[key]
 
 
-def process_raw_to_hdf5(ensembles, filename):
+def process_raw_to_hdf5(ensembles, metadata, filename):
     with h5py.File(filename, "w") as f:
+        f.attrs.update(metadata)
         for label, ensemble in ensembles.items():
             print(label, "         ")
             group = f.create_group(label)
@@ -194,7 +280,8 @@ def main():
     args = parser.parse_args()
 
     ensembles = filter_complete(yaml.safe_load(get_file_contents(args.ensembles_file)))
-    process_raw_to_hdf5(ensembles, args.hdf5_file)
+    metadata = flatten_metadata(get_basic_metadata(args.ensembles_file))
+    process_raw_to_hdf5(ensembles, metadata, args.hdf5_file)
 
 
 if __name__ == "__main__":

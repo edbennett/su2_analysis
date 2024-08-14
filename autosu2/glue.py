@@ -121,4 +121,12 @@ def read_glue_correlation_matrices(
                 )
             ),
         )
-        return (bctn, cor_L, vac_L, cor_L2, vac_L2, cor_0R, vac_0, cor_ER, cor_TR)
+        return list(
+            zip(
+                (bctn, cor_L, vac_L, cor_L2, vac_L2, cor_0R, vac_0, cor_ER, cor_TR),
+                [
+                    DEFAULT_GLUE_PARAMS.get(f"num_operators_{k}")
+                    for k in ["bctn", "L", "L", "L2", "L2", "0", "0", "E", "T"]
+                ],
+            )
+        )
