@@ -127,7 +127,7 @@ please do borrow it,
 subject to the terms in `LICENSE`,
 and making sure to cite this work as specified in `CITATION.cff`.
 
-[arxiv]: TODO
+[arxiv]: https://doi.org/10.48550/arXiv.2408.00171
 [conda]: https://anaconda.org/anaconda/conda
 [datarelease]: https://doi.org/10.5281/zenodo.13128505
 [largemass-dr]: https://doi.org/10.5281/zenodo.13128485
