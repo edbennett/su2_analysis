@@ -173,13 +173,15 @@ def get_correlators_spin12format(filename_base):
             if len(set(observable_results)) < 0.8 * len(set(cfg_indices)):
                 keys_to_remove.append(observable_key)
             # Sometimes the last trajectory starts but does not complete
-            elif set(cfg_indices) - set(observable_results.keys()) == {cfg_indices[-1]}:
-                last_cfg_idx = cfg_indices.pop()
-                for _, other_observable_results in results.items():
-                    if last_cfg_idx in other_observable_results:
-                        del other_observable_results[last_cfg_idx]
             else:
-                assert set(observable_results.keys()) == set(cfg_indices)
+                for cfg_idx in set(cfg_indices):
+                    if cfg_idx in observable_results:
+                        continue
+                    # Purge partial results
+                    for _, other_observable_results in results.items():
+                        if cfg_idx in other_observable_results:
+                            del other_observable_results[cfg_idx]
+                    cfg_indices = [idx for idx in cfg_indices if idx != cfg_idx]
 
         for key in keys_to_remove:
             del results[key]
