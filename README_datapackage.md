@@ -1,4 +1,4 @@
-# Investigating the conformal behaviour of SU(2) with one adjoint Dirac flavor
+# SU(2) gauge theory with one and two adjoint fermions towards the continuum limit
 
 ## Data release for [arXiv:2408.00171][paper]
 
