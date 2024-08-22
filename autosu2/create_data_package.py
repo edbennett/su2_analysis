@@ -7,9 +7,11 @@ import h5py
 from numpy import asarray, loadtxt, moveaxis, newaxis
 import yaml
 
+from flow_analysis.readers import readers
+
 from glue_analysis.readers import read_correlators_fortran
 from .avr_plaquette import get_plaquettes
-from .data import get_correlators_from_raw, get_flows_from_raw
+from .data import get_correlators_from_raw
 from .do_analysis import filter_complete, get_file_contents, get_subdirectory_name
 from .glue import read_glue_correlation_matrices
 from .modenumber import read_modenumber as read_modenumber_hirep
@@ -26,13 +28,14 @@ def plaq_getter(filename_base, group, **params):
 
 def gflow_getter(filename_base, group, **params):
     filename = filename_base + "out_wflow"
+    reader = params.get("param", "hirep")
+    flows = readers[reader](filename)
     subgroup = group.create_group("gradient_flow")
-    trajectories, times, Eps, Ecs, Qs = get_flows_from_raw(filename)
-    subgroup.create_dataset("trajectories", data=trajectories)
-    subgroup.create_dataset("flow_time", data=times)
-    subgroup.create_dataset("E_density_plaquette", data=Eps)
-    subgroup.create_dataset("E_density_clover", data=Ecs)
-    subgroup.create_dataset("topological_charge", data=Qs)
+    subgroup.create_dataset("trajectories", data=flows.trajectories)
+    subgroup.create_dataset("flow_time", data=flows.times)
+    subgroup.create_dataset("E_density_plaquette", data=flows.Eps)
+    subgroup.create_dataset("E_density_clover", data=flows.Ecs)
+    subgroup.create_dataset("topological_charge", data=flows.Qs)
 
 
 def polyakov_getter(filename_base, group, **params):
@@ -269,6 +272,8 @@ def process_raw_to_hdf5(ensembles, metadata, filename):
                     filename_base = "raw_data/" + directory + "/"
                     if isinstance(measurement, dict):
                         getter(filename_base, group, **measurement)
+                    elif isinstance(measurement, str):
+                        getter(filename_base, group, param=measurement)
                     else:
                         getter(filename_base, group)
 
