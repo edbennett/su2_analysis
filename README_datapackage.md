@@ -4,7 +4,7 @@
 
 This package contains all data generated in preparing the publication
 [SU(2) gauge theory with one and two adjoint fermions towards the continuum limit][paper].
-It includes four classes of data:
+It includes five classes of data:
 
 1. Raw data,
    as generated from the measurement code running on HPC,
