@@ -15,12 +15,12 @@ def get_subdirectory_name(descriptor):
         L=descriptor["L"],
         T=descriptor["T"],
         beta=descriptor["beta"],
-        m_suffix=f'/m{descriptor["m"]}' if "m" in descriptor else "",
+        m_suffix=f"/m{descriptor['m']}" if "m" in descriptor else "",
         rep_suffix=(
-            f'_{descriptor["representation"]}' if "representation" in descriptor else ""
+            f"_{descriptor['representation']}" if "representation" in descriptor else ""
         ),
         directory_suffix=(
-            f'_{descriptor["directory_suffix"]}'
+            f"_{descriptor['directory_suffix']}"
             if "directory_suffix" in descriptor
             else ""
         ),

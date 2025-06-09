@@ -38,7 +38,7 @@ def generate_table_from_content(
 ):
     if columns is not None and (header is not None or table_spec is not None):
         raise ValueError(
-            "Either `columns` or `header` + `table_spec` may be " "specified, not both."
+            "Either `columns` or `header` + `table_spec` may be specified, not both."
         )
     if columns:
         header = [column for column in columns if column is not None]
@@ -108,7 +108,7 @@ def generate_table_from_db(
 
         ensemble_data = data[data.label == ensemble]
         if len(ensemble_data) == 0:
-            print(f"WARNING: No data available for ensemble {ensemble}, " "skipping")
+            print(f"WARNING: No data available for ensemble {ensemble}, skipping")
             continue
 
         row_content = [ensemble]

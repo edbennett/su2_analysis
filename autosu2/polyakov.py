@@ -98,13 +98,9 @@ def plot_loops(
         for direction, fitted_param in enumerate(fitted_params):
             ax.plot(x_values, fit_form(x_values, *fitted_param), color=f"C{direction}")
     elif fitted_params:
-        print(
-            "WARNING: fitted_params specified but no fit form, " "not plotting a fit."
-        )
+        print("WARNING: fitted_params specified but no fit form, not plotting a fit.")
     elif fit_form:
-        print(
-            "WARNING: fit_form specified but no fitted_params, " "not plotting a fit."
-        )
+        print("WARNING: fit_form specified but no fitted_params, not plotting a fit.")
 
     ax.set_ylim((0, None))
 
