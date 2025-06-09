@@ -214,7 +214,7 @@ def main():
     """Runs the program"""
 
     parser = argparse.ArgumentParser(
-        description="Plot the topological " "charge history and histogram"
+        description="Plot the topological charge history and histogram"
     )
     parser.add_argument("flows_file", help="A Q history in HiRep~MILC format")
     parser.add_argument(
