@@ -2,7 +2,6 @@
 
 import csv
 from dataclasses import dataclass
-from functools import partial
 import typing
 
 import numpy as np
@@ -13,7 +12,7 @@ from uncertainties import ufloat
 
 from ..fit_glue import weighted_mean
 from ..plots import set_plot_defaults
-from ..derived_observables import merge_and_hat_quantities
+from ..derived_observables import merge_no_w0
 from ..provenance import text_metadata, get_basic_metadata, number_to_latex
 
 from .common import add_figure_key, beta_colour_marker, preliminary, ONE_COLUMN
@@ -41,6 +40,10 @@ class FitForm:
         return self.fit_function(*args, **kwargs)
 
 
+def fit_form_flat(x, p):
+    return p["g0"] + 0 * x
+
+
 def fit_form_linear(x, p):
     return x * p["m"] + p["q"]
 
@@ -54,7 +57,7 @@ def fit_form_invexp(x, p):
 
 
 fit_forms = {
-    "value_w0": [
+    "value_w0c": [
         FitForm(
             fit_function=fit_form_linear,
             fit_formula=r"$\gamma_*(w_0) = q + \frac{m}{w_0}$",
@@ -78,7 +81,7 @@ fit_forms = {
     ],
     "beta": [
         FitForm(
-            fit_function=partial(fit_form_invexp),
+            fit_function=fit_form_invexp,
             fit_formula=r"$\gamma_*(\beta) = d_0 + d_1 \exp\left(-d_2 \beta\right)$",
             mapping={"d0": "d_0", "d1": "d_1", "d2": "d_2"},
             prior={
@@ -89,17 +92,27 @@ fit_forms = {
             latex_name="BetaLinearExponent",
         ),
     ],
+    "const": [
+        FitForm(
+            fit_function=fit_form_flat,
+            fit_formula=r"$\gamma_*(\beta) = \gamma_*^0$",
+            mapping={"g0": r"\gamma_*^0"},
+            prior={"g0": gv.gvar(0.5, 0.5)},
+            latex_name="Flat",
+        ),
+    ],
 }
 
 
-def fit(data, x_var="value_w0"):
-    x_data = 1 / data[x_var].values
+def fit(data, x_var="value_w0c"):
+    subset = data.dropna(subset=[x_var])
+    x_data = 1 / subset[x_var].values
     target_fit_forms = fit_forms[x_var]
 
     gamma_error_combined = (
-        data.uncertainty_gamma_aic**2 + data.value_gamma_aic_syst**2
+        subset.uncertainty_gamma_aic**2 + subset.value_gamma_aic_syst**2
     ) ** 0.5
-    y_data = gv.gvar(data.value_gamma_aic.values, gamma_error_combined.values)
+    y_data = gv.gvar(subset.value_gamma_aic.values, gamma_error_combined.values)
 
     return [
         lsqfit.nonlinear_fit(
@@ -116,7 +129,7 @@ def plot(
     fit_results,
     Nf,
     xlabel_slug="a / w_0",
-    x_var="value_w0",
+    x_var="value_w0c",
     xerr_var=None,
     add_label=False,
 ):
@@ -193,7 +206,7 @@ def plot(
     fig.savefig(filename)
 
 
-def print_definitions(fit_results, Nf, x_var="w0"):
+def print_definitions(fit_results, Nf, x_var="w0c"):
     target_fit_forms = fit_forms[x_var]
 
     for fit_form, fit_result in zip(target_fit_forms, fit_results):
@@ -212,7 +225,7 @@ def print_definitions(fit_results, Nf, x_var="w0"):
             )
 
 
-def write_csv(fit_results, Nf, x_var="w0"):
+def write_csv(fit_results, Nf, x_var="w0c"):
     target_fit_forms = fit_forms[x_var]
     with open(csv_filename, "a") as f:
         csv_writer = csv.writer(f, quoting=csv.QUOTE_MINIMAL, lineterminator="\n")
@@ -228,31 +241,31 @@ def write_csv(fit_results, Nf, x_var="w0"):
             )
 
 
-def write_mean_result(fit_results, Nf=1):
+def write_mean_result(fit_results, x_values=["beta", "value_chiral_w0"], Nf=1):
     latex_var_name = f"GammaStarContinuumMeanNf{number_to_latex(Nf)}"
-    target_fit_forms = fit_forms["beta"][0], fit_forms["value_chiral_w0"][0]
+    target_fit_forms = (fit_forms[x_value][0] for x_value in x_values)
     continuum_values = [
         fit_form(np.asarray([ALMOST_ZERO]), fit_result[0].p)[0]
         for fit_form, fit_result in zip(target_fit_forms, fit_results)
     ]
     mean_gammastar_gv = weighted_mean(continuum_values, error_attr="sdev")
-
     mean_gammastar = ufloat(mean_gammastar_gv.mean, mean_gammastar_gv.sdev)
     with open(definition_filename, "a") as f:
         print(f"\\newcommand \\{latex_var_name} {{{mean_gammastar:.01uSL}}}", file=f)
 
 
 def generate_single_Nf(
-    data, Nf, xlabel_slug="a / w_0", x_var="w0", xerr_var=None, exclude=None
+    data, Nf, xlabel_slug="a / w_0", x_var="w0c", xerr_var=None, exclude=None
 ):
     if exclude is None:
         exclude = []
 
-    hatted_data = merge_and_hat_quantities(
-        data,
+    hatted_data = merge_no_w0(
+        data[(data.observable != "w0c") | (data.free_parameter == 0.2)],
         (
             "gamma_aic",
             "gamma_aic_syst",
+            "w0c",
         ),
     ).dropna(subset=["value_gamma_aic"])
     subset_data = hatted_data[hatted_data.Nf == Nf]
@@ -301,24 +314,35 @@ def generate(data, ensembles):
         print(text_metadata(ensembles_metadata), file=f)
         print("Nf,gamma_value,gamma_uncertainty,chisquare,method", file=f)
 
+    for Nf, exclude in (1, ["DB4M13", "DB7M7"]), (2, None):
+        generate_single_Nf(
+            data,
+            Nf=Nf,
+            x_var="value_w0c",
+            xerr_var="uncertainty_w0c",
+            exclude=exclude,
+        )
+        beta_results = generate_single_Nf(
+            data, Nf=Nf, x_var="beta", exclude=exclude, xlabel_slug=r"1 / \beta"
+        )
+
+        data_with_w0_extrapolation = add_w0_extrapolation(data)
+        chiral_w0_results = generate_single_Nf(
+            data_with_w0_extrapolation,
+            Nf=Nf,
+            x_var="value_chiral_w0",
+            xerr_var="uncertainty_chiral_w0",
+            xlabel_slug=r"a / w_0^\chi",
+        )
+
+        write_mean_result([beta_results, chiral_w0_results], Nf=Nf)
+
+    # Hack to be able to do a constant fit
+    data["const"] = data["beta"]
     generate_single_Nf(
         data,
-        Nf=1,
-        x_var="value_w0",
-        xerr_var="uncertainty_w0",
-        exclude=["DB4M13", "DB7M7"],
+        Nf=2,
+        x_var="const",
+        exclude=["Nf2DB0M6"],
+        xlabel_slug=r"1 / \beta",
     )
-    beta_results = generate_single_Nf(
-        data, Nf=1, x_var="beta", exclude=["DB4M13", "DB7M7"], xlabel_slug=r"1 / \beta"
-    )
-
-    data_with_w0_extrapolation = add_w0_extrapolation(data)
-    chiral_w0_results = generate_single_Nf(
-        data_with_w0_extrapolation,
-        Nf=1,
-        x_var="value_chiral_w0",
-        xerr_var="uncertainty_chiral_w0",
-        xlabel_slug=r"a / w_0^\chi",
-    )
-
-    write_mean_result([beta_results, chiral_w0_results], Nf=1)
