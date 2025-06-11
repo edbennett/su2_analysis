@@ -48,10 +48,8 @@ channel_labels = {
 
 figlegend_defaults = {
     "loc": "outside lower center",
-    "frameon": False,
     "columnspacing": 0.9,
     "handletextpad": 0,
-    "borderpad": 0,
 }
 
 ONE_COLUMN = 3.5
