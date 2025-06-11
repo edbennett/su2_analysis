@@ -138,7 +138,7 @@ def do_plot(hatted_data, plot_spec, Nf=1):
     axes[0].set_ylim(ylim)
 
     legend_rows = plot_spec.get("legend_rows", 1)
-    add_figure_key(fig, markers=False, Nf=Nf, nrow=legend_rows)
+    add_figure_key(fig, markers=False, Nfs=[Nf], nrow=legend_rows)
 
     fig.savefig(plot_spec["filename"].format(Nf=Nf), transparent=True)
     plt.close(fig)

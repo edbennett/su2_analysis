@@ -107,7 +107,7 @@ def do_plot(betas, fit_results, merged_data, Nf):
             f"$\\beta={fit_beta} \\Rightarrow \\gamma_*={gamma_with_error:.2uSL}$",
         )
 
-    add_figure_key(fig, Nf=Nf)
+    add_figure_key(fig, Nfs=[Nf])
 
     for ax in axes:
         ax.set_xlabel(r"$L (am_{\mathrm{PCAC}})^{1/(1+\gamma_*)}$")

@@ -188,7 +188,7 @@ def plot(
             fontsize="x-small",
         )
 
-    add_figure_key(fig, Nf=Nf, nrow=2)
+    add_figure_key(fig, Nfs=[Nf], nrow=2)
 
     fig.savefig(filename)
 

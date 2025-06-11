@@ -5,7 +5,7 @@ from scipy.optimize import curve_fit
 from ..derived_observables import merge_quantities
 from ..plots import set_plot_defaults
 
-from .common import beta_colour_marker, preliminary, TWO_COLUMN
+from .common import add_figure_key, beta_colour_marker, preliminary, TWO_COLUMN
 
 
 def fit_form(x, a, b, c):
@@ -58,7 +58,6 @@ def generate(data, ensembles):
                 color=colour,
                 marker=marker,
                 ls="none",
-                label=f"{beta}",
             )
 
             fit_values, _ = fit_1_over_w0(data, Nf, beta)
@@ -74,7 +73,7 @@ def generate(data, ensembles):
         ax.set_title(f"$N_{{\\mathrm{{f}}}} = {Nf}$")
         ax.set_xlabel(r"$am_{{\mathrm{{PCAC}}}}$")
 
+    add_figure_key(fig, Nfs=[1, 2], shortlabel=True)
     axes[0].set_ylabel(r"$a / w_0$")
-    fig.legend(loc="outside lower center", title=r"$\beta$", ncols=8)
 
     fig.savefig(filename)

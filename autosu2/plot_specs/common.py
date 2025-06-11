@@ -63,22 +63,28 @@ critical_ms = {
 }
 
 
-def add_figure_key(fig, markers=True, Nf=1, nrow=1):
+def add_figure_key(fig, markers=True, Nfs=[1], nrow=1, shortlabel=True):
     legend_contents = [
         fig.axes[0].errorbar(
-            [-1],
-            [-1],
+            [nan],
+            [nan],
             yerr=[nan],
             xerr=[nan],
             color=colour,
             marker=f'{marker if markers else ","}',
-            label=f"$\\beta={beta}$",
+            label=f"${beta}$" if shortlabel else f"$\\beta={beta}$",
             linestyle="",
         )
-        for beta, colour, marker in beta_colour_marker[Nf]
+        for beta, colour, marker in sorted(
+            set(bcm for Nf in Nfs for bcm in beta_colour_marker[Nf])
+        )
     ]
-
-    fig.legend(handles=legend_contents, ncol=ceil(7 / nrow), **figlegend_defaults)
+    fig.legend(
+        handles=legend_contents,
+        ncol=ceil(8 / nrow),
+        title=r"$\beta$" if shortlabel else None,
+        **figlegend_defaults,
+    )
 
 
 def format_ensembles_list(ensemble_names):

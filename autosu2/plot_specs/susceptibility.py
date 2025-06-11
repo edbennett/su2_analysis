@@ -4,7 +4,7 @@ from pandas import read_csv
 from ..derived_observables import merge_quantities
 from ..plots import set_plot_defaults
 
-from .common import beta_colour_marker, preliminary, TWO_COLUMN
+from .common import add_figure_key, beta_colour_marker, preliminary, TWO_COLUMN
 
 
 def uncertainty_ratio_sqrtsigma(suscept, suscept_err, sqrtsigma, sqrtsigma_err):
@@ -22,7 +22,7 @@ def add_sideload_data(ax):
 
     data = read_csv("external_data/su2_topology.csv", comment="#")
 
-    for Nf, label_suffix, marker in (0, "", "s"), (2, r", \beta=2.25", "*"):
+    for Nf, label_suffix, marker in [(0, "", "s")]:
         subset_data = data[data.Nf == Nf]
         ax.errorbar(
             subset_data.sqrtsigma**2,
@@ -44,7 +44,9 @@ def generate(data, ensembles):
     set_plot_defaults(markersize=2, capsize=0.2, linewidth=0.5, preliminary=preliminary)
 
     filename = "assets/plots/susceptibility.pdf"
-    fig, ax = plt.subplots(figsize=(TWO_COLUMN, 5), layout="constrained")
+    fig, axes = plt.subplots(
+        figsize=(TWO_COLUMN, 5), ncols=2, sharey=True, sharex=True, layout="constrained"
+    )
     merged_data = merge_quantities(
         data, ("sqrtsigma", "chi_top", "fitted_Q0", "Q_width", "Q_tau_exp")
     )
@@ -75,17 +77,14 @@ def generate(data, ensembles):
     )
 
     if with_sqrtsigma:
-        ax.set_ylabel(r"$\chi^{\frac{1}{4}} / \sqrt{\sigma}$")
+        axes[0].set_ylabel(r"$\chi^{\frac{1}{4}} / \sqrt{\sigma}$")
     else:
-        ax.set_ylabel(r"$w_0 \chi^{\frac{1}{4}}$")
-    ax.set_xlabel(r"$a^2 \sigma$")
+        axes[0].set_ylabel(r"$w_0 \chi^{\frac{1}{4}}$")
 
-    for Nf in 1, 2:
+    for Nf, ax in zip([1, 2], axes):
+        ax.set_xlabel(r"$a^2 \sigma$")
+        ax.set_title(f"$N_{{\\mathrm{{f}}}} = {Nf}$")
         for beta, colour, marker in beta_colour_marker[Nf]:
-            if Nf == 2 and beta == 2.25:
-                # Data will be sideloaded separately
-                continue
-
             data_to_plot = merged_data[
                 (merged_data.beta == beta)
                 & ~(merged_data.label.str.endswith("*"))
@@ -110,23 +109,14 @@ def generate(data, ensembles):
                 color=colour,
                 marker=marker,
                 ls="none",
-                label=f"$N_{{\\mathrm{{f}}}}={Nf}, \\beta={beta}$",
             )
 
-    if with_sqrtsigma:
-        add_sideload_data(ax)
+        if with_sqrtsigma:
+            add_sideload_data(ax)
 
-    fig.legend(
-        loc="outside left lower",
-        ncols=2,
-        columnspacing=0.3,
-        frameon=False,
-        handletextpad=0.2,
-    )
-
+    add_figure_key(fig, Nfs=[1, 2], shortlabel=True)
     ax.set_xlim((0, None))
     ax.set_ylim((0, None))
 
-    fig.tight_layout(rect=(0, 0.23, 1, 1), pad=0.08)
     fig.savefig(filename)
     plt.close(fig)
