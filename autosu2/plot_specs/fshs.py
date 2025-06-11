@@ -249,4 +249,4 @@ def generate(data, ensembles):
         print("Nf,beta,gamma_value,gamma_uncertainty", file=f)
 
     generate_single_Nf(data, 1, [2.05, 2.2, 2.4], ensembles)
-    generate_single_Nf(data, 2, [2.35], ensembles)
+    generate_single_Nf(data, 2, [2.25, 2.3, 2.35], ensembles)

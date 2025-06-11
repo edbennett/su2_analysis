@@ -10,7 +10,7 @@ from ..Q import plot_history_and_histogram
 
 ENSEMBLES = {
     1: ["DB4M13", "DB5M8", "DB6M9", "DB7M10"],
-    2: ["Nf2DB2M6", "Nf2DB2M7"],
+    2: ["Nf2DB0M6", "Nf2DB1M13", "Nf2DB2M7"],
 }
 OUTPUT_DIR = "assets/plots"
 FILENAME_BASE = "q_topology_Nf{Nf}"

@@ -17,6 +17,7 @@ beta_colour_marker = {
     ],
     2: [
         (2.25, "y", "*"),
+        (2.3, "m", "4"),
         (2.35, "darkorange", "+"),
     ],
 }
@@ -59,7 +60,7 @@ TWO_COLUMN = 7.0
 # TODO: get the numbers for the critical regions programmatically
 critical_ms = {
     1: [-1.5256, -1.4760, -1.4289, -1.3932, None, None, None],
-    2: [None, None],
+    2: [None, None, None],
 }
 
 
