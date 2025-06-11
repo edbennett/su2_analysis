@@ -9,6 +9,8 @@ from .common import (
     channel_labels,
     add_figure_key,
     preliminary,
+    ONE_COLUMN,
+    TWO_COLUMN,
 )
 
 use_pcac = True
@@ -16,7 +18,7 @@ use_pcac = True
 plots = [
     {
         "filename": "assets/plots/decayconst_Nf{Nf}.pdf",
-        "figsize": (3.5, 3.0),
+        "figsize": (ONE_COLUMN, 3.0),
         "subplots": [
             {
                 "ylabel": r"$w_0 f$",
@@ -33,7 +35,7 @@ plots = [
     },
     {
         "filename": "assets/plots/masses_Nf{Nf}.pdf",
-        "figsize": (7, 3.5),
+        "figsize": (TWO_COLUMN, 3.5),
         "subplots": [
             {
                 "ylabel": r"$w_0 M$",

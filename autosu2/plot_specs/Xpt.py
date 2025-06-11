@@ -8,7 +8,7 @@ import gvar as gv
 from ..plots import set_plot_defaults
 from ..derived_observables import merge_and_hat_quantities
 
-from .common import beta_colour_marker, preliminary
+from .common import beta_colour_marker, preliminary, ONE_COLUMN
 
 
 def Xpt_fit_form(mpcac_w0, p):
@@ -69,7 +69,7 @@ def generate_single_Nf(data, Nf):
 
     fit_result = Xpt_fit(hatted_data[hatted_data.value_mpcac_mass > 0])
 
-    fig, ax = plt.subplots(figsize=(3.5, 2.5))
+    fig, ax = plt.subplots(figsize=(ONE_COLUMN, 2.5))
 
     for beta, colour, marker in beta_colour_marker[Nf]:
         subset_data = hatted_data[hatted_data.beta == beta]

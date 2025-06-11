@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from numpy import nan
 
-from .common import preliminary
+from .common import preliminary, ONE_COLUMN
 from ..plots import set_plot_defaults, COLOR_LIST
 
 ENSEMBLES = ("DB2M1", "DB2M2", "DB2M3", "DB2M4", "DB2M5", "DB2M6", "DB2M7")
@@ -15,7 +15,7 @@ def generate(data, ensembles):
 
     set_plot_defaults(preliminary=preliminary)
 
-    fig, (t_ax, w_ax) = plt.subplots(figsize=(3.5, 6), nrows=2, sharex=True)
+    fig, (t_ax, w_ax) = plt.subplots(figsize=(ONE_COLUMN, 6), nrows=2, sharex=True)
 
     w_ax.set_xlabel(r"$am_0$")
     t_ax.set_ylabel(r"$\sqrt{8t_0}/a$")

@@ -5,11 +5,11 @@ import matplotlib.pyplot as plt
 from ..plots import set_plot_defaults
 from ..derived_observables import merge_and_hat_quantities
 
-from .common import beta_colour_marker, preliminary
+from .common import beta_colour_marker, preliminary, ONE_COLUMN
 
 
 def plot_single_ratio(data, channel, label, filename):
-    fig, ax = plt.subplots(figsize=(3.5, 3.5), layout="constrained")
+    fig, ax = plt.subplots(figsize=(ONE_COLUMN, 3.5), layout="constrained")
 
     ax.set_xlabel(r"$w_0 m_{\mathrm{PCAC}}$")
     ax.set_ylabel(f"$\\frac{{M_{{{label}}}}}{{M_{{2^+_{{\\mathrm{{s}}}}}}}}$")

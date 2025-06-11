@@ -8,7 +8,7 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import numpy as np
 from uncertainties import ufloat
 
-from .common import preliminary
+from .common import preliminary, ONE_COLUMN, TWO_COLUMN
 
 from ..plots import set_plot_defaults
 from ..tables import generate_table_from_content, format_value_and_error
@@ -36,7 +36,7 @@ def do_plot(data, ensemble=None, filename=None, ax=None):
     else:
         ax_supplied = False
         set_plot_defaults(linewidth=0.5, capsize=0, preliminary=preliminary)
-        fig, ax = plt.subplots(figsize=(3.5, 2))
+        fig, ax = plt.subplots(figsize=(ONE_COLUMN, 2))
 
     colour_norm = LogNorm(vmin=l_min, vmax=l_max)
 
@@ -163,7 +163,7 @@ def generate(data, ensembles):
     # capsize=1 breaks multicolour plots so don't set this here
     set_plot_defaults(linewidth=0.5, capsize=0, preliminary=preliminary)
     fig, axes = plt.subplots(
-        ncols=len(ensembles_to_plot), figsize=(7, 3), squeeze=False
+        ncols=len(ensembles_to_plot), figsize=(TWO_COLUMN, 3), squeeze=False
     )
 
     for ensemble_name, ax in zip(ensembles_to_plot, axes.ravel()):

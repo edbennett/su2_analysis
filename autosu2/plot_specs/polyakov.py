@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-from .common import format_ensembles_list, preliminary
+from .common import format_ensembles_list, preliminary, ONE_COLUMN
 from ..do_analysis import get_subdirectory_name
 from ..plots import set_plot_defaults
 from ..polyakov import fit_and_plot_polyakov_loops
@@ -15,7 +15,10 @@ CAPTION = r"Polyakov loop histograms, for the ensembles {ensembles}."
 def do_plot(ensembles, ensemble_names_to_plot, filename_base):
     set_plot_defaults(linewidth=0.5, preliminary=preliminary)
     fig, axes = plt.subplots(
-        len(ensemble_names_to_plot), sharex=True, figsize=(3.5, 8), squeeze=False
+        len(ensemble_names_to_plot),
+        sharex=True,
+        figsize=(ONE_COLUMN, 8),
+        squeeze=False,
     )
 
     for ensemble_name, ax_row in zip(ensemble_names_to_plot, axes):

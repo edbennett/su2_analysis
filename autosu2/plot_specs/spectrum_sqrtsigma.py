@@ -4,7 +4,13 @@ import matplotlib.pyplot as plt
 from ..plots import set_plot_defaults
 from ..derived_observables import merge_no_w0
 
-from .common import beta_colour_marker, channel_labels, critical_ms, preliminary
+from .common import (
+    beta_colour_marker,
+    channel_labels,
+    critical_ms,
+    preliminary,
+    ONE_COLUMN,
+)
 
 
 def generate(data, ensembles):
@@ -44,7 +50,7 @@ def generate(data, ensembles):
 
     for Nf in 1, 2:
         fig, axes = plt.subplots(
-            nrows=3, sharex=True, figsize=(3.5, 6), layout="constrained"
+            nrows=3, sharex=True, figsize=(ONE_COLUMN, 6), layout="constrained"
         )
         if use_pcac:
             axes[-1].set_xlabel(r"$m_{\mathrm{PCAC}} / \sqrt{\sigma}$")

@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from ..plots import set_plot_defaults
 from ..w0 import DEFAULT_W0
 
-from .common import beta_colour_marker
+from .common import beta_colour_marker, TWO_COLUMN
 
 
 def generate(data, ensembles):
@@ -12,7 +12,7 @@ def generate(data, ensembles):
     filename = "auxiliary_plots/bare_w0.pdf"
 
     fig, axes = plt.subplots(
-        ncols=2, layout="constrained", figsize=(7, 3.5), sharey=True
+        ncols=2, layout="constrained", figsize=(TWO_COLUMN, 3.5), sharey=True
     )
 
     for ax, (Nf, betas) in zip(axes, beta_colour_marker.items()):

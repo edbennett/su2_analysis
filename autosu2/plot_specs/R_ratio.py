@@ -14,7 +14,7 @@ from scipy.interpolate import interp1d
 from ..plots import set_plot_defaults
 from ..derived_observables import merge_no_w0
 
-from .common import beta_colour_marker, preliminary
+from .common import beta_colour_marker, preliminary, ONE_COLUMN
 from .fshs import gammastar_fshs
 
 ALPHA = 0.3
@@ -141,7 +141,7 @@ def plot_single(data, Nf, filename):
 
     fig, axes_2d = plt.subplots(
         nrows=num_subplots,
-        figsize=(3.5, 2.5 + num_subplots * 1.5),
+        figsize=(ONE_COLUMN, 2.5 + num_subplots * 1.5),
         sharex=True,
         squeeze=False,
         layout="constrained",

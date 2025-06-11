@@ -4,7 +4,7 @@ from pandas import read_csv
 from ..derived_observables import merge_quantities
 from ..plots import set_plot_defaults
 
-from .common import beta_colour_marker, preliminary
+from .common import beta_colour_marker, preliminary, TWO_COLUMN
 
 
 def uncertainty_ratio_sqrtsigma(suscept, suscept_err, sqrtsigma, sqrtsigma_err):
@@ -44,7 +44,7 @@ def generate(data, ensembles):
     set_plot_defaults(markersize=2, capsize=0.2, linewidth=0.5, preliminary=preliminary)
 
     filename = "assets/plots/susceptibility.pdf"
-    fig, ax = plt.subplots(figsize=(3.5, 5))
+    fig, ax = plt.subplots(figsize=(TWO_COLUMN, 5), layout="constrained")
     merged_data = merge_quantities(
         data, ("sqrtsigma", "chi_top", "fitted_Q0", "Q_width", "Q_tau_exp")
     )

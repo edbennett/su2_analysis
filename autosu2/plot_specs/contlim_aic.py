@@ -16,7 +16,7 @@ from ..plots import set_plot_defaults
 from ..derived_observables import merge_and_hat_quantities
 from ..provenance import text_metadata, get_basic_metadata, number_to_latex
 
-from .common import add_figure_key, beta_colour_marker, preliminary
+from .common import add_figure_key, beta_colour_marker, preliminary, ONE_COLUMN
 from .w0_chiral import fit_1_over_w0
 
 
@@ -122,7 +122,7 @@ def plot(
 ):
     filename = f"assets/plots/continuum_gammastar_Nf{Nf}_{x_var}.pdf"
 
-    fig, ax = plt.subplots(layout="constrained", figsize=(3.5, 3))
+    fig, ax = plt.subplots(layout="constrained", figsize=(ONE_COLUMN, 3))
 
     for beta, colour, marker in beta_colour_marker[Nf]:
         subset = data[data.beta == beta]

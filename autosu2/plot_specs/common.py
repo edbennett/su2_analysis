@@ -53,6 +53,9 @@ figlegend_defaults = {
     "borderpad": 0,
 }
 
+ONE_COLUMN = 3.5
+TWO_COLUMN = 7.0
+
 # TODO: get the numbers for the critical regions programmatically
 critical_ms = {
     1: [-1.5256, -1.4760, -1.4289, -1.3932, None, None, None],

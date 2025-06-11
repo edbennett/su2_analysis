@@ -1,7 +1,7 @@
 from flow_analysis.readers import readers
 import matplotlib.pyplot as plt
 
-from .common import format_ensembles_list, preliminary
+from .common import format_ensembles_list, preliminary, ONE_COLUMN
 from ..db import get_measurement_as_ufloat
 from ..do_analysis import get_subdirectory_name
 from ..plots import set_plot_defaults
@@ -27,7 +27,7 @@ def do_plot(ensembles, ensemble_names, filename_base):
         sharey="row",
         sharex="col",
         gridspec_kw={"width_ratios": [3, 1]},
-        figsize=(3.5, 0.5 + 1.5 * len(ensemble_names)),
+        figsize=(ONE_COLUMN, 0.5 + 1.5 * len(ensemble_names)),
         squeeze=False,
         layout="constrained",
     )

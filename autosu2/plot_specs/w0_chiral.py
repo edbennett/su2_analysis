@@ -5,7 +5,7 @@ from scipy.optimize import curve_fit
 from ..derived_observables import merge_quantities
 from ..plots import set_plot_defaults
 
-from .common import beta_colour_marker, preliminary
+from .common import beta_colour_marker, preliminary, TWO_COLUMN
 
 
 def fit_form(x, a, b, c):
@@ -42,7 +42,7 @@ def generate(data, ensembles):
     filename = "assets/plots/w0_chiral.pdf"
 
     fig, axes = plt.subplots(
-        ncols=2, layout="constrained", figsize=(7, 3.5), sharey=True
+        ncols=2, layout="constrained", figsize=(TWO_COLUMN, 3.5), sharey=True
     )
 
     for ax, (Nf, betas) in zip(axes, beta_colour_marker.items()):
