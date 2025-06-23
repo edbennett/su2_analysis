@@ -411,7 +411,7 @@ def main():
                     print(f"{args.channel} decay constant: {decay_const}")
                     if len(fit_results[0]) > 2:
                         print(f"{args.channel} amplitude: {amplitude}")
-                    print(f"{args.channel} chi-square: " f"{chisquare_value}")
+                    print(f"{args.channel} chi-square: {chisquare_value}")
 
 
 if __name__ == "__main__":
