@@ -70,7 +70,7 @@ def add_figure_key(fig, markers=True, Nfs=[1], nrow=1, shortlabel=True):
             yerr=[nan],
             xerr=[nan],
             color=colour,
-            marker=f'{marker if markers else ","}',
+            marker=f"{marker if markers else ','}",
             label=f"${beta}$" if shortlabel else f"$\\beta={beta}$",
             linestyle="",
         )

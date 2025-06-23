@@ -115,7 +115,7 @@ def do_plot(hatted_data, plot_spec, Nf=1):
                 [-1],
                 marker=marker,
                 color="black",
-                label=f'{channel_labels[series["channel"]]}',
+                label=f"{channel_labels[series['channel']]}",
             )
 
         ax.legend(
