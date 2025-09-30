@@ -71,7 +71,7 @@ def plot_measure_and_save_w0(
             add_measurement(simulation_descriptor, f"w0{suffix}", w0, free_parameter=W0)
 
         if plot_filename:
-            w_mean, w_error = compute_wt_t(flows, W0)
+            w_mean, w_error = compute_wt_t(flows, operator)
             ax.errorbar(
                 flows.times[1:-1],
                 w_mean,
