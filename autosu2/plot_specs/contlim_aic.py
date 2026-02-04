@@ -150,7 +150,12 @@ def plot(
         )
 
     target_fit_forms = fit_forms[x_var]
-    _, xmax = ax.get_xlim()
+    xmin, xmax = ax.get_xlim()
+    if xmin / (xmax - xmin) > 2:
+        # Plot very bunched to the right side of the axes;
+        # give some extra space
+        xmax *= 1.2
+
     x_range = np.linspace(0, xmax, 1000)
 
     fit_colours = "C0", "C1", "C2"
