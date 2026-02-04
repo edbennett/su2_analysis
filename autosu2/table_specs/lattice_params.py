@@ -32,8 +32,18 @@ def chunk_ensembles(ensembles, max_rows=45):
 
 
 def lattice_params(data, ensembles):
-    columns = ["", None, r"$\beta$", "$am$", r"$N_t \times N_s^3$", r"$N_{\rm conf.}$"]
-    constants = ("beta", "m", "V", "cfg_count")
+    columns = [
+        "",
+        None,
+        r"$\beta$",
+        "$am$",
+        r"$N_t \times N_s^3$",
+        None,
+        r"$N_{\rm conf.}$",
+        r"$\delta_{\rm conf.}$",
+        r"$\tau_{\rm traj.}$",
+    ]
+    constants = ("beta", "m", "V", "cfg_count", "cfg_sep", "traj_length")
     observables = []
     filename = "lattice_params_Nf{Nf}_part{chunk}.tex"
 

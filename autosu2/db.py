@@ -53,6 +53,8 @@ class Simulation(Base):
     first_cfg = Column(Integer, nullable=False)
     last_cfg = Column(Integer, nullable=False)
     cfg_count = Column(Integer, nullable=False)
+    cfg_sep = Column(Integer, nullable=True)
+    traj_length = Column(Float, nullable=True)
     initial_configuration = Column(Integer, nullable=True)
 
     __table_args__ = (
@@ -391,6 +393,8 @@ def describe_ensemble(ensemble, label):
         "first_cfg",
         "last_cfg",
         "cfg_count",
+        "cfg_sep",
+        "traj_length",
     ):
         descriptor[key] = ensemble[key]
     for key in ("representation", "m", "initial_configuration"):
@@ -417,7 +421,9 @@ def get_dataframe():
                simulation.m,
                simulation.first_cfg,
                simulation.last_cfg,
-               simulation.cfg_count
+               simulation.cfg_count,
+               simulation.cfg_sep,
+               simulation.traj_length
         FROM measurement
         JOIN simulation
         ON measurement.simulation_id == simulation.id""",
