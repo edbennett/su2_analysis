@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
 from ..plots import set_plot_defaults
 from ..derived_observables import merge_and_hat_quantities
@@ -85,6 +86,8 @@ def do_plot(all_hatted_data, plot_spec, Nf=1):
         if "ylabel" in subplot:
             ax.set_ylabel(subplot["ylabel"])
 
+        mhat_min = np.inf
+
         for (beta, colour, _), m_c in zip(beta_colour_marker[Nf], critical_ms[Nf]):
             data_to_plot = hatted_data[
                 (hatted_data.beta == beta)
@@ -97,6 +100,8 @@ def do_plot(all_hatted_data, plot_spec, Nf=1):
             else:
                 mhat = (data_to_plot.m - m_c) * data_to_plot.value_w0
                 mhat_err = (data_to_plot.m - m_c) * data_to_plot.uncertainty_w0
+
+            mhat_min = min(mhat_min, min(mhat))
 
             for series, marker in zip(subplot["series"], markers):
                 infix = "{channel}_{quantity}".format(**series).strip("_")
@@ -123,16 +128,22 @@ def do_plot(all_hatted_data, plot_spec, Nf=1):
                 label=f'{channel_labels[series["channel"]]}',
             )
 
+        ax.set_xlim((0, None))
+        _, mhat_max = ax.get_xlim()
+        if mhat_min > mhat_max / 2:
+            legend_columns = 1
+        else:
+            legend_columns = 2
+
         ax.legend(
             loc="upper left",
             frameon=False,
             handletextpad=0,
-            ncol=2,
+            ncol=legend_columns,
             columnspacing=0.3,
             borderaxespad=0.2,
             fontsize="small",
         )
-        ax.set_xlim((0, None))
 
     if (ylim := plot_spec.get("ylim")) is None:
         # Make room for legend
