@@ -59,7 +59,7 @@ def plot_measure_and_save_w0(
     if plot_filename:
         fig, ax = subplots()
 
-    for operator, suffix in ("plaq", "p"), ("sym", "c"):
+    for operator, suffix, colour in ("plaq", "p", "C0"), ("sym", "c", "C1"):
         try:
             w0 = measure_w0(flows, W0, operator=operator)
         except ValueError:
@@ -73,12 +73,28 @@ def plot_measure_and_save_w0(
         if plot_filename:
             w_mean, w_error = compute_wt_t(flows, operator)
             ax.errorbar(
-                flows.times[1:-1],
+                flows.times[2:-2],
                 w_mean,
                 yerr=w_error,
                 fmt=".",
+                markersize=0.03,
+                linewidth=0.01,
+                capsize=0.01,
                 label=f"$w_0^{suffix}$",
+                color=colour,
             )
+
+            if w0:
+                w0_mean, w0_error = w0.nominal_value, w0.std_dev
+                w0_squared_mean = w0_mean**2
+                w0_squared_error = 2 * w0_mean * w0_error
+                ax.axvline(w0_squared_mean, color=colour, dashes=(1, 1))
+                ax.axvline(
+                    w0_squared_mean + w0_squared_error, color=colour, dashes=(1, 2)
+                )
+                ax.axvline(
+                    w0_squared_mean - w0_squared_error, color=colour, dashes=(1, 2)
+                )
 
     if plot_filename:
         ax.set_xlabel(r"$t$")

@@ -59,7 +59,7 @@ def plot_measure_and_save_sqrt_8t0(
     else:
         fig, ax = None, None
 
-    for operator, suffix in ("plaq", "p"), ("sym", "c"):
+    for operator, suffix, colour in ("plaq", "p", "C0"), ("sym", "c", "C1"):
         try:
             s8t0 = measure_sqrt_8t0(flows, E0, operator=operator)
         except ValueError:
@@ -79,8 +79,19 @@ def plot_measure_and_save_sqrt_8t0(
                 t2E_mean,
                 yerr=t2E_error,
                 fmt=".",
+                markersize=0.03,
+                linewidth=0.01,
+                capsize=0.01,
                 label=f"$\\sqrt{{8t_0^{suffix}}}$",
             )
+
+            if s8t0:
+                s8t0_mean, s8t0_error = s8t0.nominal_value, s8t0.std_dev
+                t0_mean = s8t0_mean**2 / 8
+                t0_error = (2 * s8t0_mean * s8t0_error) / 8
+                ax.axvline(t0_mean, color=colour, dashes=(1, 1))
+                ax.axvline(t0_mean + t0_error, color=colour, dashes=(1, 2))
+                ax.axvline(t0_mean - t0_error, color=colour, dashes=(1, 2))
 
     if plot_filename:
         ax.set_xlabel(r"$t$")
