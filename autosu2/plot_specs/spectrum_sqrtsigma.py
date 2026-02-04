@@ -32,7 +32,11 @@ def generate(data, ensembles):
         "spin12_mass",
     )
 
-    merged_data = merge_no_w0(data, quantities + ("sqrtsigma",))
+    all_merged_data = merge_no_w0(data, quantities + ("sqrtsigma",))
+    merged_data = all_merged_data[
+        all_merged_data["uncertainty_mpcac_mass"] / all_merged_data["value_mpcac_mass"]
+        < 0.1
+    ]
     for quantity in quantities:
         merged_data[f"value_{quantity}_over_sqrtsigma"] = (
             merged_data[f"value_{quantity}"] / merged_data["value_sqrtsigma"]

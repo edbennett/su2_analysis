@@ -60,7 +60,7 @@ plots = [
 ]
 
 
-def do_plot(hatted_data, plot_spec, Nf=1):
+def do_plot(all_hatted_data, plot_spec, Nf=1):
     fig, axes = plt.subplots(
         ncols=len(plot_spec["subplots"]),
         sharey=True,
@@ -69,6 +69,11 @@ def do_plot(hatted_data, plot_spec, Nf=1):
     )
     if len(plot_spec["subplots"]) == 1:
         axes = [axes]
+
+    hatted_data = all_hatted_data[
+        all_hatted_data["uncertainty_mpcac_mass"] / all_hatted_data["value_mpcac_mass"]
+        < 0.1
+    ]
 
     markers = ".", "x", "*", "^", "v", "1", "2", "+"
 
