@@ -72,6 +72,8 @@ def generate(data, ensembles):
 
         ax.set_title(f"$N_{{\\mathrm{{f}}}} = {Nf}$")
         ax.set_xlabel(r"$am_{{\mathrm{{PCAC}}}}$")
+        ax.axhline(0, color="black")
+        ax.axvline(0, color="black")
 
     add_figure_key(fig, Nfs=[1, 2], shortlabel=True)
     axes[0].set_ylabel(r"$a / w_0$")
