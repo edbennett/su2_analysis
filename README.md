@@ -101,7 +101,7 @@ to run the full analysis end-to-end,
 run
 
 ``` shellsession
-$ python -m autosu2 --ensembles metadata/ensembles.yaml --sideload_csv external_data/su2_nf2_b2.25.csv --sideload_sql external_data/su2.sqlite
+$ python -m autosu2 --ensembles metadata/ensembles.yaml --sideload_sql external_data/su2.sqlite
 ```
 
 This will output all plots, tables, and LaTeX definitions
