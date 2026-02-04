@@ -115,12 +115,16 @@ def generate_table_from_db(
         previous_row_constants = current_row_constants
         current_row_constants = {}
         for constant in constants:
-            value = set(ensemble_data[constant])
-            assert len(value) == 1
-            (value,) = value
+            value = set(ensemble_data[constant].dropna())
+            if len(value) == 0:
+                value = None
+            elif len(value) == 1:
+                (value,) = value
+            else:
+                raise ValueError(f"Multiple values found for {constant} for {ensemble}")
             current_row_constants[constant] = value
             if not multirow[constant]:
-                row_content.append(f"${str(value)}$")
+                row_content.append(f"${str(value)}$" if value is not None else "---")
             elif value != previous_row_constants.get(constant, None):
                 # New value: finish previous multirow, start a multirow
                 # and reset row count
@@ -133,7 +137,7 @@ def generate_table_from_db(
                     + constant
                     + "}{*}"
                     + "{"
-                    + f"${str(value)}$"
+                    + (f"${str(value)}$" if value is not None else "---")
                     + r"}"
                 )
                 num_rows[constant] = 1
