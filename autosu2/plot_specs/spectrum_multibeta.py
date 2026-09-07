@@ -1,9 +1,8 @@
 import matplotlib.pyplot as plt
 
-from .common import beta_colour_marker, preliminary
-
-from ..plots import set_plot_defaults, SYMBOL_LIST
 from ..derived_observables import merge_no_w0
+from ..plots import SYMBOL_LIST, set_plot_defaults
+from .common import beta_colour_marker, preliminary
 
 OBSERVABLES = "mass", "decay_const"
 CHANNELS = "g5", "gk", "g5gk", "id", "A1++", "2++", "torelon"

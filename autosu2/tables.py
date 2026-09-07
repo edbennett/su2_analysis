@@ -1,7 +1,8 @@
-from collections import namedtuple, defaultdict
+from collections import defaultdict, namedtuple
+
 from uncertainties import ufloat
 
-from .provenance import text_metadata, get_basic_metadata
+from .provenance import get_basic_metadata, text_metadata
 
 HLINE = r"    \hline"
 ObservableSpec = namedtuple(
@@ -38,7 +39,7 @@ def generate_table_from_content(
 ):
     if columns is not None and (header is not None or table_spec is not None):
         raise ValueError(
-            "Either `columns` or `header` + `table_spec` may be " "specified, not both."
+            "Either `columns` or `header` + `table_spec` may be specified, not both."
         )
     if columns:
         header = [column for column in columns if column is not None]
@@ -108,7 +109,7 @@ def generate_table_from_db(
 
         ensemble_data = data[data.label == ensemble]
         if len(ensemble_data) == 0:
-            print(f"WARNING: No data available for ensemble {ensemble}, " "skipping")
+            print(f"WARNING: No data available for ensemble {ensemble}, skipping")
             continue
 
         row_content = [ensemble]
@@ -124,7 +125,7 @@ def generate_table_from_db(
                 raise ValueError(f"Multiple values found for {constant} for {ensemble}")
             current_row_constants[constant] = value
             if not multirow[constant]:
-                row_content.append(f"${str(value)}$" if value is not None else "---")
+                row_content.append(f"${value!s}$" if value is not None else "---")
             elif value != previous_row_constants.get(constant, None):
                 # New value: finish previous multirow, start a multirow
                 # and reset row count
@@ -137,7 +138,7 @@ def generate_table_from_db(
                     + constant
                     + "}{*}"
                     + "{"
-                    + (f"${str(value)}$" if value is not None else "---")
+                    + (f"${value!s}$" if value is not None else "---")
                     + r"}"
                 )
                 num_rows[constant] = 1
