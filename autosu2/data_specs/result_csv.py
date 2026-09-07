@@ -7,7 +7,7 @@ from operator import or_
 
 import numpy as np
 
-from ..provenance import text_metadata, get_basic_metadata
+from ..provenance import get_basic_metadata, text_metadata
 from ..tables import ObservableSpec
 
 observables = [

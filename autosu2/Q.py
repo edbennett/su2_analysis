@@ -1,15 +1,14 @@
-import matplotlib.pyplot as plt
-import numpy as np
 import argparse
 
-from flow_analysis.fit_forms import gaussian, exp_decay
+import matplotlib.pyplot as plt
+import numpy as np
+from flow_analysis.fit_forms import exp_decay, gaussian
+from flow_analysis.measurements.Q import Q_fit, Q_mean, Q_susceptibility, flat_bin_Qs
 from flow_analysis.readers import readers
-from flow_analysis.measurements.Q import Q_mean, Q_fit, Q_susceptibility, flat_bin_Qs
 from flow_analysis.stats.autocorrelation import autocorr, exp_autocorrelation_fit
 
-from .data import get_flows_from_raw
-from .data import file_is_up_to_date
-from .db import measurement_is_up_to_date, add_measurement
+from .data import file_is_up_to_date, get_flows_from_raw
+from .db import add_measurement, measurement_is_up_to_date
 from .plots import set_plot_defaults
 
 
@@ -117,7 +116,7 @@ def plot_history_and_histogram(
         if title:
             f.suptitle(
                 ("" if extra_title is None else extra_title)
-                + r" $Q_0 = {:.2uSL}$; $\sigma = {:.2uSL}$".format(Q0, abs(sigma))
+                + rf" $Q_0 = {Q0:.2uSL}$; $\sigma = {abs(sigma):.2uSL}$"
             )
             f.subplots_adjust(top=0.8 if legend else 0.9)
 
@@ -214,7 +213,7 @@ def main():
     """Runs the program"""
 
     parser = argparse.ArgumentParser(
-        description="Plot the topological " "charge history and histogram"
+        description="Plot the topological charge history and histogram"
     )
     parser.add_argument("flows_file", help="A Q history in HiRep~MILC format")
     parser.add_argument(

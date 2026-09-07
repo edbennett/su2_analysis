@@ -1,17 +1,16 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ..plots import set_plot_defaults
 from ..derived_observables import merge_and_hat_quantities
-
+from ..plots import set_plot_defaults
 from .common import (
-    beta_colour_marker,
-    critical_ms,
-    channel_labels,
-    add_figure_key,
-    preliminary,
     ONE_COLUMN,
     TWO_COLUMN,
+    add_figure_key,
+    beta_colour_marker,
+    channel_labels,
+    critical_ms,
+    preliminary,
 )
 
 use_pcac = True
@@ -125,7 +124,7 @@ def do_plot(all_hatted_data, plot_spec, Nf=1):
                 [-1],
                 marker=marker,
                 color="black",
-                label=f'{channel_labels[series["channel"]]}',
+                label=f"{channel_labels[series['channel']]}",
             )
 
         ax.set_xlim((0, None))

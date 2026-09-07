@@ -1,21 +1,19 @@
+from numba import vectorize
 from numpy import (
-    exp,
-    outer,
-    sum,
     asarray,
-    swapaxes,
-    mean,
-    std,
-    newaxis,
     einsum,
+    exp,
+    mean,
+    newaxis,
+    outer,
+    std,
+    sum,
+    swapaxes,
 )
 from numpy.linalg import inv
-from scipy.optimize import differential_evolution, shgo, dual_annealing, minimize
 from scipy.odr import ODR, Model, RealData
+from scipy.optimize import differential_evolution, dual_annealing, minimize, shgo
 from scipy.stats import t
-
-from numba import vectorize
-
 
 FITTING_INTENSITIES = {
     "default": {},

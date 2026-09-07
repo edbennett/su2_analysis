@@ -1,5 +1,5 @@
-from numpy import ndarray, mean, std, arccosh, asarray, sinh, newaxis, empty
-from numpy.random import randint, choice
+from numpy import arccosh, asarray, empty, mean, ndarray, newaxis, sinh, std
+from numpy.random import choice, randint
 
 BOOTSTRAP_SAMPLE_COUNT = 200
 

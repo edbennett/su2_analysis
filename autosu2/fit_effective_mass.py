@@ -1,19 +1,19 @@
-from argparse import ArgumentParser
 import logging
+from argparse import ArgumentParser
 
-from .plots import do_eff_mass_plot, set_plot_defaults
+from meson_analysis.fits import fit_pcac, pcac_eff_mass
+from meson_analysis.readers import read_correlators_hirep
+
 from .data import get_output_filename
 from .db import (
-    measurement_is_up_to_date,
     add_measurement,
+    measurement_is_up_to_date,
 )
 from .fit_correlation_function import (
-    quantity_options,
     Incomplete,
+    quantity_options,
 )
-
-from meson_analysis.fits import pcac_eff_mass, fit_pcac
-from meson_analysis.readers import read_correlators_hirep
+from .plots import do_eff_mass_plot, set_plot_defaults
 
 
 def process_mpcac(
@@ -37,7 +37,7 @@ def process_mpcac(
         try:
             eff_mass = pcac_eff_mass(correlators, valence_mass=valence_mass)
         except ValueError:
-            logging.warn("pyerrors can't cope with this; skipping.")
+            logging.warning("pyerrors can't cope with this; skipping.")
             continue
 
         do_eff_mass_plot(
