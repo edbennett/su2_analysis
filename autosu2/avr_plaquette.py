@@ -1,13 +1,13 @@
+from argparse import ArgumentParser
 from re import compile
 
-from numpy import pi, asarray
-from argparse import ArgumentParser
+from numpy import asarray, pi
 
 from .bootstrap import basic_bootstrap
+from .data import get_filename
 
 # from .data import write_results, get_output_filename
-from .db import measurement_is_up_to_date, add_measurement
-from .data import get_filename
+from .db import add_measurement, measurement_is_up_to_date
 
 C_F = 5 / 4
 DELTA_SIGMA_ONE = -12.82

@@ -3,8 +3,7 @@ from pandas import read_csv
 
 from ..derived_observables import merge_quantities
 from ..plots import set_plot_defaults
-
-from .common import add_figure_key, beta_colour_marker, preliminary, TWO_COLUMN
+from .common import TWO_COLUMN, add_figure_key, beta_colour_marker, preliminary
 
 
 def uncertainty_ratio_sqrtsigma(suscept, suscept_err, sqrtsigma, sqrtsigma_err):
