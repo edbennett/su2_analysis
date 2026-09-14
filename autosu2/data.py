@@ -1,12 +1,12 @@
+from csv import QUOTE_MINIMAL, writer
 from datetime import datetime
-from os.path import getmtime
-from csv import writer, QUOTE_MINIMAL
-from re import findall, match
 from functools import lru_cache
 from numbers import Number
+from os.path import getmtime
+from re import findall, match
 
-from pandas import read_csv, DataFrame, concat
 from numpy import asarray, float64
+from pandas import DataFrame, concat, read_csv
 
 
 def get_subdirectory_name(descriptor):
@@ -15,12 +15,12 @@ def get_subdirectory_name(descriptor):
         L=descriptor["L"],
         T=descriptor["T"],
         beta=descriptor["beta"],
-        m_suffix=f'/m{descriptor["m"]}' if "m" in descriptor else "",
+        m_suffix=f"/m{descriptor['m']}" if "m" in descriptor else "",
         rep_suffix=(
-            f'_{descriptor["representation"]}' if "representation" in descriptor else ""
+            f"_{descriptor['representation']}" if "representation" in descriptor else ""
         ),
         directory_suffix=(
-            f'_{descriptor["directory_suffix"]}'
+            f"_{descriptor['directory_suffix']}"
             if "directory_suffix" in descriptor
             else ""
         ),
@@ -41,7 +41,7 @@ def write_results(
         csv_writer = writer(
             csvfile, delimiter="\t", quoting=QUOTE_MINIMAL, lineterminator="\n"
         )
-        csv_writer.writerow((f"{channel_name}{header}" for header in headers))
+        csv_writer.writerow(f"{channel_name}{header}" for header in headers)
         #        import pdb; pdb.set_trace()
         for values, extras in zip(values_set, *zip(*extras_set)):
             csv_writer.writerow(
@@ -50,7 +50,7 @@ def write_results(
 
 
 def read_db(filename):
-    return read_csv(filename, sep="\s+", na_values="?")
+    return read_csv(filename, sep=r"\s+", na_values="?")
 
 
 def get_filename(simulation_descriptor, filename_formatter, filename, optional=False):
@@ -115,13 +115,11 @@ def get_single_raw_correlator_set(
     correlator_set = []
 
     all_relevant_correlators = concat(
-        (
-            all_correlators[
-                (all_correlators.channel == channel)
-                & (all_correlators.trajectory >= initial_configuration)
-            ]
-            for channel in channels
-        )
+        all_correlators[
+            (all_correlators.channel == channel)
+            & (all_correlators.trajectory >= initial_configuration)
+        ]
+        for channel in channels
     )
     all_relevant_correlators.drop(["channel"], axis=1, inplace=True)
 
@@ -200,7 +198,7 @@ def get_correlators_from_filtered(filename, NT):
 
     column_names = ["trajectory", "valence_mass", "channel"] + list(range(NT))
 
-    all_correlators = read_csv(filename, names=column_names, sep="\s+")
+    all_correlators = read_csv(filename, names=column_names, sep=r"\s+")
 
     return all_correlators
 
@@ -257,7 +255,7 @@ def get_target_correlator(
 
 
 def get_flows(filename):
-    data = read_csv(filename, sep="\s+", names=["n", "t", "Ep", "Ec", "Q"])
+    data = read_csv(filename, sep=r"\s+", names=["n", "t", "Ep", "Ec", "Q"])
     times = asarray(sorted(set(data.t)))
     Eps = asarray([data[data.n == n].Ep.values for n in set(data.n)])
     Ecs = asarray([data[data.n == n].Ec.values for n in set(data.n)])
@@ -303,7 +301,7 @@ def get_flows_from_raw(filename, bin_size=1, limit_t_for_Q=None, raw_Qs=False):
         t_max_for_Q = None
 
     with open(filename) as f:
-        for line in f.readlines():
+        for line in f:
             line_contents = line.split()
             if (
                 line_contents[0] == "[IO][0]Configuration"

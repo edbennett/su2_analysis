@@ -1,4 +1,4 @@
-from .db import add_measurement, measurement_is_up_to_date, get_measurement
+from .db import add_measurement, get_measurement, measurement_is_up_to_date
 
 CHANNEL_COEFFICIENTS = {"g5": "Zav", "gk": "Zv", "g5gk": "Zav"}
 
