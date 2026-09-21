@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 from numpy import nan
 
-from .common import preliminary, ONE_COLUMN
-from ..plots import set_plot_defaults, COLOR_LIST
+from ..plots import COLOR_LIST, set_plot_defaults
+from .common import ONE_COLUMN, preliminary
 
 ENSEMBLES = ("DB2M1", "DB2M2", "DB2M3", "DB2M4", "DB2M5", "DB2M6", "DB2M7")
 XS = (0.2, 0.3, 0.35, 0.4, 0.5, 0.6, 0.8, 1.0)
@@ -45,7 +45,7 @@ def generate(data, ensembles):
             yerr=nan,
             fmt=".",
             markersize=0,
-            label=r"${:.02}$".format(X),
+            label=rf"${X:.02}$",
             color=colour,
             capsize=3,
         )
