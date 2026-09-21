@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-from datetime import datetime, timezone
 import json
 import os
 import pathlib
 import socket
 import subprocess
+from datetime import datetime, timezone
 
 
 def get_commit_id():

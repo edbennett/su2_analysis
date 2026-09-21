@@ -1,26 +1,23 @@
-from .db import (
-    get_measurement,
-    measurement_is_up_to_date,
-    add_measurement,
-)
-from .plots import set_plot_defaults
-
+import itertools
 from itertools import product
 from re import compile
 
+import gvar as gv
 import lsqfit
-
+import matplotlib
 import numpy as np
 import pandas as pd
-import gvar as gv
-import itertools
-
-import matplotlib
-from matplotlib import pyplot as plt
 from matplotlib import cm
+from matplotlib import pyplot as plt
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
+from .db import (
+    add_measurement,
+    get_measurement,
+    measurement_is_up_to_date,
+)
 from .modenumber import read_modenumber as read_modenumber_hirep
+from .plots import set_plot_defaults
 
 CONFIGURATION_GETTER = compile(
     r"\[IO\]\[0\]Configuration \[.*n(?P<configuration>[0-9]+)"

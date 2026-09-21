@@ -1,13 +1,12 @@
-from matplotlib.pyplot import subplots, close
-
 from flow_analysis.measurements.scales import compute_t2E_t, measure_sqrt_8t0
 from flow_analysis.readers import readers
+from matplotlib.pyplot import close, subplots
 
-from .db import (
-    measurement_is_up_to_date,
-    add_measurement,
-)
 from .data import get_filename
+from .db import (
+    add_measurement,
+    measurement_is_up_to_date,
+)
 
 DEFAULT_E0 = 0.2
 

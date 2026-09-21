@@ -1,15 +1,14 @@
-from numpy import nan
 import matplotlib.pyplot as plt
+from numpy import nan
 
-from ..plots import set_plot_defaults
 from ..derived_observables import merge_no_w0
-
+from ..plots import set_plot_defaults
 from .common import (
+    ONE_COLUMN,
     beta_colour_marker,
     channel_labels,
     critical_ms,
     preliminary,
-    ONE_COLUMN,
 )
 
 
