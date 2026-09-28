@@ -1,19 +1,17 @@
 #!/usr/bin/env python
 
 import matplotlib.pyplot as plt
-from matplotlib.colors import LogNorm
-from matplotlib.cm import plasma, ScalarMappable
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-
 import numpy as np
+from matplotlib.cm import ScalarMappable, plasma
+from matplotlib.colors import LogNorm
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from uncertainties import ufloat
 
-from .common import preliminary, ONE_COLUMN, TWO_COLUMN
-
-from ..plots import set_plot_defaults
-from ..tables import generate_table_from_content, format_value_and_error
 from ..do_analysis import get_subdirectory_name
 from ..modenumber_julia import read_modenumber_result
+from ..plots import set_plot_defaults
+from ..tables import format_value_and_error, generate_table_from_content
+from .common import ONE_COLUMN, TWO_COLUMN, preliminary
 
 
 def do_plot(data, ensemble=None, filename=None, ax=None):
