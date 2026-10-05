@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 
-import numpy as np
-import matplotlib.pyplot as plt
-import lsqfit
 import gvar as gv
+import lsqfit
+import matplotlib.pyplot as plt
+import numpy as np
 
-from ..plots import set_plot_defaults
 from ..derived_observables import merge_and_hat_quantities
-
-from .common import beta_colour_marker, preliminary, ONE_COLUMN
+from ..plots import set_plot_defaults
+from .common import ONE_COLUMN, beta_colour_marker, preliminary
 
 
 def Xpt_fit_form(mpcac_w0, p):

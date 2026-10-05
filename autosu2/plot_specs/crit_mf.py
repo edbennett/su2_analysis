@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 from numpy import linspace
 from scipy.optimize import curve_fit
 
-from .common import preliminary
 from ..plots import set_plot_defaults
+from .common import preliminary
 
 
 def fit_form_mPS(m, B, m_c, D):
