@@ -1,20 +1,19 @@
+import logging
 from collections import namedtuple
 from functools import cache
-import logging
 
-from numpy import isnan, nan
 import matplotlib
-import matplotlib.cm as cm
 import matplotlib.pyplot as plt
+import pandas as pd
+from matplotlib import cm
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
-import pandas as pd
+from numpy import isnan, nan
 from scipy.interpolate import interp1d
 
-from ..plots import set_plot_defaults
 from ..derived_observables import merge_no_w0
-
-from .common import beta_colour_marker, preliminary, ONE_COLUMN
+from ..plots import set_plot_defaults
+from .common import ONE_COLUMN, beta_colour_marker, preliminary
 from .fshs import gammastar_fshs
 
 ALPHA = 0.3

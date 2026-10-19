@@ -3,7 +3,7 @@
 from format_multiple_errors import format_multiple_errors
 
 from ..derived_observables import merge_no_w0
-from ..provenance import text_metadata, get_basic_metadata, number_to_latex
+from ..provenance import get_basic_metadata, number_to_latex, text_metadata
 
 
 def generate(data, ensembles):

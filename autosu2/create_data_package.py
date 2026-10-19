@@ -1,22 +1,21 @@
 #!/usr/bin/env python
 
-from argparse import ArgumentParser
 import logging
+from argparse import ArgumentParser
 
 import h5py
-from numpy import asarray, loadtxt, moveaxis, newaxis
 import yaml
-
 from flow_analysis.readers import readers
-
 from glue_analysis.readers import read_correlators_fortran
+from numpy import asarray, loadtxt, moveaxis, newaxis
+
 from .avr_plaquette import get_plaquettes
 from .data import get_correlators_from_raw
 from .do_analysis import filter_complete, get_file_contents, get_subdirectory_name
 from .glue import read_glue_correlation_matrices
 from .modenumber import read_modenumber as read_modenumber_hirep
 from .polyakov import get_loops_from_raw
-from .provenance import get_basic_metadata, flatten_metadata
+from .provenance import flatten_metadata, get_basic_metadata
 from .spin12 import get_correlators_spin12format
 
 
