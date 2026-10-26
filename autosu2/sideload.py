@@ -165,7 +165,7 @@ def import_data_sql(
                 valence_mass=measurement.valence_mass,
                 free_parameter=measurement.free_parameter,
             ):
-                logging.warn(
+                logging.warning(
                     f"Measurement of {measurement.observable} already present "
                     f"for {measurement.label}; not overwriting"
                 )

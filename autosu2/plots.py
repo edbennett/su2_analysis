@@ -1,15 +1,12 @@
 from math import ceil
+from warnings import filterwarnings
 
 import matplotlib.figure
 import matplotlib.pyplot
-
-from matplotlib.figure import Figure
-from matplotlib.pyplot import subplots, rc, close
-from matplotlib.colors import XKCD_COLORS
 import numpy as np
-
-from warnings import filterwarnings
-
+from matplotlib.colors import XKCD_COLORS
+from matplotlib.figure import Figure
+from matplotlib.pyplot import close, rc, subplots
 
 REVTEX_FONT_SIZE = 10
 COLOR_LIST = [
