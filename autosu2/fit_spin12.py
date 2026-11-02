@@ -4,14 +4,14 @@ import logging
 from pathlib import Path
 
 from meson_analysis.correlator import CorrelatorEnsemble
-from meson_analysis.fits import fit_single_correlator
 from meson_analysis.fit_forms import get_fit_form
+from meson_analysis.fits import fit_single_correlator
 from meson_analysis.readers import read_correlators_flexlatsim
 
-from .plots import do_eff_mass_plot, do_correlator_plot, set_plot_defaults
 from .data import get_output_filename
-from .db import measurement_is_up_to_date, add_measurement
+from .db import add_measurement, measurement_is_up_to_date
 from .fit_correlation_function import Incomplete
+from .plots import do_correlator_plot, do_eff_mass_plot, set_plot_defaults
 
 
 def get_correlators(directory_name, valence_mass, NT):
@@ -64,7 +64,7 @@ def process_correlator(
         eff_mass = correlator.m_eff(variant="cosh")
         eff_mass.gamma_method()
     except ValueError:
-        logging.warn("pyerrors can't cope with this; skipping.")
+        logging.warning("pyerrors can't cope with this; skipping.")
         return
 
     do_eff_mass_plot(

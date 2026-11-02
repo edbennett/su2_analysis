@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-from datetime import datetime, timezone
 import json
 import os
 import pathlib
 import socket
 import subprocess
+from datetime import UTC, datetime
 
 
 def get_commit_id():
@@ -27,13 +27,13 @@ def get_basic_metadata(ensembles_filename):
         "This file and all the files in this directory were generated automatically. Do not modify them; re-run the analysis workflow!"
     )
     metadata["workflow_run"] = {
-        "completed": datetime.now(timezone.utc).isoformat(),
+        "completed": datetime.now(UTC).isoformat(),
         "user_name": os.getlogin(),
         "machine_name": socket.gethostname(),
     }
     metadata["ensembles_metadata"] = {
         "last_updated": datetime.fromtimestamp(
-            ensembles_file.stat().st_mtime, timezone.utc
+            ensembles_file.stat().st_mtime, UTC
         ).isoformat()
     }
     metadata["analysis_code"] = {"version": get_commit_id()}
