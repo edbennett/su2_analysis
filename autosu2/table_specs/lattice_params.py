@@ -1,5 +1,4 @@
 from ..tables import generate_table_from_db
-
 from .ensembles import ENSEMBLES
 
 ERROR_DIGITS = 2
@@ -24,11 +23,10 @@ def chunk_ensembles(ensembles, max_rows=45):
             current_chunk.extend(current_block)
 
         current_block = []
-    else:
-        if current_chunk:
-            current_chunk.append(None)
-        current_chunk.extend(current_block)
-        yield current_chunk
+    if current_chunk:
+        current_chunk.append(None)
+    current_chunk.extend(current_block)
+    yield current_chunk
 
 
 def lattice_params(data, ensembles):

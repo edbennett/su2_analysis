@@ -3,7 +3,7 @@
 import numpy as np
 import pandas as pd
 
-from ..provenance import text_metadata, get_basic_metadata
+from ..provenance import get_basic_metadata, text_metadata
 
 
 def generate(data, ensembles):

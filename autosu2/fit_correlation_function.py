@@ -1,25 +1,24 @@
-from argparse import ArgumentParser
 import logging
+from argparse import ArgumentParser
 
+from meson_analysis.fit_forms import get_fit_form
 from meson_analysis.fits import (
-    mean_multi_eff_mass,
     combine_multi_correlators,
     fit_multi_correlators,
+    mean_multi_eff_mass,
 )
-from meson_analysis.fit_forms import get_fit_form
 from meson_analysis.readers import read_correlators_hirep
 
-from .plots import do_eff_mass_plot, do_correlator_plot, set_plot_defaults
-from .data import get_output_filename
-from .db import (
-    measurement_is_up_to_date,
-    add_measurement,
-    purge_measurement,
-)
 from .bootstrap import (
     BOOTSTRAP_SAMPLE_COUNT,
 )
-
+from .data import get_output_filename
+from .db import (
+    add_measurement,
+    measurement_is_up_to_date,
+    purge_measurement,
+)
+from .plots import do_correlator_plot, do_eff_mass_plot, set_plot_defaults
 
 channel_set_options = {
     "g5": (("g5",), ("g5_g0g5_re",)),
@@ -132,7 +131,7 @@ def process_correlator(
                 valence_mass=valence_mass,
             )
         except ValueError:
-            logging.warn("pyerrors can't cope with this; skipping.")
+            logging.warning("pyerrors can't cope with this; skipping.")
             continue
 
         do_eff_mass_plot(
@@ -411,7 +410,7 @@ def main():
                     print(f"{args.channel} decay constant: {decay_const}")
                     if len(fit_results[0]) > 2:
                         print(f"{args.channel} amplitude: {amplitude}")
-                    print(f"{args.channel} chi-square: " f"{chisquare_value}")
+                    print(f"{args.channel} chi-square: {chisquare_value}")
 
 
 if __name__ == "__main__":

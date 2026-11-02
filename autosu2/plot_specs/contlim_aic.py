@@ -1,23 +1,21 @@
 #!/usr/bin/env python
 
 import csv
-from dataclasses import dataclass
 import typing
+from dataclasses import dataclass
 
-import numpy as np
-import matplotlib.pyplot as plt
-import lsqfit
 import gvar as gv
+import lsqfit
+import matplotlib.pyplot as plt
+import numpy as np
 from uncertainties import ufloat
 
+from ..derived_observables import merge_no_w0
 from ..fit_glue import weighted_mean
 from ..plots import set_plot_defaults
-from ..derived_observables import merge_no_w0
-from ..provenance import text_metadata, get_basic_metadata, number_to_latex
-
-from .common import add_figure_key, beta_colour_marker, preliminary, ONE_COLUMN
+from ..provenance import get_basic_metadata, number_to_latex, text_metadata
+from .common import ONE_COLUMN, add_figure_key, beta_colour_marker, preliminary
 from .w0_chiral import fit_1_over_w0
-
 
 # Some fit forms break at the zero point exactly,
 # so use an infinitesimal value instead
