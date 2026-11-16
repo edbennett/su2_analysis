@@ -4,7 +4,6 @@ import logging
 
 import matplotlib.pyplot as plt
 import numpy as np
-
 from glue_analysis.readers import readers
 from meson_analysis.fit_forms import get_fit_form
 
@@ -15,7 +14,6 @@ from .db import (
     purge_measurement,
 )
 from .plots import set_plot_defaults
-
 
 STATES = {
     "torelon": (0,),

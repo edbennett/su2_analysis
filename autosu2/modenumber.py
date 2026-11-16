@@ -1,21 +1,18 @@
+from argparse import ArgumentParser
 from collections import defaultdict
 from re import compile
-from argparse import ArgumentParser
 
 import numpy as np
-from numpy import array, mean, std, nanmin, nanmax
-from numpy.random import randint, ranf
-
-from scipy.optimize import curve_fit
-from pandas import DataFrame, read_csv
-from numba import vectorize
-
-from matplotlib.pyplot import subplots, show
 from matplotlib.cm import plasma
 from matplotlib.colors import LogNorm
+from matplotlib.pyplot import show, subplots
+from numba import vectorize
+from numpy import array, mean, nanmax, nanmin, std
+from numpy.random import randint, ranf
+from pandas import DataFrame, read_csv
+from scipy.optimize import curve_fit
 
 from .data import file_is_up_to_date
-
 
 CONFIGURATION_GETTER = compile(
     r"\[IO\]\[0\]Configuration \[.*n(?P<configuration>[0-9]+)"
