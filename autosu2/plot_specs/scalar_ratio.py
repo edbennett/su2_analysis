@@ -2,10 +2,9 @@
 
 import matplotlib.pyplot as plt
 
-from ..plots import set_plot_defaults
 from ..derived_observables import merge_and_hat_quantities
-
-from .common import add_figure_key, beta_colour_marker, preliminary, ONE_COLUMN
+from ..plots import set_plot_defaults
+from .common import ONE_COLUMN, add_figure_key, beta_colour_marker, preliminary
 
 
 def plot_single_ratio(data, channel, label, filename, Nf):

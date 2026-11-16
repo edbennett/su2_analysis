@@ -1,10 +1,9 @@
 import matplotlib.pyplot as plt
 
-from .common import format_ensembles_list, preliminary, ONE_COLUMN
 from ..do_analysis import get_subdirectory_name
 from ..plots import set_plot_defaults
 from ..polyakov import fit_and_plot_polyakov_loops
-
+from .common import ONE_COLUMN, format_ensembles_list, preliminary
 
 ENSEMBLES = {
     1: ("DB4M13", "DB5M8", "DB6M9", "DB7M9"),
@@ -60,8 +59,8 @@ def do_caption(filename_base, ensembles, caption, figlabel):
         print(r"\begin{figure}", file=f)
         print(r"  \center", file=f)
         print(r"  \includegraphics{" + filename_base + r"}", file=f)
-        print(r"  \caption{{{caption}}}".format(caption=caption), file=f)
-        print(r"  \label{{fig:{figlabel}}}".format(figlabel=figlabel), file=f)
+        print(rf"  \caption{{{caption}}}", file=f)
+        print(rf"  \label{{fig:{figlabel}}}", file=f)
         print(r"\end{figure}", file=f)
 
 
