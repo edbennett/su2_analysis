@@ -3,18 +3,23 @@ from datetime import datetime
 from glob import glob
 from os.path import getmtime
 
-from sqlalchemy import Column, String, Integer, Float, DateTime
-from sqlalchemy import CheckConstraint, ForeignKey
-from sqlalchemy import create_engine
-from sqlalchemy.orm import relationship, sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.ext.hybrid import hybrid_property
-
-from pyerrors import Obs
-from uncertainties import UFloat, ufloat
-
 from numpy import isnan
 from pandas import read_sql
+from pyerrors import Obs
+from sqlalchemy import (
+    CheckConstraint,
+    Column,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    create_engine,
+)
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import relationship, sessionmaker
+from uncertainties import UFloat, ufloat
 
 Base = declarative_base()
 
@@ -338,8 +343,7 @@ def measurement_is_up_to_date(
         for single_date in compare_dates:
             if measurement.updated < single_date:
                 return False
-        else:
-            return True
+        return True
 
 
 def purge_measurement(

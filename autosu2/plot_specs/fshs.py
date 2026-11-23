@@ -1,19 +1,16 @@
 import csv
 
-import numpy as np
-from scipy.optimize import minimize
 import matplotlib.pyplot as plt
-
+import numpy as np
 from format_multiple_errors import format_multiple_errors
+from scipy.optimize import minimize
 from uncertainties import ufloat
 
-from ..plots import set_plot_defaults
-from ..tables import generate_table_from_content, format_value_and_error
 from ..derived_observables import merge_no_w0
-from ..provenance import text_metadata, get_basic_metadata, number_to_latex
-
-from .common import beta_colour_marker, add_figure_key, preliminary
-
+from ..plots import set_plot_defaults
+from ..provenance import get_basic_metadata, number_to_latex, text_metadata
+from ..tables import format_value_and_error, generate_table_from_content
+from .common import add_figure_key, beta_colour_marker, preliminary
 
 csv_filename = "processed_data/gammastar_fshs.csv"
 definition_filename = "assets/definitions/gammastar_fshs.tex"

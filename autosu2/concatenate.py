@@ -1,5 +1,6 @@
 from argparse import ArgumentParser
-from pandas import read_csv, concat
+
+from pandas import concat, read_csv
 
 
 def main():
@@ -11,7 +12,7 @@ def main():
     frames = []
 
     for filename in args.filename:
-        frames.append(read_csv(filename, sep="\s+"))
+        frames.append(read_csv(filename, sep=r"\s+"))
 
     full_data = concat(frames)
 
