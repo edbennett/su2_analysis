@@ -3,7 +3,6 @@
 from numpy import dtype
 from scipy.io import FortranFile
 
-
 DEFAULT_GLUE_PARAMS = {
     "num_operators_bctn": 6,
     "num_operators_L": 1,

@@ -2,8 +2,7 @@ import matplotlib.pyplot as plt
 
 from ..plots import set_plot_defaults
 from ..w0 import DEFAULT_W0
-
-from .common import beta_colour_marker, TWO_COLUMN
+from .common import TWO_COLUMN, beta_colour_marker
 
 
 def generate(data, ensembles):
